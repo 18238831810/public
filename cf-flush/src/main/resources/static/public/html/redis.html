@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>redis</title>
+<meta charset="UTF-8">
+<link href="http://libs.baidu.com/bootstrap/3.0.3/css/bootstrap.min.css"
+	rel="stylesheet">
+<link rel="stylesheet"
+	href="http://res.layui.com/layui/src/css/layui.css" media="all">
+	
+<script src="/public/js/jquery-2.2.3.min.js"></script>
+<script src="/public/js/layer/layer.js"></script>
+<script src="http://libs.baidu.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+
+	<input type="text" class="form-control" id="name"
+		placeholder="请输入redis的key" >
+	<button type="button" class="btn btn-default" onclick="query()">查询</button>
+	<button type="button" class="btn btn-default" onclick="getKeys()">keys</button>
+	<button type="button" class="btn btn-default" onclick="restVal()">删除</button>
+	<table class="table table-striped">
+		<tbody>
+
+		</tbody>
+	</table>
+
+	<div id="detail"></div>
+	<ul class="pagination"></ul>
+	<div id="keys" style="display: none;"></div>
+
+</body>
+<script type="text/javascript">
+	function doSign(){
+		var sign = prompt("请输入密码", "");
+		if(sign == null){
+			return;
+		}
+		
+		if(sign != null && sign != "") {
+			$("body").data("sign", sign);
+			loadData(1, "");
+		}else{
+			doSign();
+		}
+	}
+
+	var myDate = new Date();
+	var year = myDate.getFullYear();
+	var month = myDate.getMonth() + 1;
+	var date = myDate.getDate();
+
+	var time = year + "" + (month < 10 ? "0" + month : month) + "" + (date < 10 ? "0" + date : date)
+
+	$(function() {
+		doSign();
+	});
+	
+	function restVal() {
+		var name=$("#name").val();
+		if(confirm("确定要删除此数据?"))
+		{
+			$.get("/public/mc/deleterediskey?by=" + time + "&sign=" + $("body").data("sign") + "&token=" + name,function(data){
+				alert(data.code_desc);
+				loadData(1, "");
+			});
+		}
+	}
+
+	function query() {
+		var name = $.trim($("#name").val());
+		loadData(1, name);
+	}
+
+	function loadData(curPage, pattern) {
+		$.get("/public/mc/rediskey?by=" + time + "&page=" + curPage + "&sign=" + $("body").data("sign") + "&pattern=" + pattern,function(data){
+			if(data.result == "没有权限"){
+				alert("密码错误");
+				doSign();
+			}else{
+				tabelHtml(data, pattern);
+			}
+		});
+	}
+
+	function tabelHtml(data, pattern) {
+		var total = data["total"];
+		var pageTotal = data["pageTotal"];
+		var list = data["list"];
+		console.info(data);
+		var curPage = data["curPage"];
+		var hmlt = "";
+		var keys = ""
+		for (var int = 0; int < list.length; int++) {
+
+			hmlt += "<tr>";
+			hmlt += "	<th>" + list[int] + "</th>";
+			hmlt += "	<th><a href=\"javascript:void(0)\" onclick=\"detalRedis('"
+					+ list[int] + "')\">详情</th>";
+			hmlt += "</tr>";
+			keys += list[int] + ",";
+		}
+		$("tbody").empty();
+		$("tbody").append(hmlt);
+		pageHtml(total, pageTotal, curPage, pattern);
+		$("#keys").html(keys);
+	}
+
+	function detalRedis(key, ob) {
+		$.get("/public/mc/redis?by=" + time + "&key=" + key + "&sign=" + $("body").data("sign"),function (data) {
+			console.log(data);
+			detail(data.toString());
+		})
+	}
+
+	function json2str(o) {
+		var arr = [];
+		var fmt = function(s) {
+			if (typeof s == 'object' && s != null)
+				return json2str(s);
+			return /^(string|number)$/.test(typeof s) ? "\"" + s + "\"" : s;
+		}
+		for ( var i in o)
+			arr.push("\"" + i + "\":" + fmt(o[i]));
+		return '{' + arr.join(',') + '}';
+	}
+
+	function detail(content) {
+		layer.open({
+			type : 1,
+			area : [ '600px', '360px' ],
+			shadeClose : true, //点击遮罩关闭
+			content : content
+		});
+	}
+
+	function getKeys() {
+		var keys = $("#keys").html();
+		layer.open({
+			type : 1,
+			area : [ '600px', '360px' ],
+			shadeClose : true, //点击遮罩关闭
+			content : keys
+		});
+	}
+	function pageHtml(total, pageTotal, curPage, pattern) {
+		var html = "";
+		var index = 0;
+		var start = curPage - 5 > 0 ? curPage - 5 : 1;
+		for (var int = start; int <=pageTotal; int++) {
+			index++;
+			html += "<li><a href='javascript:void(0)' onclick='loadData(" + int
+					+ ",\"" + pattern + "\")'>" + int + "</a></li>";
+			if (index >= 10)
+				break;
+		}
+		$(".pagination").empty();
+		$(".pagination").append(html);
+		$("#detail")
+				.html(
+						"总条数：<font color='blue' style='font-size:24px'>"
+								+ total
+								+ "</font>;总页数：<font color='green' style='font-size:24px'>"
+								+ pageTotal
+								+ "</font>;当前页码：<font color='red' style='font-size:24px'>"
+								+ curPage + "</font>");
+	}
+</script>
+</html>

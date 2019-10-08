@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>table模块快速使用</title>
+    <link rel="stylesheet" href="/public/plugins/layui/css/layui.css" media="all">
+    <script src="/public/js/jquery-2.2.3.min.js"></script>
+    <script src="/public/plugins/layui/layui.all.js"></script>
+    <script src="/public/plugins/vue/vue.js"></script>
+    <script src="/public/plugins/vue/vue-resource.min.js"></script>
+</head>
+<body>
+<div id="queryController">
+    <form style="margin-top: 20px" action="">
+        <div class="layui-form-item">
+            <label class="layui-form-label">权限标志</label>
+            <div class="layui-input-block">
+                <input type="text" v-model="param.sign" required  lay-verify="required" placeholder="请输入权限标志" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">数据库</label>
+            <div class="layui-input-block">
+                <select v-model="param.dataBase" style="margin-top: 10px">
+                    <option v-for="item in sourceList" :value="item">{{item}}</option>
+                </select>
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">加密key</label>
+            <div class="layui-input-block">
+                <input type="text" v-model="param.key" required  lay-verify="required" placeholder="请输入加密key" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">sql语句</label>
+            <div class="layui-input-block">
+                <textarea v-model="param.sql" placeholder="请输入查询sql语句" class="layui-textarea" style="height:200px"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <span class="layui-btn layui-bg-blue" v-on:click="querySql">查询</span>
+            </div>
+        </div>
+    </form>
+    <div>
+        <table id="queryTable"></table>
+    </div>
+</div>
+<script type="text/javascript">
+    var vueData = new Vue({
+        el: '#queryController',
+        data: {
+            param:{
+                sign:"",
+                dataBase:"master",
+                key:"",
+                sql:"",
+                enSql:""
+            },
+            sourceList:[]
+        },
+        mounted:function(){
+            this.getSourceNames();
+        },
+        methods: {
+            getSourceNames:function(){
+                this.$http.post("/public/sql/getSourceNames").then(function (res) {
+                    if(res && res.status == 200){
+                        if(res.data == null || res.data.code != 200) this.message(res.data.code_desc);
+                        else {
+                            this.sourceList = res.data.data;
+                        }
+                    }
+                });
+            },
+            querySql: function () {
+                this.$http.post("/public/sql/encrypt", this.param, {emulateJSON:true}).then(function (res) {
+                    if(res && res.status == 200){
+                        if(res.data == null || res.data.code != 200) this.message("加密sql语句为空");
+                        else {
+                            this.param.enSql = res.data.data;
+                            this.select();
+                        }
+                    }
+                });
+            },
+            select:function(){
+                this.$http.post("/public/sql/select", this.param, {emulateJSON:true,headers:{'dataBase':this.param.dataBase}}).then(function (res) {
+                    if(res && res.status == 200){
+                        var data = res.data;
+                        if(data.code == 200){
+                            if(data.data == null || data.data.length <= 0) {
+                                this.message("数据为空");
+                                tables = layui.table.render({
+                                    elem: '#queryTable'
+                                    ,data:[]
+                                });
+                            }else{
+                                tables = layui.table.render({
+                                    elem: '#queryTable'
+                                    ,data:data.data
+                                    ,page: true //分页
+                                    ,cols: [this.createTableFile(data.data[0])]
+                                    ,limits:[10,15,30,60,100,1000]
+                                    ,toolbar:true
+                                });
+                            }
+                        }else{
+                            this.message(data.code_desc);
+                            tables = layui.table.render({
+                                elem: '#queryTable'
+                                ,data:[]
+                            });
+                        }
+                    }
+                });
+            },
+            createTableFile:function(data){
+                var fileds = [];
+                for (var i in data) {
+                    var filed =  {field:i, title: i,width:200};
+                    fileds.push(filed);
+                }
+                return fileds;
+            },
+            message:function(message){
+                layer.open({
+                    title: '信息提示'
+                    ,content: message
+                });
+            }
+        }
+    });
+</script>
+</body>
+</html>

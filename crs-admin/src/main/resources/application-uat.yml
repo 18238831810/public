@@ -1,0 +1,271 @@
+spring:
+  #mongo配置
+  data:
+    mongodb:
+      uri: mongodb://192.168.35.84:27017/cf88-crs
+      #每个主机的连接数
+      connections-per-host: 50
+      #线程队列数，它以上面connectionsPerHost值相乘的结果就是线程队列最大值
+      threads-allowed-to-block-for-connection-multiplier: 50
+      connect-timeout: 5000
+      socket-timeout: 3000
+      max-wait-time: 1500
+      #控制是否在一个连接时，系统会自动重试
+      auto-connect-retry: true
+      socket-keep-alive: true
+  #redis配置
+  redis:
+    cluster:
+      nodes: 127.0.0.1:7000,127.0.0.1:7001,127.0.0.1:7002,127.0.0.1:7003,127.0.0.1:7004,127.0.0.1:7005,127.0.0.1:7006,127.0.0.1:7007
+      max-redirects: 3
+      jedis:
+        pool:
+          max-idle: 100
+          max-wait: 10000
+  #数据库配置
+  autoconfigure:
+    exclude: com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure
+  datasource:
+    dynamic:
+      datasource:
+        master:
+          username: CFAppUser
+          password: CFAppUser
+          url: jdbc:mysql://192.168.35.227:3310/new_crs?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          druid: # 以下参数针对每个库可以重新设置druid参数
+            initial-size: 10
+            max-active: 100
+            min-idle: 10
+            max-wait: 6000
+            pool-prepared-statements: true
+            max-pool-prepared-statement-per-connection-size: 20
+            time-between-eviction-runs-millis: 60000
+            min-evictable-idle-time-millis: 300000
+            #Oracle需要打开注释
+            #validation-query: SELECT 1 FROM DUAL
+            test-while-idle: true
+            test-on-borrow: false
+            test-on-return: false
+            stat-view-servlet:
+              enabled: true
+              url-pattern: /druid/*
+              #login-username: admin
+              #login-password: admin
+            filter:
+              stat:
+                log-slow-sql: true
+                slow-sql-millis: 1000
+                merge-sql: false
+              wall:
+                config:
+                  multi-statement-allow: true
+        gts2_real:
+          username: cfdevuser
+          password: cfDev1234
+          url: jdbc:postgresql://192.168.35.241:5432/goldoffice
+          driver-class-name: org.postgresql.Driver
+          druid: # 以下参数针对每个库可以重新设置druid参数
+            initial-size: 10
+            max-active: 100
+            min-idle: 10
+            max-wait: 6000
+            pool-prepared-statements: true
+            max-pool-prepared-statement-per-connection-size: 20
+            time-between-eviction-runs-millis: 60000
+            min-evictable-idle-time-millis: 300000
+            #Oracle需要打开注释
+            #validation-query: SELECT 1 FROM DUAL
+            test-while-idle: true
+            test-on-borrow: false
+            test-on-return: false
+            stat-view-servlet:
+              enabled: true
+              url-pattern: /druid/*
+              #login-username: admin
+              #login-password: admin
+            filter:
+              stat:
+                log-slow-sql: true
+                slow-sql-millis: 1000
+                merge-sql: false
+              wall:
+                config:
+                  multi-statement-allow: true
+        cfvn_gts2_real:
+          username: cfdevuser
+          password: cfDev1234
+          url: jdbc:postgresql://192.168.35.241:5432/goldoffice
+          driver-class-name: org.postgresql.Driver
+          druid: # 以下参数针对每个库可以重新设置druid参数
+            initial-size: 10
+            max-active: 100
+            min-idle: 10
+            max-wait: 6000
+            pool-prepared-statements: true
+            max-pool-prepared-statement-per-connection-size: 20
+            time-between-eviction-runs-millis: 60000
+            min-evictable-idle-time-millis: 300000
+            #Oracle需要打开注释
+            #validation-query: SELECT 1 FROM DUAL
+            test-while-idle: true
+            test-on-borrow: false
+            test-on-return: false
+            stat-view-servlet:
+              enabled: true
+              url-pattern: /druid/*
+              #login-username: admin
+              #login-password: admin
+            filter:
+              stat:
+                log-slow-sql: true
+                slow-sql-millis: 1000
+                merge-sql: false
+              wall:
+                config:
+                  multi-statement-allow: true
+        gts2_demo:
+          username: cfdevuser
+          password: cfDev1234
+          url: jdbc:postgresql://192.168.35.25:5432/goldoffice_demo
+          driver-class-name: org.postgresql.Driver
+          druid: # 以下参数针对每个库可以重新设置druid参数
+            initial-size: 10
+            max-active: 100
+            min-idle: 10
+            max-wait: 6000
+            pool-prepared-statements: true
+            max-pool-prepared-statement-per-connection-size: 20
+            time-between-eviction-runs-millis: 60000
+            min-evictable-idle-time-millis: 300000
+            #Oracle需要打开注释
+            #validation-query: SELECT 1 FROM DUAL
+            test-while-idle: true
+            test-on-borrow: false
+            test-on-return: false
+            stat-view-servlet:
+              enabled: true
+              url-pattern: /druid/*
+              #login-username: admin
+              #login-password: admin
+            filter:
+              stat:
+                log-slow-sql: true
+                slow-sql-millis: 1000
+                merge-sql: false
+              wall:
+                config:
+                  multi-statement-allow: true
+        slave_3:
+            username: root
+            password: root
+            url: jdbc:mysql://172.25.10.46:3306/new_crs?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT
+            driver-class-name: com.mysql.cj.jdbc.Driver
+
+
+
+  #kafka开始
+  kafka:
+    consumer:
+      bootstrap-servers: 192.168.35.186:9099,192.168.35.187:9099,192.168.35.163:9099
+      group-id: cf2019-crs-uat-2
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      auto-offset-reset: earliest                       #最早未被消费的offset earliest
+      max-poll-records: 500                             #批量消费一次最大拉取的数据量
+      enable-auto-commit: false                         #是否开启自动提交
+      auto-commit-interval: 60000                        #自动提交的间隔时间
+      properties:
+        sasl.mechanism: PLAIN
+        security.protocol: SASL_PLAINTEXT
+    listener:
+      ack-mode: MANUAL_IMMEDIATE
+      type: BATCH                                #是否开启批量消费，true表示批量消费
+      concurrency: 1                                 #设置消费的线程数
+      poll-timeout: 1500
+
+cftopic:
+  topicCashin: flume_source_fxgts2real_external_uat_external_t_clone_cashin_proposal_8
+  topicRealTrade: flume_source_fxgts2real_external_uat_external_t_clone_trade_8
+  topicDemoTrade: flume_source_fxgts2demo_external_uat_external_t_clone_trade_8
+  topicRealPosition: flume_source_fxgts2real_external_uat_external_t_clone_position_8
+  topicDemoPostion: flume_source_fxgts2demo_external_uat_external_t_clone_position_8
+  topicCashout: flume_source_fxgts2real_external_uat_external_t_clone_cashout_proposal_8
+  topicCustrans: flume_source_fxgts2real_external_uat_external_t_clone_custrans_8
+  topicRealAccount: flume_source_fxgts2real_external_uat_external_t_clone_customer_account_info_8
+  topicDemoAccount: flume_source_fxgts2demo_external_uat_external_t_clone_customer_account_info_8
+  topicModify: flume_source_goldoffice_office_t_customer_proposal_modify_8
+  topicRealLogin: flume_source_goldoffice_trade_gts2_gts2loginstat_8
+  topicDemoLogin: flume_source_goldoffice_demo_trade_gts2_gts2loginstat_8
+
+cfTopics: flume_source_fxgts2real_external_uat_external_t_clone_cashin_proposal_8,
+  flume_source_fxgts2real_external_uat_external_t_clone_trade_8,
+  flume_source_fxgts2demo_external_uat_external_t_clone_trade_8,
+  flume_source_fxgts2real_external_uat_external_t_clone_position_8,
+  flume_source_fxgts2demo_external_uat_external_t_clone_position_8,
+  flume_source_fxgts2real_external_uat_external_t_clone_cashout_proposal_8,
+  flume_source_fxgts2real_external_uat_external_t_clone_custrans_8,
+  flume_source_fxgts2real_external_uat_external_t_clone_customer_account_info_8,
+  flume_source_fxgts2demo_external_uat_external_t_clone_customer_account_info_8,
+  flume_source_goldoffice_office_t_customer_proposal_modify_8,
+  flume_source_goldoffice_trade_gts2_gts2loginstat_8,
+  flume_source_goldoffice_demo_trade_gts2_gts2loginstat_8
+
+#国际版topic
+cfvntopic:
+  topicCashin: flume_source_fxgts2real_external_uat_external_t_clone_cashin_proposal_16
+  topicRealTrade: flume_source_fxgts2real_external_uat_external_t_clone_trade_16
+  topicDemoTrade: flume_source_fxgts2demo_external_uat_external_t_clone_trade_16
+  topicRealPosition: flume_source_fxgts2real_external_uat_external_t_clone_position_16
+  topicDemoPostion: flume_source_fxgts2demo_external_uat_external_t_clone_position_16
+  topicCashout: flume_source_fxgts2real_external_uat_external_t_clone_cashout_proposal_16
+  topicCustrans: flume_source_fxgts2real_external_uat_external_t_clone_custrans_16
+  topicRealAccount: flume_source_fxgts2real_external_uat_external_t_clone_customer_account_info_16
+  topicDemoAccount: flume_source_fxgts2demo_external_uat_external_t_clone_customer_account_info_16
+  topicModify: flume_source_goldoffice_office_t_customer_proposal_modify_16
+  topicRealLogin: flume_source_goldoffice_trade_gts2_gts2loginstat_16
+  topicDemoLogin: flume_source_goldoffice_demo_trade_gts2_gts2loginstat_16
+  topicRealCustomer: flume_source_fxgts2real_external_uat_external_t_clone_customer_proposal_16
+
+cfvnTopics: flume_source_fxgts2real_external_uat_external_t_clone_cashin_proposal_16,
+  flume_source_fxgts2real_external_uat_external_t_clone_trade_16,
+  flume_source_fxgts2demo_external_uat_external_t_clone_trade_16,
+  flume_source_fxgts2real_external_uat_external_t_clone_position_16,
+  flume_source_fxgts2demo_external_uat_external_t_clone_position_16,
+  flume_source_fxgts2real_external_uat_external_t_clone_cashout_proposal_16,
+  flume_source_fxgts2real_external_uat_external_t_clone_custrans_16,
+  flume_source_fxgts2real_external_uat_external_t_clone_customer_account_info_16,
+  flume_source_fxgts2demo_external_uat_external_t_clone_customer_account_info_16,
+  flume_source_goldoffice_office_t_customer_proposal_modify_16,
+  flume_source_goldoffice_trade_gts2_gts2loginstat_16,
+  flume_source_goldoffice_demo_trade_gts2_gts2loginstat_16,
+  flume_source_fxgts2real_external_uat_external_t_clone_customer_proposal_16
+
+#kafka_auth
+authPath: /www/back_config/crs/
+#kafak结束
+
+#rocketmq开始
+rocketmq:
+  config:
+    #  name-server: 192.168.35.143:9876 #he name server for rocketMQ, formats: `host:port;host:port`.
+    name-server: 192.168.35.84:9876;192.168.35.83:9876 #he name server for rocketMQ, formats: `host:port;host:port`.
+    producer-group: cf-crs-producer-uat
+    consumer-group: cfvn_crs_group_uat
+#rocketmq结束
+
+#graphql开始
+appid_cf: 4e24b3ea63d8477f849ae5518fbc2957
+secret_cf: c48491e2289a1797b795f5ee0ab00c28id
+graphqlUrl: http://192.168.35.208:5555
+#graphql结束
+
+#新手任务相关配置开始
+qrcode: FmbVKoOEUyJkIJmB
+#新手任务相关配置结束
+
+#产品列表
+production:
+  config:
+    cfUrl: http://192.168.75.87:8000/getconfig?company=8&timeformat=1&extension=1
+    cfvnUrl: http://192.168.75.87:8000/getconfig?company=256&timeformat=1&extension=1
