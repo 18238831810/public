@@ -21,7 +21,7 @@ import java.util.List;
  * @author Mark sunlightcs@gmail.com
  */
 @Mapper
-public interface SysMenuDao extends BaseDao<SysMenuEntity> {
+public interface SysMenuMapper extends BaseDao<SysMenuEntity> {
 
 	SysMenuEntity getById(@Param("id") Long id, @Param("language") String language);
 

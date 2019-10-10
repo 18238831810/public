@@ -12,8 +12,9 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cf.crs.common.entity.BaseEntity;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.util.Date;
 
@@ -23,39 +24,46 @@ import java.util.Date;
  * @author Mark sunlightcs@gmail.com
  */
 @Data
-@EqualsAndHashCode(callSuper=false)
 @TableName("sys_menu")
+@ApiModel(value = "菜单管理")
 public class SysMenuEntity extends BaseEntity {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * 父菜单ID，一级菜单为0
 	 */
+	@ApiModelProperty(value = "上级ID")
 	private Long pid;
 	/**
 	 * 菜单名称
 	 */
+	@ApiModelProperty(value = "菜单名称")
 	@TableField(exist = false)
 	private String name;
 	/**
 	 * 菜单URL
 	 */
+	@ApiModelProperty(value = "菜单URL")
 	private String url;
 	/**
 	 * 授权(多个用逗号分隔，如：sys:user:list,sys:user:save)
 	 */
+	@ApiModelProperty(value = "授权(多个用逗号分隔，如：sys:user:list,sys:user:save)")
 	private String permissions;
 	/**
 	 * 类型   0：菜单   1：按钮
 	 */
+	@ApiModelProperty(value = "类型  0:主菜单 1:window服务器 2:linux服务器 3:数据库")
 	private Integer type;
 	/**
 	 * 菜单图标
 	 */
+	@ApiModelProperty(value = "菜单图标")
 	private String icon;
 	/**
 	 * 排序
 	 */
+	@ApiModelProperty(value = "排序")
 	private Integer sort;
 	/**
 	 * 更新者
@@ -67,10 +75,5 @@ public class SysMenuEntity extends BaseEntity {
 	 */
 	@TableField(fill = FieldFill.INSERT_UPDATE,value = "update_date")
 	private Date updateDate;
-	/**
-	 * 上级菜单名称
-	 */
-	@TableField(exist = false)
-	private String parentName;
 
 }

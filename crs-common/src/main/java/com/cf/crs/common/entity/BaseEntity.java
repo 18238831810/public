@@ -11,6 +11,7 @@ package com.cf.crs.common.entity;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -27,6 +28,7 @@ public abstract class BaseEntity implements Serializable {
      * id
      */
     @TableId
+    @ApiModelProperty(value = "id")
     private Long id;
     /**
      * 创建者

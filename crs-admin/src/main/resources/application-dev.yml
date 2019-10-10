@@ -21,7 +21,7 @@ spring:
         master:
           username: city
           password: '!#456QWEasd&'
-          url: jdbc:mysql://47.106.199.193/citymanager?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT
+          url: jdbc:mysql://47.106.199.193:3306/citymanager?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT
           driver-class-name: com.mysql.cj.jdbc.Driver
           druid: # 以下参数针对每个库可以重新设置druid参数
             initial-size: 10

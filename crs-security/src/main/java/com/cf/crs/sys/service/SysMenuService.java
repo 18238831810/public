@@ -8,47 +8,32 @@
 
 package com.cf.crs.sys.service;
 
-import com.cf.crs.security.user.UserDetail;
-import com.cf.crs.common.service.BaseService;
-import com.cf.crs.sys.dto.SysMenuDTO;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cf.crs.sys.entity.SysMenuEntity;
+import com.cf.crs.sys.mapper.SysMenuMapper;
+import com.cf.util.http.HttpWebResult;
+import com.cf.util.http.ResultJson;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
-
 
 /**
  * 菜单管理
  * 
  * @author Mark sunlightcs@gmail.com
  */
-public interface SysMenuService extends BaseService<SysMenuEntity> {
+@Service
+public class SysMenuService {
 
-	SysMenuDTO get(Long id);
+	@Autowired
+	SysMenuMapper sysMenuMapper;
 
-	void save(SysMenuDTO dto);
+	public ResultJson<List<SysMenuEntity>> getMenus(){
+		List<SysMenuEntity> list = sysMenuMapper.selectList(new QueryWrapper<SysMenuEntity>());
+		return HttpWebResult.getMonoSucResult(list);
+	}
 
-	void update(SysMenuDTO dto);
 
-	void delete(Long id);
-
-	/**
-	 * 菜单列表
-	 *
-	 * @param type 菜单类型
-	 */
-	List<SysMenuDTO> getAllMenuList(Integer type);
-
-	/**
-	 * 用户菜单列表
-	 *
-	 * @param user  用户
-	 * @param type 菜单类型
-	 */
-	List<SysMenuDTO> getUserMenuList(UserDetail user, Integer type);
-
-	/**
-	 * 根据父菜单，查询子菜单
-	 * @param pid  父菜单ID
-	 */
-	List<SysMenuDTO> getListPid(Long pid);
 }
