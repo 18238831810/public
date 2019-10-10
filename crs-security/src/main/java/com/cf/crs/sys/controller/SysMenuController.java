@@ -32,8 +32,8 @@ public class SysMenuController {
 	@Autowired
 	private SysMenuService sysMenuService;
 
-	@GetMapping("nav")
-	@ApiOperation("分页")
+	@GetMapping("/nav")
+	@ApiOperation("菜单栏")
 	public ResultJson<List<SysMenuEntity>> getMenus(){
 		return sysMenuService.getMenus();
 	}
