@@ -12,7 +12,7 @@ import com.cf.crs.common.redis.RedisUtils;
 import com.cf.crs.security.mapper.SysUserTokenDao;
 import com.cf.crs.security.service.ShiroService;
 import com.cf.crs.security.user.UserDetail;
-import com.cf.crs.sys.mapper.SysMenuDao;
+import com.cf.crs.sys.mapper.SysMenuMapper;
 import com.cf.crs.sys.mapper.SysRoleDataScopeDao;
 import com.cf.crs.sys.mapper.SysUserDao;
 import com.cf.crs.sys.dto.SysUserDTO;
@@ -29,7 +29,7 @@ import java.util.Set;
 @Service
 public class ShiroServiceImpl implements ShiroService {
     @Autowired
-    private SysMenuDao sysMenuDao;
+    private SysMenuMapper sysMenuMapper;
     @Autowired
     private SysUserDao sysUserDao;
     @Autowired
@@ -45,9 +45,9 @@ public class ShiroServiceImpl implements ShiroService {
         List<String> permissionsList;
 //        if(null != user.getSuperAdmin() && user.getSuperAdmin() == SuperAdminEnum.YES.value()) {
         if("admin".equals(user.getUsername())) {
-            permissionsList = sysMenuDao.getPermissionsList();
+            permissionsList = sysMenuMapper.getPermissionsList();
         }else{
-            permissionsList = sysMenuDao.getUserPermissionsList(user.getId());
+            permissionsList = sysMenuMapper.getUserPermissionsList(user.getId());
         }
 
         //用户权限列表
