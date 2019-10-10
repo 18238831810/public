@@ -59,7 +59,7 @@ public class SysMenuController {
 	}
 
 	@GetMapping("/delete")
-	@ApiOperation("编辑菜单栏")
+	@ApiOperation("删除菜单栏")
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "id", paramType = "query", required = true, dataType="String") ,
 	})
