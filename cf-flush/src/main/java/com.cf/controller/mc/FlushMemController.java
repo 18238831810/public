@@ -3,7 +3,6 @@ package com.cf.controller.mc;
 import com.cf.anno.Tourist;
 import com.cf.cache.service.impl.RedisCacheService;
 import com.cf.service.mc.FlushMemService;
-import com.cf.sms.service.impl.SMSService;
 import com.cf.util.http.HttpWebResult;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +29,6 @@ public class FlushMemController{
     @Autowired
     RedisCacheService redisCacheService;
 
-    @Autowired
-    SMSService sMSService;
 
     private final static String SIGN = "cf20190701";
 
@@ -77,49 +74,5 @@ public class FlushMemController{
         return flushMemService.getRedisKey(pattern, page);
     }
 
-    /**
-     * 添加黑名单
-     */
-    @RequestMapping("/addblack")
-    public Object addBlack(String ip, String sign) {
-        if (!hasRight(sign)) return HttpWebResult.getMonoError("没权限");
-        return sMSService.addBlack(ip);
-    }
-
-    /**
-     * 删除黑名单
-     */
-    @RequestMapping("/delblack")
-    public Object delBlack(String ip, String sign) {
-        if (!hasRight(sign)) return HttpWebResult.getMonoError("没权限");
-        return sMSService.removeBlack(ip);
-    }
-
-    /**
-     * 添加白名单
-     */
-    @RequestMapping("/addwhite")
-    public Object addwhite(String ip, String sign) {
-        if (!hasRight(sign)) return HttpWebResult.getMonoError("没权限");
-        return sMSService.addWhite(ip);
-    }
-
-    /**
-     * 删除白名单
-     */
-    @RequestMapping("/delwhite")
-    public Object delwhite(String ip, String sign) {
-        if (!hasRight(sign)) return HttpWebResult.getMonoError("没权限");
-        return sMSService.removeWhite(ip);
-    }
-
-    /**
-     * 去掉单天手机短信限制
-     */
-    @RequestMapping("/remobile")
-    public Object removeMobileTimes(String mobile, String sign) {
-        if (!hasRight(sign)) return HttpWebResult.getMonoError("没权限");
-        return sMSService.deletelMobile(mobile);
-    }
 
 }
