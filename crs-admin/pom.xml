@@ -144,7 +144,7 @@
 	</dependencies>
 
 	<build>
-		<finalName>precrs.cf139.com</finalName>
+		<finalName>city-api</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
