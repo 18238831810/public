@@ -66,6 +66,11 @@ public class SysMenuEntity extends BaseEntity {
 	@ApiModelProperty(value = "排序")
 	private Integer sort;
 	/**
+	 * 排序
+	 */
+	@ApiModelProperty(value = "帮助")
+	private String help;
+	/**
 	 * 更新者
 	 */
 	@TableField(fill = FieldFill.INSERT_UPDATE)
