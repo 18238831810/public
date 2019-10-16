@@ -10,6 +10,9 @@ package com.cf.crs.config.exception;
 
 import cn.hutool.core.map.MapUtil;
 import com.alibaba.fastjson.JSON;
+import com.cf.crs.common.exception.ErrorCode;
+import com.cf.crs.common.exception.ExceptionUtils;
+import com.cf.crs.common.exception.RenException;
 import com.cf.crs.log.entity.SysLogErrorEntity;
 import com.cf.crs.log.service.SysLogErrorService;
 import com.cf.crs.common.utils.HttpContextUtils;
