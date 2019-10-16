@@ -3,6 +3,7 @@ package com.cf.crs.entity;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.models.auth.In;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -17,7 +18,7 @@ import java.io.Serializable;
 @TableName("city_email")
 public class EmailSenderProperties implements Serializable {
 
-    private int id;
+    private Integer id;
 
     @ApiModelProperty(value = "邮箱服务名称")
     private String host;
