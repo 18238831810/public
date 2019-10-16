@@ -6,7 +6,7 @@
  * 版权所有，侵权必究！
  */
 
-package com.cf.crs.common.exception;
+package com.cf.crs.config.exception;
 
 import cn.hutool.core.map.MapUtil;
 import com.alibaba.fastjson.JSON;

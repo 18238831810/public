@@ -6,7 +6,7 @@
  * 版权所有，侵权必究！
  */
 
-package com.cf.crs.common.interceptor;
+package com.cf.crs.config.interceptor;
 
 /**
  * 数据范围

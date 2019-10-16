@@ -1,4 +1,4 @@
-package com.cf.crs.common.config;
+package com.cf.crs.config.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

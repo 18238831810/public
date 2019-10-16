@@ -6,7 +6,7 @@
  * 版权所有，侵权必究！
  */
 
-package com.cf.crs.common.config;
+package com.cf.crs.config.config;
 
 import com.cf.crs.common.constant.Constant;
 import com.github.xiaoymin.swaggerbootstrapui.annotations.EnableSwaggerBootstrapUI;

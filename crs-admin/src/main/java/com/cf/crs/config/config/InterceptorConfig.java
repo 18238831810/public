@@ -1,9 +1,8 @@
-package com.cf.crs.common.config;
+package com.cf.crs.config.config;
 
-import com.cf.crs.common.interceptor.ActionInterceptor;
+import com.cf.crs.config.interceptor.ActionInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;

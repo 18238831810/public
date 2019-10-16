@@ -11,13 +11,17 @@ package com.cf.crs;
 import com.cf.AdminApplication;
 import com.cf.crs.common.redis.RedisUtils;
 import com.cf.crs.sys.entity.SysUserEntity;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.test.context.junit4.SpringRunner;
 
+@Slf4j
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = AdminApplication.class)
 public class RedisTest {
@@ -43,6 +47,26 @@ public class RedisTest {
         long endTime = System.currentTimeMillis();
         System.out.println(endTime - startTime);
 
+    }
+
+    @Test
+    public void sendEmail() {
+        JavaMailSenderImpl sender = new JavaMailSenderImpl();
+        sender.setHost("smtp.163.com");
+        sender.setDefaultEncoding("utf-8");
+        sender.setUsername("18238831810");
+        sender.setPassword("han18238831810");
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("18238831810@163.com");
+        message.setTo("1527583922@qq.com");
+        message.setSubject("邪客发送文本邮件测试");// 标题
+        message.setText("世界，你好！--->文本邮件");// 内容
+        try {
+            sender.send(message);
+            log.info("文本邮件发送成功！");
+        } catch (Exception e) {
+            log.error("文本邮件发送异常！", e);
+        }
     }
 
 
