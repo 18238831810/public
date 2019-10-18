@@ -3,7 +3,6 @@ package com.cf.crs.entity;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import io.swagger.models.auth.In;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -33,5 +32,5 @@ public class EmailSenderProperties implements Serializable {
     private String password;
 
     @ApiModelProperty(value = "发送者邮箱")
-    private String from;
+    private String fromEmail;
 }

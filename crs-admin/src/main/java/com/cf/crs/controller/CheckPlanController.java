@@ -7,6 +7,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,8 +34,8 @@ public class CheckPlanController {
     }
 
     @ApiOperation("保存考评配置")
-    @GetMapping("/getCheckPlan")
-    public ResultJson<String> getCheckPlan(String list){
+    @PostMapping("/updateCheckPlan")
+    public ResultJson<String> updateCheckPlan(String list){
         return checkPlanService.updateCheckPlan(list);
     }
 }

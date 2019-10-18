@@ -1,13 +1,11 @@
 package com.cf.crs.service;
 
 import com.alibaba.fastjson.JSON;
-import com.cf.crs.common.utils.Result;
 import com.cf.crs.entity.EmailSenderProperties;
 import com.cf.crs.mapper.EmailSenderMapper;
 import com.cf.util.http.HttpWebResult;
 import com.cf.util.http.ResultJson;
 import com.cf.util.utils.DataUtil;
-import com.cf.util.utils.DateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -56,7 +54,7 @@ public class EmailSenderService {
         log.info("发送邮件服务配置:{}", JSON.toJSONString(emailSenderProperties));
         JavaMailSender sender = getJavaMailSender(emailSenderProperties);
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(emailSenderProperties.getFrom());
+        message.setFrom(emailSenderProperties.getFromEmail());
         message.setTo(to);
         message.setSubject(title);
         message.setText(content);
