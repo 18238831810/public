@@ -10,6 +10,8 @@ import com.cf.crs.mapper.ScheduleJobMapper;
 import com.cf.util.http.HttpWebResult;
 import com.cf.util.http.ResultJson;
 import com.google.common.collect.Lists;
+import com.sun.media.jfxmedia.logging.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -22,6 +24,7 @@ import java.util.stream.Collectors;
  * @author frank
  * 2019/10/17
  **/
+@Slf4j
 @Service
 public class CheckPlanService {
 
@@ -57,13 +60,17 @@ public class CheckPlanService {
      * @return
      */
     public ResultJson<String> updateCheckPlan(String list){
-        List<CheckPlan> checkPlans = JSON.parseObject(list, List.class);
-        if(CollectionUtils.isEmpty(checkPlans)) return HttpWebResult.getMonoError("考评管理设置不能为空");
-        checkPlans.forEach(checkPlan -> {
-            updateCheckPlan(checkPlan);
-        });
-        return null;
-
+        try {
+            List<CheckPlan> checkPlans = JSON.parseObject(list, List.class);
+            if(CollectionUtils.isEmpty(checkPlans)) return HttpWebResult.getMonoError("考评管理设置不能为空");
+            checkPlans.forEach(checkPlan -> {
+                updateCheckPlan(checkPlan);
+            });
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return HttpWebResult.getMonoError(e.getMessage());
+        }
+        return HttpWebResult.getMonoSucStr();
     }
 
     /**
