@@ -26,7 +26,7 @@ public class CheckObjectController {
 
 
     @ApiOperation("获取考评对象")
-    @GetMapping("/getCheckPlan")
+    @GetMapping("/getCheckObject")
     public ResultJson<JSONArray> getCheckObject(){
         return checkObjectService.getCheckObject();
     }
