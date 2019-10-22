@@ -1,8 +1,6 @@
 package com.cf.crs.controller;
 
 import com.alibaba.fastjson.JSONArray;
-import com.cf.crs.entity.CheckMode;
-import com.cf.crs.service.CheckModeService;
 import com.cf.crs.service.CheckObjectService;
 import com.cf.util.http.ResultJson;
 import io.swagger.annotations.Api;
@@ -12,8 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 /**
  * 考评对象
