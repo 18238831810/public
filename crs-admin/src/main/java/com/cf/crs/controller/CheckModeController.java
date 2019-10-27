@@ -31,7 +31,7 @@ public class CheckModeController {
 
     @ApiOperation("获取考评对象")
     @GetMapping("/getCheckMode")
-    public ResultJson<List<CheckMode>> getCheckPlan(){
+    public ResultJson<List<CheckMode>> getCheckMode(){
         return checkModeService.getCheckMode();
     }
 
