@@ -27,13 +27,13 @@ public class CheckPlanController {
     CheckPlanService checkPlanService;
 
 
-    @ApiOperation("获取考评配置")
+    @ApiOperation("获取考评计划")
     @GetMapping("/getCheckPlan")
     public ResultJson<List<CheckPlan>> getCheckPlan(){
         return checkPlanService.getCheckPlan();
     }
 
-    @ApiOperation("保存考评配置")
+    @ApiOperation("保存考评计划")
     @PostMapping("/updateCheckPlan")
     public ResultJson<String> updateCheckPlan(String list){
         return checkPlanService.updateCheckPlan(list);

@@ -29,13 +29,13 @@ public class CheckModeController {
     CheckModeService checkModeService;
 
 
-    @ApiOperation("获取考评对象")
+    @ApiOperation("获取考评模型")
     @GetMapping("/getCheckMode")
     public ResultJson<List<CheckMode>> getCheckMode(){
         return checkModeService.getCheckMode();
     }
 
-    @ApiOperation("保存考评对象")
+    @ApiOperation("保存考评模型")
     @PostMapping("/updateCheckMode")
     public ResultJson<String> updateCheckPlan(String list){
         return checkModeService.updateCheckMode(list);
