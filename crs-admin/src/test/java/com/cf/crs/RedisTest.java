@@ -13,6 +13,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.cf.AdminApplication;
 import com.cf.crs.common.redis.RedisUtils;
 import com.cf.crs.service.CheckSqlService;
+import com.cf.crs.service.WaringService;
 import com.cf.crs.sys.entity.SysUserEntity;
 import com.cf.util.http.ResultJson;
 import lombok.extern.slf4j.Slf4j;
@@ -82,5 +83,14 @@ public class RedisTest {
     public void setCheckSqlService() {
         ResultJson<List<JSONObject>> checkSqlList = checkSqlService.getCheckList(2);
         System.out.println(JSONArray.toJSON(checkSqlList.getData()));
+    }
+
+    @Autowired
+    WaringService waringService;
+
+    @Test
+    public void getServerList() {
+        ResultJson json = waringService.analyWaring();
+        System.out.println(json.getData());
     }
 }
