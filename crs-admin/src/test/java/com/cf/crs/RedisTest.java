@@ -8,9 +8,13 @@
 
 package com.cf.crs;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.cf.AdminApplication;
 import com.cf.crs.common.redis.RedisUtils;
+import com.cf.crs.service.CheckSqlService;
 import com.cf.crs.sys.entity.SysUserEntity;
+import com.cf.util.http.ResultJson;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.junit.Test;
@@ -21,12 +25,17 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.List;
+
 @Slf4j
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = AdminApplication.class)
 public class RedisTest {
     @Autowired
     private RedisUtils redisUtils;
+
+    @Autowired
+    private CheckSqlService checkSqlService;
 
     @Test
     public void contextLoads() {
@@ -69,6 +78,9 @@ public class RedisTest {
         }
     }
 
-
-
+    @Test
+    public void setCheckSqlService() {
+        ResultJson<List<JSONObject>> checkSqlList = checkSqlService.getCheckList(2);
+        System.out.println(JSONArray.toJSON(checkSqlList.getData()));
+    }
 }

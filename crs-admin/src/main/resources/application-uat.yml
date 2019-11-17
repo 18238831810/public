@@ -55,3 +55,14 @@ spring:
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+check:
+  sql: # 考评sql配置
+    url: http://192.168.1.72:9090
+    sqlType: MYSQL-DB-server,PostgreSQL
+    apikey: 154e1ff58e5e66db2a8e524b41eff082
+    middlewareType: Tomcat-server
+  server:
+    url: http://192.168.1.72:8060
+    name: Server
+    apikey: f997bc19a9410ded2c0eb17f24e0690d
