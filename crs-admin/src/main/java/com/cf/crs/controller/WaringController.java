@@ -29,7 +29,7 @@ public class WaringController {
     WaringService waringService;
 
 
-    @ApiOperation("获取考评模型")
+    @ApiOperation("获取告警统计信息")
     @GetMapping("/getWaring")
     public ResultJson<JSONObject> getWaring(){
         return waringService.analyWaring();
