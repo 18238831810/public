@@ -1,15 +1,11 @@
 package com.cf.crs.service;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cf.util.http.HttpWebResult;
 import com.cf.util.http.ResultJson;
-import com.fasterxml.jackson.core.JsonParser;
 import com.google.common.collect.Lists;
-import com.sun.org.apache.bcel.internal.generic.NEW;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.ss.formula.functions.T;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -18,7 +14,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -45,6 +40,9 @@ public class CheckSqlService {
     @Value("${check.sql.middlewareType}")
     private String middlewareType;
 
+    @Autowired
+    CheckServerService checkServerService;
+
     /**
      * 获取设备列表
      * @param type 1:数据库 2:中间件
@@ -52,6 +50,7 @@ public class CheckSqlService {
      */
     public ResultJson<List<JSONObject>> getCheckList(Integer type){
         if (type == null) return HttpWebResult.getMonoError("请选择查询设备类型");
+        if (type == 3) return checkServerService.serverList();
         List<JSONObject> list = Lists.newArrayList();
         String html = getCheckSqlList(type);
         if (StringUtils.isEmpty(html)) return HttpWebResult.getMonoError("接口返回为null");

@@ -32,7 +32,7 @@ public class CheckSqlController {
 
 
     @ApiOperation("获取数据库和中间件设备列表")
-    @ApiImplicitParam(paramType="query", name = "type", value = "1:数据库 2:中间件", required = true, dataType = "Integer")
+    @ApiImplicitParam(paramType="query", name = "type", value = "1:数据库 2:中间件 3:服务器 4:物联网设备", required = true, dataType = "Integer")
     @GetMapping("/getCheckSqlList")
     public ResultJson<List<JSONObject>> getCheckSqlList(Integer type){
         return checkSqlService.getCheckList(type);

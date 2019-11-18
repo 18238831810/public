@@ -2,21 +2,16 @@ package com.cf.crs.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.cf.crs.entity.CheckMode;
 import com.cf.crs.entity.CheckObject;
-import com.cf.crs.mapper.CheckModeMapper;
 import com.cf.crs.mapper.CheckObjectMapper;
 import com.cf.util.http.HttpWebResult;
 import com.cf.util.http.ResultJson;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.protocol.HTTP;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -36,8 +31,12 @@ public class CheckObjectService {
      * @return
      */
     public ResultJson<JSONArray> getCheckObject(){
-        CheckObject checkObject = checkObjectMapper.selectById(1);
+        CheckObject checkObject = getObject();
         return HttpWebResult.getMonoSucResult(checkObject != null?JSON.parseArray(checkObject.getObject()): Lists.newArrayList());
+    }
+
+    public CheckObject getObject() {
+        return checkObjectMapper.selectById(1);
     }
 
     /**

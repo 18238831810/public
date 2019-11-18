@@ -42,6 +42,9 @@ public class WaringService {
     @Autowired
     CheckSqlService checkSqlService;
 
+    @Autowired
+    CheckServerService checkServerService;
+
 
     public ResultJson<JSONObject> analyWaring(){
         JSONObject jsonObject = new JSONObject();
@@ -51,16 +54,11 @@ public class WaringService {
         return HttpWebResult.getMonoSucResult(jsonObject);
     }
 
-    public JSONObject getServerList(){
-        String serverUrl = url+"/api/json/discovery/getInfrastructureDetailsView?apiKey="+apikey+"&categoryName="+name;
-        log.info("checkServerUrl:{}",serverUrl);
-        return restTemplate.getForObject(serverUrl, JSONObject.class);
-    }
 
     public JSONObject analyServer(){
         JSONObject jsonObject = new JSONObject();
         try {
-            JSONObject servers = getServerList();
+            JSONObject servers = checkServerService.getServers();
             if (servers == null || servers.isEmpty()) return jsonObject;
             log.info("serverResult:{}",servers.toJSONString());
             JSONObject infrastructureDetailsView = servers.getJSONObject("InfrastructureDetailsView");
