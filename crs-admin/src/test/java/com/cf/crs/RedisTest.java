@@ -8,10 +8,12 @@
 
 package com.cf.crs;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cf.AdminApplication;
 import com.cf.crs.common.redis.RedisUtils;
+import com.cf.crs.service.CheckObjectAnalyService;
 import com.cf.crs.service.CheckSqlService;
 import com.cf.crs.service.WaringService;
 import com.cf.crs.sys.entity.SysUserEntity;
@@ -37,6 +39,9 @@ public class RedisTest {
 
     @Autowired
     private CheckSqlService checkSqlService;
+
+    @Autowired
+    CheckObjectAnalyService checkObjectAnalyService;
 
     @Test
     public void contextLoads() {
@@ -92,5 +97,10 @@ public class RedisTest {
     public void getServerList() {
         ResultJson json = waringService.analyWaring();
         System.out.println(json.getData());
+    }
+    @Test
+    public void getCheckObjectAnalyResult() {
+        List<Object> checkObjectAnalyResult = checkObjectAnalyService.getCheckObjectAnalyResult();
+        System.out.println(JSON.toJSONString(checkObjectAnalyResult));
     }
 }
