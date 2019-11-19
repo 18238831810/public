@@ -100,59 +100,63 @@ public class CheckObjectAnalyService {
             JSONArray information = checkObj.getJSONArray("information");
             if (information == null ||information.isEmpty()) continue;
             HashMap<Object, Object> deviceMap = Maps.newHashMap();
-            for (Object typeObj:information){
-                //遍历二级菜单
-                JSONObject TypeObj = JSON.parseObject(JSON.toJSONString(typeObj));
-                if (TypeObj == null || TypeObj.isEmpty()) continue;
-                String name = TypeObj.getString("name");
-                int total = 0;
-                int waring = 0;
-                //获取考评设备列表
-                JSONArray deviceList = TypeObj.getJSONArray("information");
-                if (deviceList == null || deviceList.isEmpty()) continue;
-                if ("server".equalsIgnoreCase(name)){
-                    //服务器
-                    for (Object deviceObj:deviceList){
-                        JSONObject device = JSON.parseObject(JSON.toJSONString(deviceObj));
-                        String deviceName = device.getString("name");
-                        JSONObject jsonObject = serversMap.get(deviceName);
-                        if (jsonObject == null || jsonObject.isEmpty()) continue;
-                        total += 1;
-                        Integer severity = jsonObject.getInteger("severity");
-                        if (severity != 5) waring += 1;
-                    }
-                }else if ("sql".equalsIgnoreCase(name)){
-                    //数据库
-                    for (Object deviceObj:deviceList){
-                        JSONObject device = JSON.parseObject(JSON.toJSONString(deviceObj));
-                        String deviceName = device.getString("name");
-                        Element element = sqlMap.get(deviceName);
-                        if (element == null) continue;
-                        total += 1;
-                        String healthstatus = element.attr("HEALTHSTATUS");
-                        if (!"clear".equalsIgnoreCase(healthstatus)) waring += 1;
-                    }
-                }else if("middleware".equalsIgnoreCase(name)){
-                    //中间件
-                    for (Object deviceObj:deviceList){
-                        JSONObject device = JSON.parseObject(JSON.toJSONString(deviceObj));
-                        String deviceName = device.getString("name");
-                        Element element = middlewareMap.get(deviceName);
-                        if (element == null) continue;
-                        total += 1;
-                        String healthstatus = element.attr("HEALTHSTATUS");
-                        if (!"clear".equalsIgnoreCase(healthstatus)) waring += 1;
-                    }
-                }else if("物联网设备".equalsIgnoreCase(name)){
-                    //物联网设备
-                }
-                deviceMap.put(name,waring+"/"+total);
-            }
+            analyDeviceData(serversMap, sqlMap, middlewareMap, information, deviceMap);
             symbolJson.put("name",symbol);
             symbolJson.put("information",deviceMap);
             list.add(symbolJson);
         }
         return list;
+    }
+
+    private void analyDeviceData(Map<String, JSONObject> serversMap, Map<String, Element> sqlMap, Map<String, Element> middlewareMap, JSONArray information, HashMap<Object, Object> deviceMap) {
+        for (Object typeObj:information){
+            //遍历二级菜单
+            JSONObject TypeObj = JSON.parseObject(JSON.toJSONString(typeObj));
+            if (TypeObj == null || TypeObj.isEmpty()) continue;
+            String name = TypeObj.getString("name");
+            int total = 0;
+            int waring = 0;
+            //获取考评设备列表
+            JSONArray deviceList = TypeObj.getJSONArray("information");
+            if (deviceList == null || deviceList.isEmpty()) continue;
+            if ("server".equalsIgnoreCase(name)){
+                //服务器
+                for (Object deviceObj:deviceList){
+                    JSONObject device = JSON.parseObject(JSON.toJSONString(deviceObj));
+                    String deviceName = device.getString("name");
+                    JSONObject jsonObject = serversMap.get(deviceName);
+                    if (jsonObject == null || jsonObject.isEmpty()) continue;
+                    total += 1;
+                    Integer severity = jsonObject.getInteger("severity");
+                    if (severity != 5) waring += 1;
+                }
+            }else if ("sql".equalsIgnoreCase(name)){
+                //数据库
+                for (Object deviceObj:deviceList){
+                    JSONObject device = JSON.parseObject(JSON.toJSONString(deviceObj));
+                    String deviceName = device.getString("name");
+                    Element element = sqlMap.get(deviceName);
+                    if (element == null) continue;
+                    total += 1;
+                    String healthstatus = element.attr("HEALTHSTATUS");
+                    if (!"clear".equalsIgnoreCase(healthstatus)) waring += 1;
+                }
+            }else if("middleware".equalsIgnoreCase(name)){
+                //中间件
+                for (Object deviceObj:deviceList){
+                    JSONObject device = JSON.parseObject(JSON.toJSONString(deviceObj));
+                    String deviceName = device.getString("name");
+                    Element element = middlewareMap.get(deviceName);
+                    if (element == null) continue;
+                    total += 1;
+                    String healthstatus = element.attr("HEALTHSTATUS");
+                    if (!"clear".equalsIgnoreCase(healthstatus)) waring += 1;
+                }
+            }else if("物联网设备".equalsIgnoreCase(name)){
+                //物联网设备
+            }
+            deviceMap.put(name,waring+"/"+total);
+        }
     }
 
     public ResultJson<List> getAnalyResult(){
