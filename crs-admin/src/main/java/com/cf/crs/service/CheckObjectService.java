@@ -47,7 +47,7 @@ public class CheckObjectService {
     public ResultJson<String> updateCheckObject(String list){
         try {
             if (StringUtils.isEmpty(list)) return HttpWebResult.getMonoError("考评对象不能为空");
-            JSON.parseArray(list, List.class);
+            JSON.parseArray(list);
             final CheckObject checkObject = new CheckObject();
             checkObject.setId(1);
             checkObject.setObject(list);
