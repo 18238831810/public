@@ -60,11 +60,9 @@ public class CheckPlanService {
      */
     public ResultJson<String> updateCheckPlan(String list){
         try {
-            List<CheckPlan> checkPlans = JSON.parseObject(list, List.class);
+            List<CheckPlan> checkPlans = (List<CheckPlan>) JSON.parseObject(list);
             if(CollectionUtils.isEmpty(checkPlans)) return HttpWebResult.getMonoError("考评管理设置不能为空");
-            checkPlans.forEach(checkPlan -> {
-                updateCheckPlan(checkPlan);
-            });
+            checkPlans.forEach(checkPlan -> updateCheckPlan(checkPlan));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             return HttpWebResult.getMonoError(e.getMessage());
