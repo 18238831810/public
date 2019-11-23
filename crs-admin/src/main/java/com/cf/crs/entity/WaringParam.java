@@ -15,17 +15,17 @@ import java.io.Serializable;
 public class WaringParam implements Serializable {
 
     @ApiModelProperty(value = "严重度级别")
-    private Integer severity;
+    private String severity;
 
     @ApiModelProperty(value = "设备名称")
-    private Integer deviceName;
+    private String deviceName;
 
     @ApiModelProperty(value = "设备类型")
-    private Integer category;
+    private String category;
 
     @ApiModelProperty(value = "fromTime")
-    private Integer fromTime;
+    private String fromTime;
     @ApiModelProperty(value = "toTime")
-    private Integer toTime;
+    private String toTime;
 
 }
