@@ -1,6 +1,7 @@
 package com.cf.crs.service;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cf.crs.entity.CheckPlan;
 import com.cf.crs.job.dto.ScheduleJobDTO;
@@ -15,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import javax.activation.MailcapCommandMap;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -60,7 +63,7 @@ public class CheckPlanService {
      */
     public ResultJson<String> updateCheckPlan(String list){
         try {
-            List<CheckPlan> checkPlans = (List<CheckPlan>) JSON.parseObject(list);
+            List<CheckPlan> checkPlans = (List<CheckPlan>)JSONArray.parse(list);
             if(CollectionUtils.isEmpty(checkPlans)) return HttpWebResult.getMonoError("考评管理设置不能为空");
             checkPlans.forEach(checkPlan -> updateCheckPlan(checkPlan));
         } catch (Exception e) {
@@ -85,6 +88,20 @@ public class CheckPlanService {
         jsonObject.put("email",checkPlan.getEmail());
         scheduleJobDTO.setParams(jsonObject.toJSONString());
         scheduleJobService.update(scheduleJobDTO);
+    }
+
+    public static void main(String[] args) {
+        CheckPlan checkPlan = new CheckPlan();
+        checkPlan.setEmail("dfdf");
+        CheckPlan checkPlan1 = new CheckPlan();
+        checkPlan1.setEmail("dfdfd");
+        ArrayList<Object> objects = Lists.newArrayList();
+        objects.add(checkPlan);
+        objects.add(checkPlan1);
+        String s = JSON.toJSONString(objects);
+        List<CheckPlan> checkPlans = (List<CheckPlan>)JSONArray.parse(s);
+        System.out.println(JSON.toJSONString(checkPlans));
+
     }
 
 }
