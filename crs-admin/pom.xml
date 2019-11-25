@@ -18,7 +18,7 @@
 		<commons.io.version>2.5</commons.io.version>
 		<commons.codec.version>1.10</commons.codec.version>
 		<joda.time.version>2.9.9</joda.time.version>
-		<hutool.version>4.1.8</hutool.version>
+		<hutool.version>4.1.12</hutool.version>
 		<jsoup.version>1.11.3</jsoup.version>
 		<swagger.version>2.9.2</swagger.version>
 		<lombok.version>1.18.4</lombok.version>
