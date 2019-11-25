@@ -59,30 +59,31 @@ public class Listener {
                 if (StringUtils.isEmpty(jsonObject.getString("GPS_SJ"))) return false;
                 if (jsonObject.getInteger("GPS_ZT") == null) return false;
                 return true;
-            }).map(json -> {
-                JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(json));
-                CityCar cityCar = new CityCar();
-                cityCar.setRfid_id(jsonObject.getString("RFID_ID"));
-                cityCar.setDay(jsonObject.getString("GPS_SJ").substring(0, 10));
-                cityCar.setCp_hm(jsonObject.getString("CP_HM"));
-                cityCar.setJd(jsonObject.getDouble("JD"));
-                cityCar.setWd(jsonObject.getDouble("WD"));
-                cityCar.setSd(jsonObject.getString("SD"));
-                cityCar.setFx(jsonObject.getString("FX"));
-                cityCar.setGps_sj(jsonObject.getString("GPS_SJ"));
-                cityCar.setGps_sj_long(DateUtil.parseDate(jsonObject.getString("GPS_SJ_LONG"), DateUtil.TIMESTAMP));
-                cityCar.setLast_time(DateUtil.parseDate(jsonObject.getString("GPS_SJ_LONG"), DateUtil.TIMESTAMP));
-                cityCar.setGps_zt(jsonObject.getInteger("GPS_ZT"));
-                cityCar.setMatch(jsonObject.getInteger("MATCH"));
-                cityCar.setStatus(jsonObject.getString("GPS_SJ") + "#" + jsonObject.getInteger("GPS_ZT") + ",");
-                cityCar.setTotalTime(0L);
-                if (cityCar.getGps_zt() == 0)
-                    cityCar.setTotalTime(cityCar.getGps_sj_long() - DateUtil.getStartTime(cityCar.getGps_sj_long()).getTime());
-                return cityCar;
-            }).collect(Collectors.toList());
+            }).map(json -> getCityCar(json)).collect(Collectors.toList());
             if (CollectionUtil.isEmpty(list)) return;
             consumer.accept(list);
         });
+    }
+
+    private CityCar getCityCar(Object json) {
+        JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(json));
+        CityCar cityCar = new CityCar();
+        cityCar.setRfid_id(jsonObject.getString("RFID_ID"));
+        cityCar.setDay(jsonObject.getString("GPS_SJ").substring(0, 10));
+        cityCar.setCp_hm(jsonObject.getString("CP_HM"));
+        cityCar.setJd(jsonObject.getDouble("JD"));
+        cityCar.setWd(jsonObject.getDouble("WD"));
+        cityCar.setSd(jsonObject.getString("SD"));
+        cityCar.setFx(jsonObject.getString("FX"));
+        cityCar.setGps_sj(jsonObject.getString("GPS_SJ"));
+        cityCar.setGps_sj_long(DateUtil.parseDate(jsonObject.getString("GPS_SJ_LONG"), DateUtil.TIMESTAMP));
+        cityCar.setLast_time(DateUtil.parseDate(jsonObject.getString("GPS_SJ_LONG"), DateUtil.TIMESTAMP));
+        cityCar.setGps_zt(jsonObject.getInteger("GPS_ZT"));
+        cityCar.setMatch(jsonObject.getInteger("MATCH"));
+        cityCar.setStatus(jsonObject.getString("GPS_SJ") + "#" + jsonObject.getInteger("GPS_ZT") + ",");
+        cityCar.setTotalTime(0L);
+        if (cityCar.getGps_zt() == 0) cityCar.setTotalTime(cityCar.getGps_sj_long() - DateUtil.getStartTime(cityCar.getGps_sj_long()).getTime());
+        return cityCar;
     }
 
 }
