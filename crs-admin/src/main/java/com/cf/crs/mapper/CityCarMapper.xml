@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cf.crs.mapper.CityCarMapper">
+
+    <sql id="insert">
+        (`rfid_id`,`day`,`cp_hm`,`jd`,`wd`,`sd`,`fx`,`gps_sj`,`gps_sj_long`,`gps_zt`,`match`,`status`,`totalTime`)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.rfid_id},#{item.day},#{item.cp_hm},#{item.jd},#{item.wd},#{item.sd},#{item.fx},#{item.gps_sj},#{item.gps_sj_long},#{item.gps_zt},#{item.match},#{item.status},#{item.totalTime})
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        `cp_hm` = VALUES(cp_hm),
+        `jd` = VALUES(jd),
+        `wd` = VALUES(wd),
+        `sd` = VALUES(sd),
+        `fx` = VALUES(fx),
+        `gps_sj_long` = VALUES(gps_sj_long),
+        `gps_zt` = VALUES(gps_zt),
+        `match` = VALUES(match),
+        `status` = if(`gps_zt` != VALUES(gps_zt),CONCAT(`gts2_account_id`,VALUES(status)),VALUES(status)),
+        `totalTime` = if((`gps_zt` != VALUES(gps_zt) and VALUES(gps_zt) = 0),(`totalTime`+(VALUES(last_time) - `gps_sj_long`)),VALUES(totalTime)),
+        `last_time` = if(`gps_zt` != VALUES(gps_zt),VALUES(last_time),`last_time`),
+        `gps_sj` = VALUES(gps_sj)
+    </sql>
+
+    <insert id="lhBatchInsert" parameterType="com.cf.crs.entity.CityCar">
+        INSERT INTO `city_car_lh`
+       <include refid="insert"></include>
+    </insert>
+
+    <insert id="hwBatchInsert" parameterType="com.cf.crs.entity.CityCar">
+        INSERT INTO `city_car_hw`
+       <include refid="insert"></include>
+    </insert>
+
+    <insert id="zfBatchInsert" parameterType="com.cf.crs.entity.CityCar">
+        INSERT INTO `city_car_zf`
+       <include refid="insert"></include>
+    </insert>
+
+
+</mapper>
