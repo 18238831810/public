@@ -58,8 +58,14 @@ public class Listener {
                 List<Object> jsonArray = (List) JSONArray.fromObject(value);
                 List<CityCar> list = jsonArray.stream().filter(json -> {
                     JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(json));
-                    if (StringUtils.isEmpty(jsonObject.getString("GPS_SJ"))) return false;
-                    if (jsonObject.getInteger("GPS_ZT") == null) return false;
+                    if (StringUtils.isEmpty(jsonObject.getString("GPS_SJ"))) {
+                        log.info("id:{},topic:{}",jsonObject.getString("RFID_ID"),record.topic());
+                        return false;
+                    }
+                    if (jsonObject.getInteger("GPS_ZT") == null) {
+                        log.info("id:{},topic:{}",jsonObject.getString("RFID_ID"),record.topic());
+                        return false;
+                    }
                     return true;
                 }).map(json -> getCityCar(json)).collect(Collectors.toList());
                 if (CollectionUtil.isEmpty(list)) return;
