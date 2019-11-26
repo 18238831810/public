@@ -10,19 +10,18 @@
             (#{item.rfid_id},#{item.day},#{item.cp_hm},#{item.jd},#{item.wd},#{item.sd},#{item.fx},#{item.gps_sj},#{item.gps_sj_long},#{item.gps_zt},#{item.matchStatus},#{item.statusList},#{item.totalTime})
         </foreach>
         ON DUPLICATE KEY UPDATE
-        `cp_hm` = VALUES(cp_hm),
-        `jd` = VALUES(jd),
-        `wd` = VALUES(wd),
-        `sd` = VALUES(sd),
-        `fx` = VALUES(fx),
-        `gps_sj` = VALUES(gps_sj),
-        `gps_sj_long` = VALUES(gps_sj_long),
-        `gps_zt` = VALUES(gps_zt),
-        `matchStatus` = VALUES(matchStatus),
-        `statusList` = if(`gps_zt` != VALUES(gps_zt),CONCAT(`statusList`,VALUES(statusList)),VALUES(statusList)),
-        `totalTime` = if((`gps_zt` != VALUES(gps_zt) and VALUES(gps_zt) = 0),(`totalTime`+(VALUES(last_time) - `gps_sj_long`)),VALUES(totalTime)),
-        `last_time` = if(`gps_zt` != VALUES(gps_zt),VALUES(last_time),`last_time`)
-
+        `cp_hm` = if(VALUES(gps_sj_long) > `gps_sj_long`,VALUES(cp_hm),`cp_hm`),
+        `jd` = if(VALUES(gps_sj_long) > `gps_sj_long`,VALUES(jd),`jd`),
+        `wd` = if(VALUES(gps_sj_long) > `gps_sj_long`,VALUES(wd),`wd`),
+        `sd` = if(VALUES(gps_sj_long) > `gps_sj_long`,VALUES(sd),`sd`),
+        `fx` = if(VALUES(gps_sj_long) > `gps_sj_long`,VALUES(fx),`fx`),
+        `gps_sj` = if(VALUES(gps_sj_long) > `gps_sj_long`,VALUES(gps_sj),`gps_sj`),
+        `matchStatus` = if(VALUES(gps_sj_long) > `gps_sj_long`,VALUES(matchStatus),`matchStatus`),
+        `statusList` = if((`gps_zt` != VALUES(gps_zt)) and (VALUES(gps_sj_long) > `gps_sj_long`),CONCAT(`statusList`,VALUES(statusList)),VALUES(statusList)),
+        `totalTime` = if(`gps_zt` != VALUES(gps_zt) and (VALUES(gps_zt) = 0) and (VALUES(gps_sj_long) > `gps_sj_long`),(`totalTime`+(VALUES(last_time) - `gps_sj_long`)),VALUES(totalTime)),
+        `last_time` = if(`gps_zt` != VALUES(gps_zt) and (VALUES(gps_sj_long) > `gps_sj_long`),VALUES(last_time),`last_time`),
+        `gps_zt` = if(VALUES(gps_sj_long) > `gps_sj_long`,VALUES(gps_zt),`gps_zt`),
+        `gps_sj_long` = if(VALUES(gps_sj_long) > `gps_sj_long`,VALUES(gps_sj_long),`gps_sj_long`)
     </sql>
 
     <insert id="lhBatchInsert" parameterType="com.cf.crs.entity.CityCar">
