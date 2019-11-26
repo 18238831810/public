@@ -79,8 +79,8 @@ public class Listener {
         cityCar.setGps_sj_long(DateUtil.parseDate(jsonObject.getString("GPS_SJ"), DateUtil.TIMESTAMP));
         cityCar.setLast_time(DateUtil.parseDate(jsonObject.getString("GPS_SJ"), DateUtil.TIMESTAMP));
         cityCar.setGps_zt(jsonObject.getInteger("GPS_ZT"));
-        cityCar.setMatch(jsonObject.getInteger("MATCH"));
-        cityCar.setStatus(jsonObject.getString("GPS_SJ") + "#" + jsonObject.getInteger("GPS_ZT") + ",");
+        cityCar.setMatchStatus(jsonObject.getInteger("MATCH"));
+        cityCar.setStatusList(jsonObject.getString("GPS_SJ") + "#" + jsonObject.getInteger("GPS_ZT") + ",");
         cityCar.setTotalTime(0L);
         if (cityCar.getGps_zt() == 0) cityCar.setTotalTime(cityCar.getGps_sj_long() - DateUtil.getStartTime(cityCar.getGps_sj_long()).getTime());
         return cityCar;

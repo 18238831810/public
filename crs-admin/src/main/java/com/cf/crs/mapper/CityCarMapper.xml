@@ -17,8 +17,8 @@
         `fx` = VALUES(fx),
         `gps_sj_long` = VALUES(gps_sj_long),
         `gps_zt` = VALUES(gps_zt),
-        `match` = VALUES(match),
-        `status` = if(`gps_zt` != VALUES(gps_zt),CONCAT(`gts2_account_id`,VALUES(status)),VALUES(status)),
+        `matchStatus` = VALUES(matchStatus),
+        `statusList` = if(`gps_zt` != VALUES(gps_zt),CONCAT(`statusList`,VALUES(statusList)),VALUES(statusList)),
         `totalTime` = if((`gps_zt` != VALUES(gps_zt) and VALUES(gps_zt) = 0),(`totalTime`+(VALUES(last_time) - `gps_sj_long`)),VALUES(totalTime)),
         `last_time` = if(`gps_zt` != VALUES(gps_zt),VALUES(last_time),`last_time`),
         `gps_sj` = VALUES(gps_sj)

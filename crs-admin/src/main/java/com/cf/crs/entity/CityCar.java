@@ -49,10 +49,10 @@ public class CityCar implements Serializable {
     private Integer gps_zt;
 
     //匹配状态
-    private Integer match;
+    private Integer matchStatus;
 
     //状态变更列表
-    private String status;
+    private String statusList;
 
     //时间统计
     private Long totalTime;
