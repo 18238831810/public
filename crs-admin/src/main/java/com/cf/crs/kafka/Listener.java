@@ -62,10 +62,10 @@ public class Listener {
                         log.info("id:{},topic:{}",jsonObject.getString("RFID_ID"),record.topic());
                         return false;
                     }
-                    if (jsonObject.getInteger("GPS_ZT") == null) {
+                    /*if (jsonObject.getInteger("GPS_ZT") == null) {
                         log.info("id:{},topic:{}",jsonObject.getString("RFID_ID"),record.topic());
                         return false;
-                    }
+                    }*/
                     return true;
                 }).map(json -> getCityCar(json)).collect(Collectors.toList());
                 if (CollectionUtil.isEmpty(list)) return;
