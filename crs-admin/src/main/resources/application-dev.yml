@@ -55,7 +55,6 @@ spring:
   kafka:
     consumer:
       bootstrap-servers: 10.253.36.37:9092
-      group-id: city-dev-car
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       auto-offset-reset: earliest                       #最早未被消费的offset earliest
@@ -84,11 +83,7 @@ check:
     name: Server
     apikey: f997bc19a9410ded2c0eb17f24e0690d
 
-topic:
-  lh: CLWGPS-LH
-  hw: CLWGPS-HW
-  zf: CLWGPS-ZF
-topics: CLWGPS-LH,CLWGPS-HW,CLWGPS-ZF
+
 
 
 

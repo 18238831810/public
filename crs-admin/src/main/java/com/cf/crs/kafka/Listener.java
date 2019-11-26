@@ -12,7 +12,6 @@ import net.sf.json.JSONArray;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
@@ -32,24 +31,27 @@ public class Listener {
     @Autowired
     CityCarMapper cityCarMapper;
 
-    @Value("${topic.lh}")
-    String lh;
 
-    @Value("${topic.hw}")
-    String hw;
-
-    @Value("${topic.zf}")
-    String zf;
-
-
-    @KafkaListener(topics = "#{'${topics}'.replaceAll(' ','').split(',')}")
+    @KafkaListener(topics = "CLWGPS-ZF",groupId = "zf")
+    private void zfBatchListener(List<ConsumerRecord<String, Object>> consumerRecords, Acknowledgment acknowledgment){
+        //同步数据
+        insert(consumerRecords,list -> cityCarMapper.zfBatchInsert(list));
+        acknowledgment.acknowledge();
+    }
+    @KafkaListener(topics = "CLWGPS-HW",groupId = "hw")
+    private void hwBatchListener(List<ConsumerRecord<String, Object>> consumerRecords, Acknowledgment acknowledgment){
+        //同步数据
+        insert(consumerRecords,list -> cityCarMapper.hwBatchInsert(list));
+        acknowledgment.acknowledge();
+    }
+    @KafkaListener(topics = "CLWGPS-LH",groupId = "lh")
     private void lhBatchListener(List<ConsumerRecord<String, Object>> consumerRecords, Acknowledgment acknowledgment){
         //同步数据
-        insert(consumerRecords);
+        insert(consumerRecords,list -> cityCarMapper.lhBatchInsert(list));
         acknowledgment.acknowledge();
     }
 
-    private void insert(List<ConsumerRecord<String, Object>> consumerRecords) {
+    private void insert(List<ConsumerRecord<String, Object>> consumerRecords,Consumer<List<CityCar>> consumer) {
         try {
             consumerRecords.forEach(record -> {
                 Object value = record.value();
@@ -61,9 +63,7 @@ public class Listener {
                     return true;
                 }).map(json -> getCityCar(json)).collect(Collectors.toList());
                 if (CollectionUtil.isEmpty(list)) return;
-                if (lh.equalsIgnoreCase(record.topic())) cityCarMapper.lhBatchInsert(list);
-                else if (hw.equalsIgnoreCase(record.topic())) cityCarMapper.hwBatchInsert(list);
-                else if (zf.equalsIgnoreCase(record.topic())) cityCarMapper.zfBatchInsert(list);
+               consumer.accept(list);
             });
         } catch (Exception e) {
             log.error(e.getMessage(),e);
