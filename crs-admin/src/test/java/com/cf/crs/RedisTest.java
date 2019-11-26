@@ -15,6 +15,7 @@ import com.cf.AdminApplication;
 import com.cf.crs.common.redis.RedisUtils;
 import com.cf.crs.service.CheckObjectAnalyService;
 import com.cf.crs.service.CheckSqlService;
+import com.cf.crs.service.LoginService;
 import com.cf.crs.service.WaringService;
 import com.cf.crs.sys.entity.SysUserEntity;
 import com.cf.util.http.ResultJson;
@@ -42,6 +43,9 @@ public class RedisTest {
 
     @Autowired
     CheckObjectAnalyService checkObjectAnalyService;
+
+    @Autowired
+    LoginService loginService;
 
     @Test
     public void contextLoads() {
@@ -102,5 +106,11 @@ public class RedisTest {
     public void getCheckObjectAnalyResult() {
         List<Object> checkObjectAnalyResult = checkObjectAnalyService.getCheckObjectAnalyResult();
         System.out.println(JSON.toJSONString(checkObjectAnalyResult));
+    }
+
+    @Test
+    public void integration() {
+        loginService.integration();
+
     }
 }
