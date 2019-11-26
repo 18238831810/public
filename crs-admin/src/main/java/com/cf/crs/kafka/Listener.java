@@ -36,33 +36,40 @@ public class Listener {
     private void lhBatchListener(List<ConsumerRecord<String, Object>> consumerRecords, Acknowledgment acknowledgment){
         //同步数据
         insert(consumerRecords,list -> cityCarMapper.lhBatchInsert(list));
+        acknowledgment.acknowledge();
     }
 
     @KafkaListener(topics = "#{'${topic.hw}'}")
     private void hwBatchListener(List<ConsumerRecord<String, Object>> consumerRecords, Acknowledgment acknowledgment){
         //同步数据
         insert(consumerRecords,list -> cityCarMapper.hwBatchInsert(list));
+        acknowledgment.acknowledge();
     }
 
     @KafkaListener(topics = "#{'${topic.zf}'}")
     private void zfBatchListener(List<ConsumerRecord<String, Object>> consumerRecords, Acknowledgment acknowledgment){
         //同步数据
         insert(consumerRecords,list -> cityCarMapper.zfBatchInsert(list));
+        acknowledgment.acknowledge();
     }
 
     private void insert(List<ConsumerRecord<String, Object>> consumerRecords, Consumer<List<CityCar>> consumer) {
-        consumerRecords.forEach(record -> {
-            Object value = record.value();
-            List<Object> jsonArray = (List) JSONArray.fromObject(value);
-            List<CityCar> list = jsonArray.stream().filter(json -> {
-                JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(json));
-                if (StringUtils.isEmpty(jsonObject.getString("GPS_SJ"))) return false;
-                if (jsonObject.getInteger("GPS_ZT") == null) return false;
-                return true;
-            }).map(json -> getCityCar(json)).collect(Collectors.toList());
-            if (CollectionUtil.isEmpty(list)) return;
-            consumer.accept(list);
-        });
+        try {
+            consumerRecords.forEach(record -> {
+                Object value = record.value();
+                List<Object> jsonArray = (List) JSONArray.fromObject(value);
+                List<CityCar> list = jsonArray.stream().filter(json -> {
+                    JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(json));
+                    if (StringUtils.isEmpty(jsonObject.getString("GPS_SJ"))) return false;
+                    if (jsonObject.getInteger("GPS_ZT") == null) return false;
+                    return true;
+                }).map(json -> getCityCar(json)).collect(Collectors.toList());
+                if (CollectionUtil.isEmpty(list)) return;
+                consumer.accept(list);
+            });
+        } catch (Exception e) {
+            log.error(e.getMessage(),e);
+        }
     }
 
     private CityCar getCityCar(Object json) {
