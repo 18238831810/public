@@ -4,10 +4,10 @@
 <mapper namespace="com.cf.crs.mapper.CityCarMapper">
 
     <sql id="insert">
-        (`rfid_id`,`day`,`cp_hm`,`jd`,`wd`,`sd`,`fx`,`gps_sj`,`gps_sj_long`,`gps_zt`,`matchStatus`,`statusList`,`totalTime`)
+        (`rfid_id`,`day`,`cp_hm`,`jd`,`wd`,`sd`,`fx`,`gps_sj`,`gps_sj_long`,`gps_zt`,`matchStatus`,`statusList`,`totalTime`,`last_time`)
         VALUES
         <foreach collection="list" item="item" index="index" separator=",">
-            (#{item.rfid_id},#{item.day},#{item.cp_hm},#{item.jd},#{item.wd},#{item.sd},#{item.fx},#{item.gps_sj},#{item.gps_sj_long},#{item.gps_zt},#{item.matchStatus},#{item.statusList},#{item.totalTime})
+            (#{item.rfid_id},#{item.day},#{item.cp_hm},#{item.jd},#{item.wd},#{item.sd},#{item.fx},#{item.gps_sj},#{item.gps_sj_long},#{item.gps_zt},#{item.matchStatus},#{item.statusList},#{item.totalTime},#{item.last_time})
         </foreach>
         ON DUPLICATE KEY UPDATE
         `cp_hm` = if(VALUES(gps_sj_long) > `gps_sj_long`,VALUES(cp_hm),`cp_hm`),
