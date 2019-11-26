@@ -32,13 +32,13 @@ public class Listener {
     @Autowired
     CityCarMapper cityCarMapper;
 
-    @Value("${topic.lh}}")
+    @Value("${topic.lh}")
     String lh;
 
-    @Value("${topic.hw}}")
+    @Value("${topic.hw}")
     String hw;
 
-    @Value("${topic.zf}}")
+    @Value("${topic.zf}")
     String zf;
 
 
