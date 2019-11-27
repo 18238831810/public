@@ -1,19 +1,12 @@
 package com.cf.crs.service;
 
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.cf.util.utils.AESCrypto;
 import com.cf.util.utils.SHA256;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.collections.map.MultiValueMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
