@@ -42,23 +42,19 @@ public class LoginService {
         String nonce = "123456789abcdefg";
         String signature = SHA256.sha256(timestamp + token + nonce + timestamp).toUpperCase();
         log.info("timestamp:{},signature:{}",timestamp,signature);
-        Map map = new MultiValueMap();
-        map.put("method","login");
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("systemCode","ZNKPGL");
         jsonObject.put("integrationKey","szcg1234");
         jsonObject.put("force",false);
         jsonObject.put("timestamp",1458793365386L);
-        map.put("request",jsonObject.toJSONString());
-        String url = "https://szzhcg.com/ebus/iam/integration";
+        String url = "https://szzhcg.com/ebus/iam/integration?method={method}&request={request}";
         HttpHeaders headers = new HttpHeaders();
-        //headers.setContentType(MediaType.APPLICATION_JSON);
         headers.add("x-tif-nonce",nonce);
         headers.add("x-tif-signature",signature);
         headers.add("x-tif-paasid",paasid);
         headers.add("x-tif-timestamp",String.valueOf(timestamp));
         HttpEntity<Map> httpEntity = new HttpEntity<>(null,headers);
-        String s = restTemplate.postForObject(url, httpEntity, String.class);
+        String s = restTemplate.postForObject(url, httpEntity, String.class,"login",jsonObject.toString());
         System.out.println(s);
     }
 }
