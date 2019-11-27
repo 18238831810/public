@@ -111,6 +111,5 @@ public class RedisTest {
     @Test
     public void integration() {
         loginService.integration();
-
     }
 }

@@ -32,7 +32,7 @@ public class Listener {
     CityCarMapper cityCarMapper;
 
 
-    @KafkaListener(topics = "CLWGPS-ZF",groupId = "zf")
+    /*@KafkaListener(topics = "CLWGPS-ZF",groupId = "zf")
     private void zfBatchListener(List<ConsumerRecord<String, Object>> consumerRecords, Acknowledgment acknowledgment){
         //同步数据
         insert(consumerRecords,list -> cityCarMapper.zfBatchInsert(list));
@@ -49,7 +49,7 @@ public class Listener {
         //同步数据
         insert(consumerRecords,list -> cityCarMapper.lhBatchInsert(list));
         acknowledgment.acknowledge();
-    }
+    }*/
 
     private void insert(List<ConsumerRecord<String, Object>> consumerRecords,Consumer<List<CityCar>> consumer) {
         try {
