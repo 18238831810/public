@@ -109,7 +109,22 @@ public class RedisTest {
     }
 
     @Test
-    public void integration() {
-        loginService.integration();
+    public void login() {
+        loginService.login();
     }
+
+   /* @Test
+    public void pullTask() {
+        loginService.pullTask();
+    }
+
+    @Test
+    public void pullFinish() {
+        loginService.pullFinish();
+    }
+
+    @Test
+    public void logout() {
+        loginService.logout();
+    }*/
 }
