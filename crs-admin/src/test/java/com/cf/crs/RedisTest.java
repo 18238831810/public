@@ -110,21 +110,12 @@ public class RedisTest {
 
     @Test
     public void login() {
-        loginService.login();
-    }
-
-   /* @Test
-    public void pullTask() {
-        loginService.pullTask();
+        loginService.synUserData();
     }
 
     @Test
-    public void pullFinish() {
-        loginService.pullFinish();
+    public void loginOUT() {
+        loginService.logout("f6672820-9ace-4930-9a64-7d99505a3c09");
     }
 
-    @Test
-    public void logout() {
-        loginService.logout();
-    }*/
 }

@@ -80,7 +80,7 @@ public class LoginService {
     private Integer savaOrUpdateOrganization(JSONObject json) {
         Integer guidFlag;
         Integer guid = json.getInteger("guid");
-        CityOrganization cityOrganization = getCityOrganization(json);
+        CityOrganization cityOrganization = getCityOrganization(json.getJSONObject("data"));
         if (DataUtil.checkIsUsable(guid)) {
             //存在guid，更新数据
             cityOrganizationMapper.update(cityOrganization,new UpdateWrapper<CityOrganization>().eq("code",cityOrganization.getCode()).le("updateAt",cityOrganization.getUpdateAt()));
@@ -100,7 +100,7 @@ public class LoginService {
     private Integer savaOrUpdateUser(JSONObject json) {
         Integer guidFlag;
         Integer guid = json.getInteger("guid");
-        CityUser cityUser = getCityUser(json);
+        CityUser cityUser = getCityUser(json.getJSONObject("data"));
         if (DataUtil.checkIsUsable(guid)) {
             //存在guid，更新数据
             cityUserMapper.update(cityUser,new UpdateWrapper<CityUser>().eq("id",guid).le("updateAt",cityUser.getUpdateAt()));
