@@ -8,11 +8,9 @@
 
 package com.cf.crs.sys.controller;
 
-import com.cf.crs.common.constant.Constant;
 import com.cf.crs.sys.entity.SysMenuEntity;
 import com.cf.crs.sys.service.SysMenuService;
 import com.cf.util.http.ResultJson;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -29,7 +27,7 @@ import java.util.List;
  * 菜单管理
  * @author frank
  */
-@Api(tags="城管项目")
+//@Api(tags="城管项目")
 @RestController
 @RequestMapping("/public/sys/menu")
 public class SysMenuController {
@@ -37,7 +35,7 @@ public class SysMenuController {
 	private SysMenuService sysMenuService;
 
 	@GetMapping("/nav")
-	@ApiOperation("菜单栏")
+	//@ApiOperation("菜单栏")
 	public ResultJson<List<SysMenuEntity>> getMenus(){
 		return sysMenuService.getMenus();
 	}
@@ -49,7 +47,7 @@ public class SysMenuController {
 	}
 
 	@GetMapping("/edit")
-	@ApiOperation("编辑菜单栏")
+	//@ApiOperation("编辑菜单栏")
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "id", paramType = "query", required = true, dataType="String") ,
 			@ApiImplicitParam(name = "编辑名称",  paramType = "query",required = true, dataType="String") ,
@@ -59,10 +57,10 @@ public class SysMenuController {
 	}
 
 	@GetMapping("/delete")
-	@ApiOperation("删除菜单栏")
-	@ApiImplicitParams({
-			@ApiImplicitParam(name = "id", paramType = "query", required = true, dataType="String") ,
-	})
+	//@ApiOperation("删除菜单栏")
+	//@ApiImplicitParams({
+	//		@ApiImplicitParam(name = "id", paramType = "query", required = true, dataType="String") ,
+	//})
 	public ResultJson<String> deleteMenu(@ApiIgnore String id){
 		return sysMenuService.deleteMenu(id);
 	}
