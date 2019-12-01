@@ -35,6 +35,8 @@ public class LoginService {
     @Autowired
     CityOrganizationMapper cityOrganizationMapper;
 
+
+
     /**
      * 同步数据入口
      */

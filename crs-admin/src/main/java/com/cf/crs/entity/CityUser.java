@@ -29,7 +29,7 @@ public class CityUser implements Serializable {
     private Integer isMaster;
     private Long createAt;
     private Long updateAt;
-
+    private Integer auth;
 
 
 
