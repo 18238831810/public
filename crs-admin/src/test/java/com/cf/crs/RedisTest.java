@@ -115,7 +115,7 @@ public class RedisTest {
 
     @Test
     public void loginOUT() {
-        loginService.logout("f6672820-9ace-4930-9a64-7d99505a3c09");
+        loginService.logout("9381e969-cbe9-48fd-82a8-bdffecee5417");
     }
 
 }

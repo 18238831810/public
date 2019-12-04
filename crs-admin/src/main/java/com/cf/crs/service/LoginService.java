@@ -8,6 +8,7 @@ import com.cf.crs.entity.CityOrganization;
 import com.cf.crs.entity.CityUser;
 import com.cf.crs.mapper.CityOrganizationMapper;
 import com.cf.crs.mapper.CityUserMapper;
+import com.cf.util.utils.DataChange;
 import com.cf.util.utils.DataUtil;
 import com.cf.util.utils.DateUtil;
 import com.cf.util.utils.SHA256;
@@ -133,7 +134,7 @@ public class LoginService {
     private CityOrganization getCityOrganization(JSONObject json) {
         CityOrganization cityOrganization = new CityOrganization();
         cityOrganization.setCode(json.getInteger("code"));
-        cityOrganization.setParent(json.getInteger("_parent"));
+        cityOrganization.setParent(DataChange.obToInt(json.get("_parent"),0));
         cityOrganization.setOrganization(json.getString("_organization"));
         cityOrganization.setFullname(json.getString("fullname"));
         cityOrganization.setDescription(json.getString("description"));
