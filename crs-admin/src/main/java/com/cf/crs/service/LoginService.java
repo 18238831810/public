@@ -3,11 +3,13 @@ package com.cf.crs.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.cf.crs.entity.CityOrganization;
 import com.cf.crs.entity.CityUser;
 import com.cf.crs.mapper.CityOrganizationMapper;
 import com.cf.crs.mapper.CityUserMapper;
+import com.cf.util.utils.DataChange;
 import com.cf.util.utils.DataUtil;
 import com.cf.util.utils.DateUtil;
 import com.cf.util.utils.SHA256;
@@ -62,15 +64,15 @@ public class LoginService {
         //保存数据
         String objectType = json.getString("objectType");
         //回传guid
-        Integer guidFlag = null;
+        String guid = "";
         if ("TARGET_ACCOUNT".equalsIgnoreCase(objectType)){
             //用户
-            guidFlag = savaOrUpdateUser(json);
+            guid = savaOrUpdateUser(json);
         }else if("TARGET_ORGANIZATION".equalsIgnoreCase(objectType)){
             //机构
-            guidFlag = savaOrUpdateOrganization(json);
+            guid = savaOrUpdateOrganization(json);
         }
-        pullFinish(tokenId,json.getString("taskId"),String.valueOf(guidFlag));
+        pullFinish(tokenId,json.getString("taskId"),guid);
         return false;
     }
 
@@ -79,19 +81,23 @@ public class LoginService {
      * @param json
      * @return
      */
-    private Integer savaOrUpdateOrganization(JSONObject json) {
-        Integer guidFlag;
-        Integer guid = json.getInteger("guid");
+    private String savaOrUpdateOrganization(JSONObject json) {
+        String effectOn = json.getString("effectOn");
         CityOrganization cityOrganization = getCityOrganization(json.getJSONObject("data"));
-        if (DataUtil.checkIsUsable(guid)) {
-            //存在guid，更新数据
-            cityOrganizationMapper.update(cityOrganization,new UpdateWrapper<CityOrganization>().eq("code",cityOrganization.getCode()).le("updateAt",cityOrganization.getUpdateAt()));
+        if ("DELETED".equalsIgnoreCase(effectOn)) {
+            //删除数据
+            cityOrganizationMapper.delete(new QueryWrapper<CityOrganization>().eq("code",cityOrganization.getCode()));
         }else {
-            //插入数据
-            cityOrganizationMapper.insert(cityOrganization);
+            CityOrganization code = cityOrganizationMapper.selectOne(new QueryWrapper<CityOrganization>().eq("code", cityOrganization.getCode()));
+            if (code == null){
+                //插入
+                cityOrganizationMapper.insert(cityOrganization);
+            }else{
+                //更新
+                cityOrganizationMapper.update(cityOrganization,new UpdateWrapper<CityOrganization>().eq("code",cityOrganization.getCode()).le("updateAt",cityOrganization.getUpdateAt()));
+            }
         }
-        guidFlag = cityOrganization.getCode();
-        return guidFlag;
+        return String.valueOf(cityOrganization.getCode());
     }
 
     /**
@@ -99,24 +105,29 @@ public class LoginService {
      * @param json
      * @return
      */
-    private Integer savaOrUpdateUser(JSONObject json) {
-        Integer guidFlag;
-        Integer guid = json.getInteger("guid");
-        CityUser cityUser = getCityUser(json.getJSONObject("data"));
-        if (DataUtil.checkIsUsable(guid)) {
-            //存在guid，更新数据
-            cityUserMapper.update(cityUser,new UpdateWrapper<CityUser>().eq("id",guid).le("updateAt",cityUser.getUpdateAt()));
-            guidFlag = guid;
-        }else {
-            //插入数据
-            cityUserMapper.insert(cityUser);
-            guidFlag = cityUser.getId();
+    private String savaOrUpdateUser(JSONObject json) {
+        String effectOn = json.getString("effectOn");
+        CityUser cityUser = getCityUser(json);
+        if ("DELETED".equalsIgnoreCase(effectOn)){
+            //删除数据
+            cityUserMapper.delete(new QueryWrapper<CityUser>().eq("synId",cityUser.getSynId()));
+        } else {
+            CityUser synId = cityUserMapper.selectOne(new QueryWrapper<CityUser>().eq("synId", cityUser.getSynId()));
+            if (synId == null){
+                //插入
+                cityUserMapper.insert(cityUser);
+            }else{
+                //更新
+                cityUserMapper.update(cityUser,new UpdateWrapper<CityUser>().eq("synId",cityUser.getSynId()).le("updateAt",cityUser.getUpdateAt()));
+            }
         }
-        return guidFlag;
+        return cityUser.getSynId();
     }
 
-    private CityUser getCityUser(JSONObject json) {
+    private CityUser getCityUser(JSONObject jsonObject) {
+        JSONObject json = jsonObject.getJSONObject("data");
         CityUser cityUser = new CityUser();
+        cityUser.setSynId(jsonObject.getString("id"));
         cityUser.setUser(json.getString("_user"));
         cityUser.setOrganization(json.getInteger("_organization"));
         cityUser.setUsername(json.getString("username"));
@@ -133,7 +144,7 @@ public class LoginService {
     private CityOrganization getCityOrganization(JSONObject json) {
         CityOrganization cityOrganization = new CityOrganization();
         cityOrganization.setCode(json.getInteger("code"));
-        cityOrganization.setParent(json.getInteger("_parent"));
+        cityOrganization.setParent(DataChange.obToInt(json.get("_parent"),0));
         cityOrganization.setOrganization(json.getString("_organization"));
         cityOrganization.setFullname(json.getString("fullname"));
         cityOrganization.setDescription(json.getString("description"));

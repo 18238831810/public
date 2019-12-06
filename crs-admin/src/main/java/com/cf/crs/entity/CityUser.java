@@ -30,6 +30,7 @@ public class CityUser implements Serializable {
     private Long createAt;
     private Long updateAt;
     private Integer auth;
+    private String synId;
 
 
 
