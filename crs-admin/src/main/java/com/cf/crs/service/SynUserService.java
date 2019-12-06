@@ -25,7 +25,7 @@ import java.util.Map;
 
 @Slf4j
 @Service
-public class LoginService {
+public class SynUserService {
 
 
     @Autowired

@@ -2,7 +2,7 @@ package com.cf.crs.controller;
 
 import com.cf.crs.entity.CheckMode;
 import com.cf.crs.service.CheckModeService;
-import com.cf.crs.service.LoginService;
+import com.cf.crs.service.SynUserService;
 import com.cf.util.http.ResultJson;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -28,7 +28,7 @@ public class CheckModeController {
     CheckModeService checkModeService;
 
     @Autowired
-    LoginService loginService;
+    SynUserService synUserService;
 
 
     @ApiOperation("获取考评模型")

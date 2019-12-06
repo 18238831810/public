@@ -82,6 +82,10 @@ check:
     url: http://192.168.1.72:8060
     name: Server
     apikey: f997bc19a9410ded2c0eb17f24e0690d
+client:
+  url: http://iam.bamboocloud.com
+  client-id: iam
+  client-secret: 889c3af4f806401da37e5b33c9f0f650
 
 
 

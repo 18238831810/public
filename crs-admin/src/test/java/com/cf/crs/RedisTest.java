@@ -13,10 +13,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cf.AdminApplication;
 import com.cf.crs.common.redis.RedisUtils;
-import com.cf.crs.service.CheckObjectAnalyService;
-import com.cf.crs.service.CheckSqlService;
-import com.cf.crs.service.LoginService;
-import com.cf.crs.service.WaringService;
+import com.cf.crs.service.*;
 import com.cf.crs.sys.entity.SysUserEntity;
 import com.cf.util.http.ResultJson;
 import lombok.extern.slf4j.Slf4j;
@@ -45,7 +42,7 @@ public class RedisTest {
     CheckObjectAnalyService checkObjectAnalyService;
 
     @Autowired
-    LoginService loginService;
+    SynUserService synUserService;
 
     @Test
     public void contextLoads() {
@@ -97,6 +94,9 @@ public class RedisTest {
     @Autowired
     WaringService waringService;
 
+    @Autowired
+    ClientLoginService clientLoginService;
+
     @Test
     public void getServerList() {
         ResultJson json = waringService.analyWaring();
@@ -110,12 +110,17 @@ public class RedisTest {
 
     @Test
     public void login() {
-        loginService.synUserData();
+        synUserService.synUserData();
     }
 
     @Test
     public void loginOUT() {
-        loginService.logout("95b51c71-e8ea-45d4-afe2-61ee24cbf0f9");
+        synUserService.logout("95b51c71-e8ea-45d4-afe2-61ee24cbf0f9");
+    }
+
+    @Test
+    public void getToken(){
+        clientLoginService.getUser("3ea9286cda3956372cff5df1f983131b");
     }
 
 }
