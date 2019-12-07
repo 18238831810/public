@@ -2,12 +2,22 @@ package com.cf.crs.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.cf.crs.common.redis.RedisUtils;
 import com.cf.crs.config.config.ClientConfig;
+import com.cf.crs.entity.CityUser;
+import com.cf.crs.entity.SysUser;
+import com.cf.crs.mapper.CityUserMapper;
+import com.cf.crs.mapper.SysUserMapper;
+import com.cf.crs.sys.service.SysUserService;
 import com.cf.util.http.HttpWebResult;
+import com.cf.util.http.ResultJson;
+import com.cf.util.utils.CacheKey;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.DigestUtils;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -24,20 +34,64 @@ public class ClientLoginService {
     @Autowired
     RestTemplate restTemplate;
 
+    @Autowired
+    CityUserMapper cityUserMapper;
+
+    @Autowired
+    SysUserMapper sysUserMapper;
+
+    @Autowired
+    RedisUtils redisUtils;
+
+    public static void main(String[] args) {
+        String md5Password = DigestUtils.md5DigestAsHex("123456".getBytes());
+        System.out.println(md5Password);
+    }
+
+    public ResultJson login(String userName,String password,String code){
+        //第三方登录
+        if (StringUtils.isNotEmpty(code)) return getUser(code);
+
+        //自己用户登录
+        SysUser sysUser = sysUserMapper.selectOne(new QueryWrapper<SysUser>().eq("username", userName));
+        if (sysUser == null) return HttpWebResult.getMonoError("用户名错误");
+        String md5Password = DigestUtils.md5DigestAsHex(password.getBytes());
+        if (!md5Password.equalsIgnoreCase(sysUser.getPassword())) return HttpWebResult.getMonoError("密码错误");
+        return createToken(sysUser);
+    }
+
+
     /**
-     * 验证登录用户
+     * 验证第三方登录用户
      * @param code
      * @return
      */
-    public JSONObject getUser(String code){
+    public ResultJson getUser(String code){
+        //获取第三方登录信息
         JSONObject result = getTokenByCode(code);
         String access_token = result.getString("access_token");
         if (StringUtils.isEmpty(access_token)) {
             //获取token失败
             log.info("获取iam登录token失败");
-            return result;
+            return HttpWebResult.getMonoError(result.getString("msg"));
         }
-        return getUserByToken(access_token);
+        JSONObject user = getUserByToken(access_token);
+        String uid = user.getString("uid");
+        if (StringUtils.isEmpty(uid)) return HttpWebResult.getMonoError(user.getString("msg"));
+
+        //验证第三方用户登录权限
+        CityUser cityUser = cityUserMapper.selectOne(new QueryWrapper<CityUser>().eq("synId", uid));
+        if (cityUser == null) return HttpWebResult.getMonoError("不存在此用户");
+        Integer auth = cityUser.getAuth();
+        if (auth == null || auth == 0) return HttpWebResult.getMonoError("此用户没有登录权限");
+        return createToken(cityUser);
+    }
+
+    private ResultJson createToken(Object sysUser) {
+        String token = CacheKey.USER_TOKEN + ":"+System.currentTimeMillis();
+        //验证成功，返回token和用户信息
+        redisUtils.set(token,sysUser,60*60*2);
+        return HttpWebResult.getMonoSucResult(token,sysUser);
     }
 
     /**
