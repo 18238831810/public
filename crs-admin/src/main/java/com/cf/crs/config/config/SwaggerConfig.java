@@ -68,9 +68,9 @@ public class SwaggerConfig {
 
     private ApiInfo restApiInfo() {
         return new ApiInfoBuilder()
-                .title("CMS后台API接口文档")
-                .description("CMS系统 API文档，注意，在每个接口都有一个{version}，该参数是版本号，默认填写v1，如有接口需要版本升级，则填写与开发定义好的版本号")
-                .contact(new Contact("盈创科技", "", ""))
+                .title("城管系统API接口文档")
+                .description("城管系统 API文档")
+                .contact(new Contact("城管系统", "", ""))
                 .version("1.0")
                 .build();
     }

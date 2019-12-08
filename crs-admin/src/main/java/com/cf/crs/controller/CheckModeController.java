@@ -33,13 +33,13 @@ public class CheckModeController {
 
     @ApiOperation("获取考评模型")
     @PostMapping("/getCheckMode")
-    public ResultJson<List<CheckMode>> getCheckMode(HttpServletRequest request,String url){
+    public ResultJson<List<CheckMode>> getCheckMode(){
         return checkModeService.getCheckMode();
     }
 
     @ApiOperation("保存考评模型")
     @PostMapping("/updateCheckMode")
-    public ResultJson<String> updateCheckPlan(String list){
-        return checkModeService.updateCheckMode(list);
+    public ResultJson<String> updateCheckPlan(CheckMode checkMode){
+        return checkModeService.updateCheckMode(checkMode);
     }
 }

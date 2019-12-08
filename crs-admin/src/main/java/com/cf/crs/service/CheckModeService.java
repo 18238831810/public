@@ -1,25 +1,16 @@
 package com.cf.crs.service;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.cf.crs.entity.CheckMode;
-import com.cf.crs.entity.CheckPlan;
-import com.cf.crs.job.dto.ScheduleJobDTO;
-import com.cf.crs.job.entity.ScheduleJobEntity;
-import com.cf.crs.job.service.ScheduleJobService;
 import com.cf.crs.mapper.CheckModeMapper;
-import com.cf.crs.mapper.ScheduleJobMapper;
 import com.cf.util.http.HttpWebResult;
 import com.cf.util.http.ResultJson;
-import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author frank
@@ -44,14 +35,13 @@ public class CheckModeService {
 
     /**
      * 更改考评任务配置
-     * @param list
+     * @param checkMode
      * @return
      */
-    public ResultJson<String> updateCheckMode(String list){
+    public ResultJson<String> updateCheckMode(CheckMode checkMode){
         try {
-            List<CheckMode> checkPlans = JSON.parseObject(list, List.class);
-            if(CollectionUtils.isEmpty(checkPlans)) return HttpWebResult.getMonoError("考评模型不能为空");
-            checkPlans.forEach(checkMode ->  checkModeMapper.updateById(checkMode));
+            if(StringUtils.isEmpty(checkMode.getRule())) return HttpWebResult.getMonoError("考评模型不能为空");
+            checkModeMapper.updateById(checkMode);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             return HttpWebResult.getMonoError(e.getMessage());

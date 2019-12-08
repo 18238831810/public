@@ -23,29 +23,9 @@ public class CheckMode implements Serializable {
     @ApiModelProperty(value = "状态：0:不启用，1：启用")
     private Integer status;
 
-    @ApiModelProperty(value = "可用性：0:不启用，1：启用")
-    private Integer ableStatus;
+    @ApiModelProperty(value = "考评规则")
+    private String rule;
 
-    @ApiModelProperty(value = "可用性达标条件")
-    private Integer ablePoint;
-
-    @ApiModelProperty(value = "性能：0:不启用，1：启用")
-    private Integer natureStatus;
-
-    @ApiModelProperty(value = "性能达标条件")
-    private Integer naturePoint;
-
-    @ApiModelProperty(value = "数据质量：0:不启用，1：启用")
-    private Integer qualityStatus;
-
-    @ApiModelProperty(value = "数据质量达标条件")
-    private Integer qualityPoint;
-
-    @ApiModelProperty(value = "逻辑：0:不启用，1：启用")
-    private Integer logictatus;
-
-    @ApiModelProperty(value = "逻辑达标条件")
-    private Integer logicPoint;
 
 
 }
