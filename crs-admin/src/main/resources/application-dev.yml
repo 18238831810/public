@@ -50,6 +50,39 @@ spring:
               wall:
                 config:
                   multi-statement-allow: true
+        orcale:
+          username: query
+          password: 888888
+          url: jdbc:oracle:thin:@192.168.3.35:1521/xhdb
+          driver-class-name: oracle.jdbc.driver.OracleDriver
+          druid: # 以下参数针对每个库可以重新设置druid参数
+            initial-size: 10
+            max-active: 100
+            min-idle: 10
+            max-wait: 6000
+            pool-prepared-statements: true
+            max-pool-prepared-statement-per-connection-size: 20
+            time-between-eviction-runs-millis: 60000
+            min-evictable-idle-time-millis: 300000
+            #Oracle需要打开注释
+            #validation-query: SELECT 1 FROM DUAL
+            test-while-idle: true
+            test-on-borrow: false
+            test-on-return: false
+            stat-view-servlet:
+              enabled: true
+              url-pattern: /druid/*
+              #login-username: admin
+              #login-password: admin
+            filter:
+              stat:
+                log-slow-sql: true
+                slow-sql-millis: 1000
+                merge-sql: false
+              wall:
+                config:
+                  multi-statement-allow: true
+
 
     #kafka
   kafka:

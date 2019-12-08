@@ -100,6 +100,14 @@
 			<version>${swagger.version}</version>
 		</dependency>
 
+		<!--oracle-->
+		<dependency>
+			<groupId>com.oracle</groupId>
+			<artifactId>ojdbc6</artifactId>
+			<version>12.1.0.1-atlassian-hosted</version>
+		</dependency>
+
+
 		<!-- dozer依赖 -->
 		<dependency>
 			<groupId>net.sf.dozer</groupId>
