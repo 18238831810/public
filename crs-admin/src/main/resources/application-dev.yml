@@ -54,7 +54,7 @@ spring:
           username: query
           password: 888888
           url: jdbc:oracle:thin:@192.168.3.35:1521/xhdb
-          driver-class-name: oracle.jdbc.driver.OracleDriver
+          driver-class-name: oracle.jdbc.OracleDriver
           druid: # 以下参数针对每个库可以重新设置druid参数
             initial-size: 10
             max-active: 100
