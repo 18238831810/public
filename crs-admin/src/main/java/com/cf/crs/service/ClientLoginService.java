@@ -76,11 +76,11 @@ public class ClientLoginService {
             return HttpWebResult.getMonoError(result.getString("msg"));
         }
         JSONObject user = getUserByToken(access_token);
-        String uid = user.getString("uid");
-        if (StringUtils.isEmpty(uid)) return HttpWebResult.getMonoError(user.getString("msg"));
+        String loginName = user.getString("loginName");
+        if (StringUtils.isEmpty(loginName)) return HttpWebResult.getMonoError(user.getString("msg"));
 
         //验证第三方用户登录权限
-        CityUser cityUser = cityUserMapper.selectOne(new QueryWrapper<CityUser>().eq("synId", uid));
+        CityUser cityUser = cityUserMapper.selectOne(new QueryWrapper<CityUser>().eq("username", loginName));
         if (cityUser == null) return HttpWebResult.getMonoError("不存在此用户");
         Integer auth = cityUser.getAuth();
         if (auth == null || auth == 0) return HttpWebResult.getMonoError("此用户没有登录权限");
