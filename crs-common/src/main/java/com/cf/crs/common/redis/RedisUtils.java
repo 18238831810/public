@@ -46,7 +46,7 @@ public class RedisUtils {
     }
 
     public void set(String key, Object value){
-        set(key, value, DEFAULT_EXPIRE);
+        set(key, value, NOT_EXPIRE);
     }
 
     public Object get(String key, long expire) {
@@ -79,7 +79,7 @@ public class RedisUtils {
     }
 
     public void hMSet(String key, Map<String, Object> map){
-        hMSet(key, map, DEFAULT_EXPIRE);
+        hMSet(key, map, NOT_EXPIRE);
     }
 
     public void hMSet(String key, Map<String, Object> map, long expire){
@@ -91,7 +91,7 @@ public class RedisUtils {
     }
 
     public void hSet(String key, String field, Object value) {
-        hSet(key, field, value, DEFAULT_EXPIRE);
+        hSet(key, field, value, NOT_EXPIRE);
     }
 
     public void hSet(String key, String field, Object value, long expire) {
@@ -111,7 +111,7 @@ public class RedisUtils {
     }
 
     public void leftPush(String key, Object value){
-        leftPush(key, value, DEFAULT_EXPIRE);
+        leftPush(key, value, NOT_EXPIRE);
     }
 
     public void leftPush(String key, Object value, long expire){
