@@ -122,5 +122,10 @@ public class RedisTest {
     public void getToken(){
         clientLoginService.getUser("3ea9286cda3956372cff5df1f983131b");
     }
+    @Test
+    public void getOrderJson(){
+        JSONObject orderJson = waringService.getOrderJson();
+        System.out.println(JSON.toJSONString(orderJson));
+    }
 
 }
