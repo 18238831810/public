@@ -13,6 +13,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cf.AdminApplication;
 import com.cf.crs.common.redis.RedisUtils;
+import com.cf.crs.entity.CheckWaringHistory;
 import com.cf.crs.service.*;
 import com.cf.crs.sys.entity.SysUserEntity;
 import com.cf.util.http.ResultJson;
@@ -43,6 +44,9 @@ public class RedisTest {
 
     @Autowired
     SynUserService synUserService;
+
+    @Autowired
+    CheckWaringHistoryService checkWaringHistoryService;
 
     @Test
     public void contextLoads() {
@@ -126,6 +130,11 @@ public class RedisTest {
     public void getOrderJson(){
         JSONObject orderJson = waringService.getOrderJson();
         System.out.println(JSON.toJSONString(orderJson));
+    }
+
+    @Test
+    public void synWaringHistory(){
+        checkWaringHistoryService.synWaringHistory();
     }
 
 }

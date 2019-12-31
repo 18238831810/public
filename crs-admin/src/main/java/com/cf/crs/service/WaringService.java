@@ -5,9 +5,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cf.util.http.HttpWebResult;
 import com.cf.util.http.ResultJson;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -55,7 +52,7 @@ public class WaringService {
 
     public ResultJson<JSONObject> analyWaring(){
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("server",analyServer());
+        jsonObject.put("server",analyServer(null));
         jsonObject.put("sql",analySql(1));
         jsonObject.put("middleware",analySql(2));
         jsonObject.put("order",analyOrder());
@@ -63,7 +60,7 @@ public class WaringService {
     }
 
 
-    public JSONObject analyServer(){
+    public JSONObject analyServer(List record){
         JSONObject jsonObject = new JSONObject();
         try {
             JSONObject servers = checkServerService.getServers();
@@ -76,14 +73,14 @@ public class WaringService {
             jsonObject.put("totalRecords",totalRecords);
             List details = infrastructureDetailsView.getJSONArray("Details");
             if (details == null || details.isEmpty()) return  jsonObject;
-            analyServer(jsonObject, details);
+            analyServer(jsonObject, details,record);
         } catch (Exception e) {
            log.info(e.getMessage(),e);
         }
         return jsonObject;
     }
 
-    private void analyServer(JSONObject jsonObject, List details) {
+    private void analyServer(JSONObject jsonObject, List details,List record) {
         Integer critical = 0;
         Integer warning = 0;
         Integer clear = 0;
@@ -92,6 +89,7 @@ public class WaringService {
             if (server == null || server.isEmpty()) continue;
             Integer severity = server.getInteger("severity");
             if (severity == null) continue;
+            if (record != null) record.add(server);
             if (severity == 1) critical+=1;
             else if (severity == 5) clear+=1;
             else warning+=1;
