@@ -17,6 +17,7 @@ import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -139,19 +140,24 @@ public class WaringService {
     }
 
     public JSONObject getOrderJson(){
-        String url = orderUrl + "/sdpapi/request?TECHNICIAN_KEY={TECHNICIAN_KEY}&OPERATION_NAME=GET_REQUESTS&format=json&INPUT_DATA={INPUT_DATA}";
-        JSONObject input = new JSONObject();
-        JSONObject operation = new JSONObject();
-        JSONObject details = new JSONObject();
-        details.put("from",0);
-        details.put("limit",0);
-        details.put("filterby","All_Requests");
-        operation.put("details",details);
-        input.put("operation",operation);
-        String forObject = restTemplate.getForObject(url, String.class, orderAppkey, input.toJSONString());
-        log.info("order:{}",forObject);
-        if (StringUtils.isNotEmpty(forObject)) return JSON.parseObject(forObject);
-        return new JSONObject();
+        try {
+            String url = orderUrl + "/sdpapi/request?TECHNICIAN_KEY={TECHNICIAN_KEY}&OPERATION_NAME=GET_REQUESTS&format=json&INPUT_DATA={INPUT_DATA}";
+            JSONObject input = new JSONObject();
+            JSONObject operation = new JSONObject();
+            JSONObject details = new JSONObject();
+            details.put("from",0);
+            details.put("limit",0);
+            details.put("filterby","All_Requests");
+            operation.put("details",details);
+            input.put("operation",operation);
+            String forObject = restTemplate.getForObject(url, String.class, orderAppkey, input.toJSONString());
+            log.info("order:{}",forObject);
+            if (StringUtils.isNotEmpty(forObject)) return JSON.parseObject(forObject);
+            return new JSONObject();
+        } catch (RestClientException e) {
+            log.error(e.getMessage(),e);
+            return new JSONObject();
+        }
     }
 
     public JSONObject analyOrder(){
