@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
  * 2019/10/16
  **/
 @Slf4j
-@Component("checkPlanTask")
+@Component("checkWaringHistory")
 public class CheckWaringHistoryTask implements ITask{
 
     @Autowired
