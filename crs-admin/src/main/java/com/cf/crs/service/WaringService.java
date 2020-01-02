@@ -53,8 +53,8 @@ public class WaringService {
     public ResultJson<JSONObject> analyWaring(){
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("server",analyServer(null));
-        jsonObject.put("sql",analySql(1));
-        jsonObject.put("middleware",analySql(2));
+        jsonObject.put("sql",analySql(1,null));
+        jsonObject.put("middleware",analySql(2,null));
         jsonObject.put("order",analyOrder());
         return HttpWebResult.getMonoSucResult(jsonObject);
     }
@@ -99,7 +99,7 @@ public class WaringService {
         jsonObject.put("clear",clear);
     }
 
-    public JSONObject analySql(Integer type){
+    public JSONObject analySql(Integer type,List record){
         JSONObject jsonObject = new JSONObject();
         try {
             String html = checkSqlService.getCheckSqlList(type);
@@ -111,14 +111,14 @@ public class WaringService {
             if (!result.hasAttr("response-code") || !"4000".equalsIgnoreCase(result.attr("response-code"))) HttpWebResult.getMonoError("请求失败");
             //请求数据成功
             Elements rowList = result.select("Monitor");
-            analySql(jsonObject, rowList);
+            analySql(jsonObject, rowList,record);
         } catch (Exception e) {
             log.info(e.getMessage(),e);
         }
         return jsonObject;
     }
 
-    private void analySql(JSONObject jsonObject, Elements rowList) {
+    private void analySql(JSONObject jsonObject, Elements rowList,List record) {
         Integer critical = 0;
         Integer warning = 0;
         Integer clear = 0;
@@ -127,6 +127,14 @@ public class WaringService {
             String status = element.attr("HEALTHSTATUS");
             count+=1;
             if (StringUtils.isEmpty(status)) continue;
+            if (record != null) {
+                JSONObject history = new JSONObject();
+                history.put("status",status);
+                history.put("healthmessage",element.attr("HEALTHMESSAGE"));
+                history.put("lastalarmtime",element.attr("LASTALARMTIME"));
+                history.put("displayName",element.attr("DISPLAYNAME"));
+                record.add(history);
+            }
             if ("critical".equalsIgnoreCase(status)) critical+=1;
             else if ("warning".equalsIgnoreCase(status)) warning+=1;
             else if ("clear".equalsIgnoreCase(status)) clear+=1;
