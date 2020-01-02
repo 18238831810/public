@@ -136,5 +136,9 @@ public class RedisTest {
     public void synWaringHistory(){
         checkWaringHistoryService.synWaringHistory();
     }
+    @Test
+    public void checkByDay(){
+        checkWaringHistoryService.checkByDay("20200102");
+    }
 
 }

@@ -1,8 +1,10 @@
 package com.cf.crs.service;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.cf.crs.entity.CheckWaringHistory;
 import com.cf.crs.mapper.CheckWaringHistoryMapper;
 import com.cf.util.utils.DataUtil;
@@ -10,11 +12,9 @@ import com.cf.util.utils.DateUtil;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.aspectj.weaver.ast.Var;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.nio.charset.CharsetDecoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -39,7 +39,7 @@ public class CheckWaringHistoryService {
     CheckWaringHistoryMapper checkWaringHistoryMapper;
 
     /**
-     * 同步告警数据
+     * 统计告警数据
      */
     public void synWaringHistory(){
         long now = System.currentTimeMillis();
@@ -87,6 +87,13 @@ public class CheckWaringHistoryService {
 
     }
 
+    /**
+     * 封装告警记录
+     * @param name
+     * @param analyRecord
+     * @param waringRecord
+     * @param biFunction
+     */
     private void packRecord(String name, JSONObject analyRecord, JSONObject waringRecord, BiFunction<Integer,List,JSONObject> biFunction){
         ArrayList<JSONObject> serverList = Lists.newArrayList();
         JSONObject serverObject = biFunction.apply(1,serverList);
@@ -95,6 +102,11 @@ public class CheckWaringHistoryService {
         analyRecord.put(name,analyResult);
     }
 
+    /**
+     * 打分
+     * @param jsonObject
+     * @return
+     */
     private JSONObject trantAnalyData(JSONObject jsonObject){
         JSONObject result = new JSONObject();
         Integer criticalInt = 100;
@@ -115,6 +127,65 @@ public class CheckWaringHistoryService {
         return result;
     }
 
+    /**
+     * 考评每天的告警评分
+     */
+    public void checkByDay(String day){
+        if (StringUtils.isEmpty(day))  day = DateUtil.date2String(DateUtil.getYesterday(), DateUtil.DEFAULT);
+        CheckWaringHistory dayHistory = checkWaringHistoryMapper.selectOne(new QueryWrapper<CheckWaringHistory>().eq("day", day));
+        if (dayHistory == null) return;
+        String analyRecord = dayHistory.getAnalyRecord();
+        if (StringUtils.isEmpty(analyRecord)) return;
+        JSONArray analyList = JSONArray.parseArray(analyRecord);
+        JSONObject server = new JSONObject();
+        JSONObject sql = new JSONObject();
+        JSONObject middleware = new JSONObject();
+        for (Object o : analyList) {
+            JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(o));
+            sumWaring(server, jsonObject,"server");
+            sumWaring(sql, jsonObject,"sql");
+            sumWaring(middleware, jsonObject,"middleware");
+        }
+        int size = analyList.size();
+        averageWaring(server,size);
+        averageWaring(sql,size);
+        averageWaring(middleware,size);
+        JSONObject score = new JSONObject();
+        score.put("server",server);
+        score.put("sql",sql);
+        score.put("middleware",middleware);
+        checkWaringHistoryMapper.update(null,new UpdateWrapper<CheckWaringHistory>().set("score",JSON.toJSONString(score)).eq("id",dayHistory.getId()));
+    }
+
+    /**
+     * 累加求和
+     * @param server
+     * @param jsonObject
+     * @param name
+     */
+    private void sumWaring(JSONObject server, JSONObject jsonObject,String name) {
+        JSONObject serverObj = jsonObject.getJSONObject(name);
+        Integer critical = serverObj.getIntValue("critical");
+        Integer clear = serverObj.getIntValue("clear");
+        Integer warning = serverObj.getIntValue("warning");
+        server.put("critical",critical + server.getIntValue("critical"));
+        server.put("clear",clear + server.getIntValue("clear"));
+        server.put("warning",warning + server.getIntValue("warning"));
+    }
+
+    /**
+     * 求平均值
+     * @param server
+     * @param size
+     */
+    private void averageWaring(JSONObject server,Integer size) {
+        Integer critical = server.getIntValue("critical");
+        Integer clear = server.getIntValue("clear");
+        Integer warning = server.getIntValue("warning");
+        server.put("critical",critical/size);
+        server.put("clear",clear/size);
+        server.put("warning",warning/size);
+    }
 
 
 }

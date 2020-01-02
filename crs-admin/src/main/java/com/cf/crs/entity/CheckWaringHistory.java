@@ -36,4 +36,6 @@ public class CheckWaringHistory implements Serializable {
 
     private String waringRecord;
 
+    private String score;
+
 }
