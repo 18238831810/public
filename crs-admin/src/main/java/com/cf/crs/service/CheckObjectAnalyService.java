@@ -111,13 +111,13 @@ public class CheckObjectAnalyService {
     private void analyDeviceData(Map<String, JSONObject> serversMap, Map<String, Element> sqlMap, Map<String, Element> middlewareMap, JSONArray information, HashMap<Object, Object> deviceMap) {
         for (Object typeObj:information){
             //遍历二级菜单
-            JSONObject TypeObj = JSON.parseObject(JSON.toJSONString(typeObj));
-            if (TypeObj == null || TypeObj.isEmpty()) continue;
-            String name = TypeObj.getString("name");
+            JSONObject typeJson = JSON.parseObject(JSON.toJSONString(typeObj));
+            if (typeJson == null || typeJson.isEmpty()) continue;
+            String name = typeJson.getString("name");
             int total = 0;
             int waring = 0;
             //获取考评设备列表
-            JSONArray deviceList = TypeObj.getJSONArray("information");
+            JSONArray deviceList = typeJson.getJSONArray("information");
             if (deviceList == null || deviceList.isEmpty()) continue;
             if ("server".equalsIgnoreCase(name)){
                 //服务器

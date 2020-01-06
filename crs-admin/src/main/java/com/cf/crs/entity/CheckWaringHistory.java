@@ -38,4 +38,6 @@ public class CheckWaringHistory implements Serializable {
 
     private String score;
 
+    private String displayName;
+
 }

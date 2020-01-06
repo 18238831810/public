@@ -1,24 +1,30 @@
 package com.cf.crs.service;
 
+import cn.afterturn.easypoi.cache.manager.IFileLoader;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.cf.crs.entity.CheckObject;
 import com.cf.crs.entity.CheckWaringHistory;
 import com.cf.crs.mapper.CheckWaringHistoryMapper;
 import com.cf.util.utils.DataUtil;
 import com.cf.util.utils.DateUtil;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.sun.org.apache.regexp.internal.RE;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.nodes.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import springfox.documentation.spring.web.readers.operation.CachingOperationNameGenerator;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.rmi.MarshalledObject;
+import java.util.*;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 /**
  * 告警历史数据同步
@@ -36,24 +42,71 @@ public class CheckWaringHistoryService {
     CheckServerService checkServerService;
 
     @Autowired
+    CheckSqlService checkSqlService;
+
+    @Autowired
+    CheckObjectService checkObjectService;
+
+    @Autowired
     CheckWaringHistoryMapper checkWaringHistoryMapper;
 
     /**
      * 统计告警数据
      */
     public void synWaringHistory(){
+        //获取服务器信息
+        JSONObject servers = checkServerService.getServers();
+        //获取sql信息
+        String sqlHtml = checkSqlService.getCheckSqlList(1);
+        //获取中间件信息
+        String middlewareHtml = checkSqlService.getCheckSqlList(2);
+        JSONArray checkObjectList = getCheckObjectList();
+        for (Object typeObj:checkObjectList){
+            //遍历二级菜单
+            JSONObject typeJson = JSON.parseObject(JSON.toJSONString(typeObj));
+            if (typeJson == null || typeJson.isEmpty()) continue;
+            String name = typeJson.getString("name");
+            if (StringUtils.isEmpty(name)) continue;
+            String information = typeJson.getString("information");
+            if (StringUtils.isEmpty(information)) continue;
+            JSONArray informationList = JSONArray.parseArray(information);
+            synWaringHistory(servers,sqlHtml, middlewareHtml,name,informationList);
+        }
+    }
+
+    /**
+     * 统计告警数据
+     */
+    public void synWaringHistory(JSONObject servers,String sqlHtml,String middlewareHtml,String name,JSONArray informationList){
         long now = System.currentTimeMillis();
         JSONObject analyRecord = new JSONObject();
         JSONObject waringRecord = new JSONObject();
         analyRecord.put("time",now);
         waringRecord.put("time",now);
-
+        List<String> serverNameList = Lists.newArrayList();
+        List<String> sqlNameList = Lists.newArrayList();
+        List<String> middlewareNameList = Lists.newArrayList();
+        for (Object obj: informationList) {
+            List<String> temp;
+            JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(obj));
+            String deviceType = jsonObject.getString("name");
+            String information = jsonObject.getString("information");
+            if (StringUtils.isEmpty(information)) continue;
+            JSONArray nameList = JSONArray.parseArray(information);
+            if ("server".equalsIgnoreCase(deviceType)) {
+                listDeviceName(obj, serverNameList, nameList);
+            }else if("sql".equalsIgnoreCase(deviceType)){
+                listDeviceName(obj, sqlNameList, nameList);
+            }else if("middleware".equalsIgnoreCase(deviceType)){
+                listDeviceName(obj, middlewareNameList, nameList);
+            }
+        }
         //统计服务器数据
-        packRecord("server",analyRecord,waringRecord,(key,list)->waringService.analyServer(list));
-        packRecord("sql",analyRecord,waringRecord,(key,list)->waringService.analySql(1,list));
-        packRecord("middleware",analyRecord,waringRecord,(key,list)->waringService.analySql(2,list));
+        packRecord("server",analyRecord,waringRecord,(key,list)->waringService.scoreServe(list,servers,serverNameList));
+        packRecord("sql",analyRecord,waringRecord,(key,list)->waringService.scoreSql(list,sqlHtml, sqlNameList));
+        packRecord("middleware",analyRecord,waringRecord,(key,list)->waringService.scoreSql(list,middlewareHtml, middlewareNameList));
         String day = DateUtil.date2String(new Date(), DateUtil.DEFAULT);
-        CheckWaringHistory dayHistory = checkWaringHistoryMapper.selectOne(new QueryWrapper<CheckWaringHistory>().eq("day", day));
+        CheckWaringHistory dayHistory = checkWaringHistoryMapper.selectOne(new QueryWrapper<CheckWaringHistory>().eq("day", day).eq("displayName",name));
         if (dayHistory == null){
             //插入数据
             CheckWaringHistory checkWaringHistory = new CheckWaringHistory();
@@ -67,6 +120,7 @@ public class CheckWaringHistoryService {
             ArrayList<Object> waringRecords = Lists.newArrayList();
             waringRecords.add(waringRecord);
             checkWaringHistory.setWaringRecord(JSONArray.toJSONString(waringRecords));
+            checkWaringHistory.setDisplayName(name);
             checkWaringHistoryMapper.insert(checkWaringHistory);
         }else {
             String analyRecords = dayHistory.getAnalyRecord();
@@ -80,11 +134,39 @@ public class CheckWaringHistoryService {
             if (StringUtils.isNotEmpty(waringRecords)) waringList = JSONArray.parseArray(waringRecords);
             waringList.add(waringRecord);
             dayHistory.setWaringRecord(JSONArray.toJSONString(waringList));
-
+            dayHistory.setDisplayName(name);
             checkWaringHistoryMapper.updateById(dayHistory);
         }
 
 
+    }
+
+
+    /**
+     * 统计考评对象的设备名称
+     * @param obj
+     * @param temp
+     * @param nameList
+     */
+    private void listDeviceName(Object obj, List<String> temp, JSONArray nameList) {
+        for (Object o : nameList) {
+            JSONObject deviceJson = JSON.parseObject(JSON.toJSONString(o));
+            String deviceName = deviceJson.getString("name");
+            if (StringUtils.isEmpty(deviceName)) continue;
+            temp.add(deviceName);
+        }
+    }
+
+
+    /**
+     * 获取考评对象
+     * @return
+     */
+    public JSONArray getCheckObjectList(){
+        CheckObject object = checkObjectService.getObject();
+        if (object == null) return null;
+        String result = object.getObject();
+        return JSON.parseArray(result);
     }
 
     /**

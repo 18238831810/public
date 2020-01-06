@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.cf.util.http.HttpWebResult;
 import com.cf.util.http.ResultJson;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -61,9 +62,14 @@ public class WaringService {
 
 
     public JSONObject analyServer(List record){
+        JSONObject servers = checkServerService.getServers();
+        return scoreServe(record, servers,null);
+    }
+
+
+    public JSONObject scoreServe(List record, JSONObject servers,List<String> deviceNameList) {
         JSONObject jsonObject = new JSONObject();
         try {
-            JSONObject servers = checkServerService.getServers();
             if (servers == null || servers.isEmpty()) return jsonObject;
             log.info("serverResult:{}",servers.toJSONString());
             JSONObject infrastructureDetailsView = servers.getJSONObject("InfrastructureDetailsView");
@@ -73,14 +79,14 @@ public class WaringService {
             jsonObject.put("totalRecords",totalRecords);
             List details = infrastructureDetailsView.getJSONArray("Details");
             if (details == null || details.isEmpty()) return  jsonObject;
-            analyServer(jsonObject, details,record);
+            analyServer(jsonObject, details,record,deviceNameList);
         } catch (Exception e) {
            log.info(e.getMessage(),e);
         }
         return jsonObject;
     }
 
-    private void analyServer(JSONObject jsonObject, List details,List record) {
+    private void analyServer(JSONObject jsonObject, List details,List record,List<String> deviceNameList) {
         Integer critical = 0;
         Integer warning = 0;
         Integer clear = 0;
@@ -88,6 +94,7 @@ public class WaringService {
             JSONObject server = JSON.parseObject(JSON.toJSONString(obj));
             if (server == null || server.isEmpty()) continue;
             Integer severity = server.getInteger("severity");
+            if (CollectionUtils.isEmpty(deviceNameList) || !deviceNameList.contains(server.getString("name"))) continue;
             if (severity == null) continue;
             if (record != null) record.add(server);
             if (severity == 1) critical+=1;
@@ -100,9 +107,13 @@ public class WaringService {
     }
 
     public JSONObject analySql(Integer type,List record){
+        String html = checkSqlService.getCheckSqlList(type);
+        return scoreSql(record, html,null);
+    }
+
+    public JSONObject scoreSql(List record, String html,List<String> deviceNameList) {
         JSONObject jsonObject = new JSONObject();
         try {
-            String html = checkSqlService.getCheckSqlList(type);
             if (StringUtils.isEmpty(html)) return jsonObject;
             log.info("getCheckSqlResult:{}",html);
             Document doc = Jsoup.parse(html);
@@ -111,14 +122,14 @@ public class WaringService {
             if (!result.hasAttr("response-code") || !"4000".equalsIgnoreCase(result.attr("response-code"))) HttpWebResult.getMonoError("请求失败");
             //请求数据成功
             Elements rowList = result.select("Monitor");
-            analySql(jsonObject, rowList,record);
+            analySql(jsonObject, rowList,record,deviceNameList);
         } catch (Exception e) {
             log.info(e.getMessage(),e);
         }
         return jsonObject;
     }
 
-    private void analySql(JSONObject jsonObject, Elements rowList,List record) {
+    private void analySql(JSONObject jsonObject, Elements rowList,List record,List<String> deviceNameList) {
         Integer critical = 0;
         Integer warning = 0;
         Integer clear = 0;
@@ -129,10 +140,12 @@ public class WaringService {
             if (StringUtils.isEmpty(status)) continue;
             if (record != null) {
                 JSONObject history = new JSONObject();
+                String displayname = element.attr("DISPLAYNAME");
+                if (CollectionUtils.isEmpty(deviceNameList) || !deviceNameList.contains(displayname)) continue;
                 history.put("status",status);
                 history.put("healthmessage",element.attr("HEALTHMESSAGE"));
                 history.put("lastalarmtime",element.attr("LASTALARMTIME"));
-                history.put("displayName",element.attr("DISPLAYNAME"));
+                history.put("displayName",displayname);
                 record.add(history);
             }
             if ("critical".equalsIgnoreCase(status)) critical+=1;
