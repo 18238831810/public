@@ -1,6 +1,5 @@
 package com.cf.crs.service;
 
-import cn.afterturn.easypoi.cache.manager.IFileLoader;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -12,19 +11,15 @@ import com.cf.crs.mapper.CheckWaringHistoryMapper;
 import com.cf.util.utils.DataUtil;
 import com.cf.util.utils.DateUtil;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.sun.org.apache.regexp.internal.RE;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.jsoup.nodes.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import springfox.documentation.spring.web.readers.operation.CachingOperationNameGenerator;
 
-import java.rmi.MarshalledObject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 
 /**
  * 告警历史数据同步
@@ -86,6 +81,61 @@ public class CheckWaringHistoryService {
         List<String> serverNameList = Lists.newArrayList();
         List<String> sqlNameList = Lists.newArrayList();
         List<String> middlewareNameList = Lists.newArrayList();
+        getCheckDeviceName(informationList, serverNameList, sqlNameList, middlewareNameList);
+        //统计服务器数据
+        packRecord("server",analyRecord,waringRecord,(key,list)->waringService.scoreServe(list,servers,serverNameList));
+        packRecord("sql",analyRecord,waringRecord,(key,list)->waringService.scoreSql(list,sqlHtml, sqlNameList));
+        packRecord("middleware",analyRecord,waringRecord,(key,list)->waringService.scoreSql(list,middlewareHtml, middlewareNameList));
+        String day = DateUtil.date2String(new Date(), DateUtil.DEFAULT);
+        CheckWaringHistory dayHistory = checkWaringHistoryMapper.selectOne(new QueryWrapper<CheckWaringHistory>().eq("day", day).eq("displayName",name));
+        if (dayHistory == null){
+            //插入数据
+            inserData(name, analyRecord, waringRecord, day);
+        }else {
+            updateData(name, analyRecord, waringRecord, dayHistory);
+        }
+    }
+
+    private void updateData(String name, JSONObject analyRecord, JSONObject waringRecord, CheckWaringHistory dayHistory) {
+        String analyRecords = dayHistory.getAnalyRecord();
+        JSONArray analyList = new JSONArray();
+        if (StringUtils.isNotEmpty(analyRecords)) analyList = JSONArray.parseArray(analyRecords);
+        analyList.add(analyRecord);
+        dayHistory.setAnalyRecord(JSONArray.toJSONString(analyList));
+
+        String waringRecords = dayHistory.getWaringRecord();
+        JSONArray waringList = new JSONArray();
+        if (StringUtils.isNotEmpty(waringRecords)) waringList = JSONArray.parseArray(waringRecords);
+        waringList.add(waringRecord);
+        dayHistory.setWaringRecord(JSONArray.toJSONString(waringList));
+        dayHistory.setDisplayName(name);
+        checkWaringHistoryMapper.updateById(dayHistory);
+    }
+
+    private void inserData(String name, JSONObject analyRecord, JSONObject waringRecord, String day) {
+        CheckWaringHistory checkWaringHistory = new CheckWaringHistory();
+        checkWaringHistory.setDay(day);
+        checkWaringHistory.setMonth(day.substring(0,6));
+        checkWaringHistory.setYear(day.substring(0,4));
+        checkWaringHistory.setWeek(DateUtil.getWeekByDate(new Date()));
+        ArrayList<Object> analyRecords = Lists.newArrayList();
+        analyRecords.add(analyRecord);
+        checkWaringHistory.setAnalyRecord(JSONArray.toJSONString(analyRecords));
+        ArrayList<Object> waringRecords = Lists.newArrayList();
+        waringRecords.add(waringRecord);
+        checkWaringHistory.setWaringRecord(JSONArray.toJSONString(waringRecords));
+        checkWaringHistory.setDisplayName(name);
+        checkWaringHistoryMapper.insert(checkWaringHistory);
+    }
+
+    /**
+     * 统计考评设备名称
+     * @param informationList
+     * @param serverNameList
+     * @param sqlNameList
+     * @param middlewareNameList
+     */
+    private void getCheckDeviceName(JSONArray informationList, List<String> serverNameList, List<String> sqlNameList, List<String> middlewareNameList) {
         for (Object obj: informationList) {
             List<String> temp;
             JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(obj));
@@ -101,44 +151,6 @@ public class CheckWaringHistoryService {
                 listDeviceName(obj, middlewareNameList, nameList);
             }
         }
-        //统计服务器数据
-        packRecord("server",analyRecord,waringRecord,(key,list)->waringService.scoreServe(list,servers,serverNameList));
-        packRecord("sql",analyRecord,waringRecord,(key,list)->waringService.scoreSql(list,sqlHtml, sqlNameList));
-        packRecord("middleware",analyRecord,waringRecord,(key,list)->waringService.scoreSql(list,middlewareHtml, middlewareNameList));
-        String day = DateUtil.date2String(new Date(), DateUtil.DEFAULT);
-        CheckWaringHistory dayHistory = checkWaringHistoryMapper.selectOne(new QueryWrapper<CheckWaringHistory>().eq("day", day).eq("displayName",name));
-        if (dayHistory == null){
-            //插入数据
-            CheckWaringHistory checkWaringHistory = new CheckWaringHistory();
-            checkWaringHistory.setDay(day);
-            checkWaringHistory.setMonth(day.substring(0,6));
-            checkWaringHistory.setYear(day.substring(0,4));
-            checkWaringHistory.setWeek(DateUtil.getWeekByDate(new Date()));
-            ArrayList<Object> analyRecords = Lists.newArrayList();
-            analyRecords.add(analyRecord);
-            checkWaringHistory.setAnalyRecord(JSONArray.toJSONString(analyRecords));
-            ArrayList<Object> waringRecords = Lists.newArrayList();
-            waringRecords.add(waringRecord);
-            checkWaringHistory.setWaringRecord(JSONArray.toJSONString(waringRecords));
-            checkWaringHistory.setDisplayName(name);
-            checkWaringHistoryMapper.insert(checkWaringHistory);
-        }else {
-            String analyRecords = dayHistory.getAnalyRecord();
-            JSONArray analyList = new JSONArray();
-            if (StringUtils.isNotEmpty(analyRecords)) analyList = JSONArray.parseArray(analyRecords);
-            analyList.add(analyRecord);
-            dayHistory.setAnalyRecord(JSONArray.toJSONString(analyList));
-
-            String waringRecords = dayHistory.getWaringRecord();
-            JSONArray waringList = new JSONArray();
-            if (StringUtils.isNotEmpty(waringRecords)) waringList = JSONArray.parseArray(waringRecords);
-            waringList.add(waringRecord);
-            dayHistory.setWaringRecord(JSONArray.toJSONString(waringList));
-            dayHistory.setDisplayName(name);
-            checkWaringHistoryMapper.updateById(dayHistory);
-        }
-
-
     }
 
 
