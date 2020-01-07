@@ -94,9 +94,11 @@ public class WaringService {
             JSONObject server = JSON.parseObject(JSON.toJSONString(obj));
             if (server == null || server.isEmpty()) continue;
             Integer severity = server.getInteger("severity");
-            if (CollectionUtils.isEmpty(deviceNameList) || !deviceNameList.contains(server.getString("name"))) continue;
             if (severity == null) continue;
-            if (record != null) record.add(server);
+            if (record != null) {
+                if (CollectionUtils.isEmpty(deviceNameList) || !deviceNameList.contains(server.getString("name"))) continue;
+                record.add(server);
+            }
             if (severity == 1) critical+=1;
             else if (severity == 5) clear+=1;
             else warning+=1;
