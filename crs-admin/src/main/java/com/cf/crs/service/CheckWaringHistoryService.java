@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.cf.crs.entity.CheckObject;
 import com.cf.crs.entity.CheckWaringHistory;
+import com.cf.crs.function.MyConsumer;
 import com.cf.crs.mapper.CheckWaringHistoryMapper;
 import com.cf.util.utils.DataUtil;
 import com.cf.util.utils.DateUtil;
@@ -55,46 +56,57 @@ public class CheckWaringHistoryService {
         String sqlHtml = checkSqlService.getCheckSqlList(1);
         //获取中间件信息
         String middlewareHtml = checkSqlService.getCheckSqlList(2);
+        updateWaringHistory((name,serverNameList,sqlNameList,middlewareNameList)->{
+            updateWaringHistoryByDeviceName(servers, sqlHtml, middlewareHtml, name, serverNameList, sqlNameList, middlewareNameList);
+        });
+    }
+
+
+    /**
+     * 获取考评对象
+     * @param consumer
+     */
+    private void updateWaringHistory(MyConsumer<String,List<String>,List<String>,List<String>> consumer) {
         JSONArray checkObjectList = getCheckObjectList();
         for (Object typeObj:checkObjectList){
             //遍历二级菜单
             JSONObject typeJson = JSON.parseObject(JSON.toJSONString(typeObj));
             if (typeJson == null || typeJson.isEmpty()) continue;
-            String name = typeJson.getString("name");
+            String name = typeJson.getString("displayName");
             if (StringUtils.isEmpty(name)) continue;
             String information = typeJson.getString("information");
             if (StringUtils.isEmpty(information)) continue;
             JSONArray informationList = JSONArray.parseArray(information);
-            synWaringHistory(servers,sqlHtml, middlewareHtml,name,informationList);
+            //synWaringHistory(servers,sqlHtml, middlewareHtml,name,informationList);
+            List<String> serverNameList = Lists.newArrayList();
+            List<String> sqlNameList = Lists.newArrayList();
+            List<String> middlewareNameList = Lists.newArrayList();
+            getCheckDeviceName(informationList, serverNameList, sqlNameList, middlewareNameList);
+            //统计服务器数据
+            consumer.accept(name,serverNameList,sqlNameList,middlewareNameList);
+            //updateWaringHistoryByDeviceName(servers, sqlHtml, middlewareHtml, name, serverNameList, sqlNameList, middlewareNameList);
         }
     }
 
-    /**
-     * 统计告警数据
-     */
-    public void synWaringHistory(JSONObject servers,String sqlHtml,String middlewareHtml,String name,JSONArray informationList){
+    private void updateWaringHistoryByDeviceName(JSONObject servers, String sqlHtml, String middlewareHtml, String name,List<String> serverNameList, List<String> sqlNameList, List<String> middlewareNameList) {
         long now = System.currentTimeMillis();
         JSONObject analyRecord = new JSONObject();
         JSONObject waringRecord = new JSONObject();
         analyRecord.put("time",now);
         waringRecord.put("time",now);
-        List<String> serverNameList = Lists.newArrayList();
-        List<String> sqlNameList = Lists.newArrayList();
-        List<String> middlewareNameList = Lists.newArrayList();
-        getCheckDeviceName(informationList, serverNameList, sqlNameList, middlewareNameList);
-        //统计服务器数据
-        packRecord("server",analyRecord,waringRecord,(key,list)->waringService.scoreServe(list,servers,serverNameList));
-        packRecord("sql",analyRecord,waringRecord,(key,list)->waringService.scoreSql(list,sqlHtml, sqlNameList));
-        packRecord("middleware",analyRecord,waringRecord,(key,list)->waringService.scoreSql(list,middlewareHtml, middlewareNameList));
+        packRecord("server", analyRecord, waringRecord, (key, list) -> waringService.scoreServe(list, servers, serverNameList));
+        packRecord("sql", analyRecord, waringRecord, (key, list) -> waringService.scoreSql(list, sqlHtml, sqlNameList));
+        packRecord("middleware", analyRecord, waringRecord, (key, list) -> waringService.scoreSql(list, middlewareHtml, middlewareNameList));
         String day = DateUtil.date2String(new Date(), DateUtil.DEFAULT);
-        CheckWaringHistory dayHistory = checkWaringHistoryMapper.selectOne(new QueryWrapper<CheckWaringHistory>().eq("day", day).eq("displayName",name));
-        if (dayHistory == null){
+        CheckWaringHistory dayHistory = checkWaringHistoryMapper.selectOne(new QueryWrapper<CheckWaringHistory>().eq("day", day).eq("displayName", name));
+        if (dayHistory == null) {
             //插入数据
             inserData(name, analyRecord, waringRecord, day);
-        }else {
+        } else {
             updateData(name, analyRecord, waringRecord, dayHistory);
         }
     }
+
 
     private void updateData(String name, JSONObject analyRecord, JSONObject waringRecord, CheckWaringHistory dayHistory) {
         String analyRecords = dayHistory.getAnalyRecord();
@@ -204,7 +216,7 @@ public class CheckWaringHistoryService {
     private JSONObject trantAnalyData(JSONObject jsonObject){
         JSONObject result = new JSONObject();
         Integer criticalInt = 100;
-        Integer clearlInt = 100;
+        //Integer clearlInt = 100;
         Integer warningInt = 100;
         if (DataUtil.jsonNotEmpty(jsonObject)){
             Integer totalRecords = jsonObject.getInteger("totalRecords");
@@ -212,11 +224,11 @@ public class CheckWaringHistoryService {
             Integer clear = jsonObject.getInteger("clear");
             Integer warning = jsonObject.getInteger("warning");
             criticalInt = 100*(totalRecords - critical)/totalRecords;
-            clearlInt = 100*(totalRecords - clear)/totalRecords;
+            //clearlInt = 100*(totalRecords - clear)/totalRecords;
             warningInt = 100*(totalRecords - warning)/totalRecords;
         }
         result.put("critical",criticalInt);
-        result.put("clear",clearlInt);
+        //result.put("clear",clearlInt);
         result.put("warning",warningInt);
         return result;
     }
@@ -226,29 +238,31 @@ public class CheckWaringHistoryService {
      */
     public void checkByDay(String day){
         if (StringUtils.isEmpty(day))  day = DateUtil.date2String(DateUtil.getYesterday(), DateUtil.DEFAULT);
-        CheckWaringHistory dayHistory = checkWaringHistoryMapper.selectOne(new QueryWrapper<CheckWaringHistory>().eq("day", day));
-        if (dayHistory == null) return;
-        String analyRecord = dayHistory.getAnalyRecord();
-        if (StringUtils.isEmpty(analyRecord)) return;
-        JSONArray analyList = JSONArray.parseArray(analyRecord);
-        JSONObject server = new JSONObject();
-        JSONObject sql = new JSONObject();
-        JSONObject middleware = new JSONObject();
-        for (Object o : analyList) {
-            JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(o));
-            sumWaring(server, jsonObject,"server");
-            sumWaring(sql, jsonObject,"sql");
-            sumWaring(middleware, jsonObject,"middleware");
+        List<CheckWaringHistory> dayHistoryList = checkWaringHistoryMapper.selectList(new QueryWrapper<CheckWaringHistory>().eq("day", day));
+        for (CheckWaringHistory dayHistory : dayHistoryList) {
+            if (dayHistory == null) return;
+            String analyRecord = dayHistory.getAnalyRecord();
+            if (StringUtils.isEmpty(analyRecord)) return;
+            JSONArray analyList = JSONArray.parseArray(analyRecord);
+            JSONObject server = new JSONObject();
+            JSONObject sql = new JSONObject();
+            JSONObject middleware = new JSONObject();
+            for (Object o : analyList) {
+                JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(o));
+                sumWaring(server, jsonObject,"server");
+                sumWaring(sql, jsonObject,"sql");
+                sumWaring(middleware, jsonObject,"middleware");
+            }
+            int size = analyList.size();
+            averageWaring(server,size);
+            averageWaring(sql,size);
+            averageWaring(middleware,size);
+            JSONObject score = new JSONObject();
+            score.put("server",server);
+            score.put("sql",sql);
+            score.put("middleware",middleware);
+            checkWaringHistoryMapper.update(null,new UpdateWrapper<CheckWaringHistory>().set("score",JSON.toJSONString(score)).eq("id",dayHistory.getId()));
         }
-        int size = analyList.size();
-        averageWaring(server,size);
-        averageWaring(sql,size);
-        averageWaring(middleware,size);
-        JSONObject score = new JSONObject();
-        score.put("server",server);
-        score.put("sql",sql);
-        score.put("middleware",middleware);
-        checkWaringHistoryMapper.update(null,new UpdateWrapper<CheckWaringHistory>().set("score",JSON.toJSONString(score)).eq("id",dayHistory.getId()));
     }
 
     /**
@@ -260,10 +274,10 @@ public class CheckWaringHistoryService {
     private void sumWaring(JSONObject server, JSONObject jsonObject,String name) {
         JSONObject serverObj = jsonObject.getJSONObject(name);
         Integer critical = serverObj.getIntValue("critical");
-        Integer clear = serverObj.getIntValue("clear");
+        //Integer clear = serverObj.getIntValue("clear");
         Integer warning = serverObj.getIntValue("warning");
         server.put("critical",critical + server.getIntValue("critical"));
-        server.put("clear",clear + server.getIntValue("clear"));
+        //server.put("clear",clear + server.getIntValue("clear"));
         server.put("warning",warning + server.getIntValue("warning"));
     }
 
@@ -274,11 +288,32 @@ public class CheckWaringHistoryService {
      */
     private void averageWaring(JSONObject server,Integer size) {
         Integer critical = server.getIntValue("critical");
-        Integer clear = server.getIntValue("clear");
+        //Integer clear = server.getIntValue("clear");
         Integer warning = server.getIntValue("warning");
         server.put("critical",critical/size);
-        server.put("clear",clear/size);
+        //server.put("clear",clear/size);
         server.put("warning",warning/size);
+    }
+
+    /**
+     * 获取服务器性能考评分数
+     * @param type （1:天 2：上周 3：上月）
+     */
+    public Integer checkAvailabilt(List<String> serverNameList,Integer type){
+        int total = 0;
+        int score = 0;
+        for (String  deviceName: serverNameList) {
+            JSONObject jsonObject = checkServerService.checkAvailabilt(deviceName);
+            JSONObject availProps = jsonObject.getJSONObject("availProps");
+            if (availProps == null || availProps.isEmpty()) continue;
+            total += 1;
+            int result = 0;
+            if (type == 0) result = availProps.getIntValue("昨天");
+            else if (type == 0) result = availProps.getIntValue("最近一周");
+            else if (type == 0) result = availProps.getIntValue("上月");
+            score += result;
+        }
+        return score/total;
     }
 
 

@@ -54,4 +54,15 @@ public class CheckServerService {
     public ResultJson<List<JSONObject>> serverList(){
         return HttpWebResult.getMonoSucResult(getServerList());
     }
+
+    /**
+     * 性能考评结果
+     * @param deviceName
+     * @return
+     */
+    public JSONObject checkAvailabilt(String deviceName){
+        String serverUrl = url+"/api/json/device/getAvailabiltyGraphData?apiKey="+apikey+"&deviceName="+deviceName+"&period=YESTERDAY";
+        log.info("checkServerAvailabiltUrl:{}",serverUrl);
+        return restTemplate.getForObject(serverUrl, JSONObject.class);
+    }
 }

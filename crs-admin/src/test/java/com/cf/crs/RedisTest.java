@@ -138,7 +138,7 @@ public class RedisTest {
     }
     @Test
     public void checkByDay(){
-        checkWaringHistoryService.checkByDay("20200102");
+        checkWaringHistoryService.checkByDay("20200108");
     }
 
 }
