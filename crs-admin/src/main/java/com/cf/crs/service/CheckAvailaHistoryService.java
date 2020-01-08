@@ -2,7 +2,14 @@ package com.cf.crs.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cf.crs.mapper.CheckWaringHistoryMapper;
+import com.cf.util.http.HttpWebResult;
+import com.cf.util.utils.DataChange;
+import com.cf.util.utils.DataUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -56,5 +63,28 @@ public class CheckAvailaHistoryService {
         return score/total;
     }
 
+    public void syn(){
+        checkWaringHistoryService.updateWaringHistory((name,serverNameList,sqlNameList,middlewareNameList)->{
+            int score = 0;
+            int total = 0;
+            for (String sqlName: sqlNameList) {
+                String html = checkSqlService.getMonitorData(sqlName);
+                if (StringUtils.isEmpty(html)) return;
+                log.info("getCheckSqlResult:{}",html);
+                Document doc = Jsoup.parse(html);
+                Elements result = doc.select("response");
+                if (result == null) return;
+                if (!result.hasAttr("response-code") || !"4000".equalsIgnoreCase(result.attr("response-code"))) HttpWebResult.getMonoError("请求失败");
+                //请求数据成功
+                Elements rowList = result.select("Monitorinfo");
+                if (rowList == null || rowList.isEmpty()) return;
+                total += 1;
+                Integer resultScore = DataChange.obToInt(rowList.get(0).attr("TODAYUNAVAILPERCENT"));
+                score += (100 - resultScore);
+            }
+
+        });
+
+    }
 
 }

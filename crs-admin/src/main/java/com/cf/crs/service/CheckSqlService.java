@@ -101,4 +101,6 @@ public class CheckSqlService {
         log.info("getCheckSqlList:{}",listUrl);
         return restTemplate.getForObject(listUrl, String.class);
     }
+
+
 }
