@@ -6,7 +6,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * 考评模型
+ * 告警能考评统计记录
  * @author frank
  * 2019/10/16
  **/
