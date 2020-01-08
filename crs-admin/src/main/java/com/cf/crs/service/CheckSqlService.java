@@ -90,4 +90,15 @@ public class CheckSqlService {
     public String getCheckSqlList(Integer type){
         return getCheckSqlList(type==1?sqlType:middlewareType);
     }
+
+    /**
+     * 获取设备列表
+     * @param resourceid 设备id
+     * @return
+     */
+    public String getMonitorData(String resourceid){
+        String listUrl = url+"/AppManager/xml/GetMonitorData?apikey="+apikey+"&resourceid="+resourceid;
+        log.info("getCheckSqlList:{}",listUrl);
+        return restTemplate.getForObject(listUrl, String.class);
+    }
 }
