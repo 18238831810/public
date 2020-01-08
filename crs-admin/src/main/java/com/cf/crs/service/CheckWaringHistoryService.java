@@ -63,7 +63,7 @@ public class CheckWaringHistoryService {
 
 
     /**
-     * 获取考评对象
+     * 获取考评对象信息去统计
      * @param consumer
      */
     private void updateWaringHistory(MyConsumer<String,List<String>,List<String>,List<String>> consumer) {
