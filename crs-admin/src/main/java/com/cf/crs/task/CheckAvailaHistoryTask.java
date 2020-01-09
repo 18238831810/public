@@ -1,7 +1,7 @@
 package com.cf.crs.task;
 
 import com.cf.crs.job.task.ITask;
-import com.cf.crs.service.CheckWaringHistoryService;
+import com.cf.crs.service.CheckAvailaHistoryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,17 +12,17 @@ import org.springframework.stereotype.Component;
  * 2019/10/16
  **/
 @Slf4j
-@Component("checkWaringHistoryTask")
-public class CheckWaringHistoryTask implements ITask{
+@Component("checAvailaHistoryTask")
+public class CheckAvailaHistoryTask implements ITask{
 
     @Autowired
-    CheckWaringHistoryService checkWaringHistoryService;
+    CheckAvailaHistoryService checkAvailaHistoryService;
 
     @Override
     public void run(String params) {
         try {
-            log.info("同步告警计划开始执行");
-            checkWaringHistoryService.synWaringHistory();
+            log.info("同步性能考评数据计划开始执行");
+            checkAvailaHistoryService.synSqlAndMiddlewareScore();
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
