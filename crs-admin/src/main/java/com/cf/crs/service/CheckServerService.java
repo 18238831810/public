@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author frank
@@ -51,8 +52,21 @@ public class CheckServerService {
         return details;
     }
 
-    public ResultJson<List<JSONObject>> serverList(){
-        return HttpWebResult.getMonoSucResult(getServerList());
+    /**
+     * 获取对应告警的的服务器数据
+     * @param waringType
+     * @return
+     */
+    public ResultJson<List<JSONObject>> serverList(Integer waringType){
+        List<JSONObject> serverList = getServerList();
+        if (waringType == null) return HttpWebResult.getMonoSucResult(getServerList());
+        List<JSONObject> list = serverList.stream().filter(jsonObject -> {
+            int severity = jsonObject.getIntValue("severity");
+            if (waringType == 1) return severity == 1;
+            else if (waringType == 3) return severity == 5;
+            else return severity != 1 && severity != 5;
+        }).collect(Collectors.toList());
+        return HttpWebResult.getMonoSucResult(list);
     }
 
     /**

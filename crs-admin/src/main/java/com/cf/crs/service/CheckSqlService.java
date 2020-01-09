@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -45,12 +46,22 @@ public class CheckSqlService {
 
     /**
      * 获取设备列表
-     * @param type 1:数据库 2:中间件
+     * @param type 1:数据库 2:中间件 3:服务器
      * @return
      */
-    public ResultJson<List<JSONObject>> getCheckList(Integer type){
+    public ResultJson<List<JSONObject>> getCheckList(Integer type,Integer waringType){
         if (type == null) return HttpWebResult.getMonoError("请选择查询设备类型");
-        if (type == 3) return checkServerService.serverList();
+        if (type == 3) return checkServerService.serverList(waringType);
+        return sqlList(type, waringType);
+    }
+
+    /**
+     * 获取对应告警的的数据库和中间件数据
+     * @param type
+     * @param waringType
+     * @return
+     */
+    private ResultJson<List<JSONObject>> sqlList(Integer type, Integer waringType) {
         List<JSONObject> list = Lists.newArrayList();
         String html = getCheckSqlList(type);
         if (StringUtils.isEmpty(html)) return HttpWebResult.getMonoError("接口返回为null");
@@ -66,9 +77,17 @@ public class CheckSqlService {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("name",row.attr("RESOURCEID"));
             jsonObject.put("displayName",row.attr("DISPLAYNAME"));
+            jsonObject.put("status",row.attr("HEALTHSTATUS"));
             list.add(jsonObject);
         });
-        return HttpWebResult.getMonoSucResult(list);
+        if (waringType == null)  return HttpWebResult.getMonoSucResult(list);
+        List<JSONObject> resultList = list.stream().filter(jsonObject -> {
+            String status = jsonObject.getString("status");
+            if (waringType == 1) return "critical".equalsIgnoreCase(status);
+            else if (waringType == 2) return "warning".equalsIgnoreCase(status);
+            else return "clear".equalsIgnoreCase(status);
+        }).collect(Collectors.toList());
+        return HttpWebResult.getMonoSucResult(resultList);
     }
 
     /**
