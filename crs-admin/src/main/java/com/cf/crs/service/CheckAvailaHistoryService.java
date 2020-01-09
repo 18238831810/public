@@ -122,9 +122,9 @@ public class CheckAvailaHistoryService {
             if (availProps == null || availProps.isEmpty()) continue;
             total += 1;
             int result = 0;
-            if (type == 0) result = availProps.getIntValue("今天");
-            else if (type == 0) result = availProps.getIntValue("最近一周");
-            else if (type == 0) result = availProps.getIntValue("上月");
+            if (type == 1) result = availProps.getIntValue("今天");
+            else if (type == 2) result = availProps.getIntValue("最近一周");
+            else if (type == 3) result = availProps.getIntValue("上月");
             score += result;
         }
         if (total <= 0) return null;
