@@ -48,6 +48,9 @@ public class RedisTest {
     @Autowired
     CheckWaringHistoryService checkWaringHistoryService;
 
+    @Autowired
+    CheckAvailaHistoryService checkAvailaHistoryService;
+
     @Test
     public void contextLoads() {
         SysUserEntity user = new SysUserEntity();
@@ -139,6 +142,11 @@ public class RedisTest {
     @Test
     public void checkByDay(){
         checkWaringHistoryService.checkByDay("20200108");
+    }
+
+    @Test
+    public void synSqlAndMiddlewareScore(){
+        checkAvailaHistoryService.synSqlAndMiddlewareScore();
     }
 
 }

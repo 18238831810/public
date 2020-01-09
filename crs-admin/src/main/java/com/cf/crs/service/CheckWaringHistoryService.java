@@ -13,6 +13,7 @@ import com.cf.util.utils.DataUtil;
 import com.cf.util.utils.DateUtil;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -82,6 +83,7 @@ public class CheckWaringHistoryService {
             List<String> sqlNameList = Lists.newArrayList();
             List<String> middlewareNameList = Lists.newArrayList();
             getCheckDeviceName(informationList, serverNameList, sqlNameList, middlewareNameList);
+            if (CollectionUtils.isEmpty(serverNameList) && CollectionUtils.isEmpty(sqlNameList) && CollectionUtils.isEmpty(middlewareNameList)) return;
             //统计服务器数据
             consumer.accept(name,serverNameList,sqlNameList,middlewareNameList);
             //updateWaringHistoryByDeviceName(servers, sqlHtml, middlewareHtml, name, serverNameList, sqlNameList, middlewareNameList);
