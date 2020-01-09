@@ -94,7 +94,7 @@ public class RedisTest {
 
     @Test
     public void setCheckSqlService() {
-        ResultJson<List<JSONObject>> checkSqlList = checkSqlService.getCheckList(2);
+        ResultJson<List<JSONObject>> checkSqlList = checkSqlService.getCheckList(2,null);
         System.out.println(JSONArray.toJSON(checkSqlList.getData()));
     }
 
