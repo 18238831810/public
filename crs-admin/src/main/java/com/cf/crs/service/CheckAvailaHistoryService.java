@@ -82,7 +82,7 @@ public class CheckAvailaHistoryService {
                 Integer resultScore = DataChange.obToInt(rowList.get(0).attr("TODAYUNAVAILPERCENT"));
                 score += (100 - resultScore);
             }
-
+            if (total <= 0) return;
         });
 
     }
