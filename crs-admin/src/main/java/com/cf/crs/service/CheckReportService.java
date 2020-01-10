@@ -92,15 +92,21 @@ public class CheckReportService {
         int avaServerSum = 0;
         int avaSqlSum = 0;
         int avaMiddlewareSum = 0;
-        int warServerSum = 0;
-        int warSqlSum = 0;
-        int warMiddlewareSum = 0;
+        int warServerCriticalSum = 0;
+        int warSqlCriticalSum = 0;
+        int warMiddlewareCriticalSum = 0;
+        int warServerWarningSum = 0;
+        int warSqlWarningSum = 0;
+        int warMiddlewareWarningSum = 0;
         int avaServerCount = 0;
         int avaSqlCount = 0;
         int avaMiddlewareCount = 0;
-        int warServerCount = 0;
-        int warSqlCount = 0;
-        int warMiddlewareCount = 0;
+        int warServerCriticalCount = 0;
+        int warSqlCriticalCount = 0;
+        int warMiddlewareCriticalCount = 0;
+        int warServerWarningCount = 0;
+        int warSqlWarningCount = 0;
+        int warMiddlewareWarningCount = 0;
         for (CheckReport checkReport : list) {
             String reportRecord = checkReport.getReportRecord();
             if(StringUtils.isEmpty(reportRecord)) continue;
@@ -126,25 +132,76 @@ public class CheckReportService {
             }
             JSONObject waring = jsonObject.getJSONObject("waring");
             if (DataUtil.jsonNotEmpty(waring)){
-                Integer sql = waring.getInteger("sql");
-                if (sql != null) {
-                    warSqlSum += sql;
-                    warSqlCount += 1;
+                //sql
+                JSONObject sql = waring.getJSONObject("sql");
+                if (DataUtil.jsonNotEmpty(sql)) {
+                    Integer critical = sql.getInteger("critical");
+                    if (critical != null) {
+                        warSqlCriticalSum += critical;
+                        warSqlCriticalCount += 1;
+                    }
+                    Integer war = sql.getInteger("waring");
+                    if (war != null) {
+                        warSqlWarningSum += critical;
+                        warSqlWarningCount += 1;
+                    }
                 }
-                Integer middleware = waring.getInteger("middleware");
-                if (middleware != null) {
-                    warMiddlewareSum += sql;
-                    warMiddlewareCount += 1;
+
+                JSONObject server = waring.getJSONObject("server");
+                if (DataUtil.jsonNotEmpty(server)) {
+                    Integer critical = server.getInteger("critical");
+                    if (critical != null) {
+                        warServerCriticalSum += critical;
+                        warServerCriticalCount += 1;
+                    }
+                    Integer war = server.getInteger("waring");
+                    if (war != null) {
+                        warServerWarningSum += critical;
+                        warServerWarningCount += 1;
+                    }
                 }
-                Integer server = waring.getInteger("server");
-                if (server != null) {
-                    warServerSum += server;
-                    warServerCount += 1;
+
+                JSONObject middleware = waring.getJSONObject("middleware");
+                if (DataUtil.jsonNotEmpty(middleware)) {
+                    Integer critical = middleware.getInteger("critical");
+                    if (critical != null) {
+                        warMiddlewareCriticalCount += critical;
+                        warMiddlewareCriticalCount += 1;
+                    }
+                    Integer war = middleware.getInteger("waring");
+                    if (war != null) {
+                        warMiddlewareWarningSum += critical;
+                        warMiddlewareWarningCount += 1;
+                    }
                 }
+
             }
 
         }
-        return getScoreJson(avaServerSum, avaSqlSum, avaMiddlewareSum, warServerSum, warSqlSum, warMiddlewareSum, avaServerCount, avaSqlCount, avaMiddlewareCount, warServerCount, warSqlCount, warMiddlewareCount);
+        JSONObject ava = new JSONObject();
+        if (avaServerCount > 0) ava.put("server",avaServerSum/avaServerCount);
+        if (avaSqlCount > 0) ava.put("sql",avaSqlSum/avaSqlCount);
+        if (avaMiddlewareCount > 0) ava.put("middleware",avaMiddlewareSum/avaMiddlewareCount);
+        JSONObject war = new JSONObject();
+
+        JSONObject server = new JSONObject();
+        if (warServerCriticalCount > 0) server.put("critical",warServerCriticalSum/warServerCriticalCount);
+        if (warServerWarningCount > 0) server.put("waring",warServerWarningSum/warServerWarningCount);
+
+        JSONObject sql = new JSONObject();
+        if (warSqlCriticalCount > 0) sql.put("critical",warSqlCriticalSum/warSqlCriticalCount);
+        if (warSqlWarningCount > 0) sql.put("waring",warSqlWarningSum/warSqlWarningCount);
+
+        JSONObject middleware = new JSONObject();
+        if (warMiddlewareCriticalCount > 0) middleware.put("critical",warMiddlewareCriticalSum/warMiddlewareCriticalCount);
+        if (warMiddlewareWarningCount > 0) middleware.put("waring",warMiddlewareWarningSum/warMiddlewareWarningCount);
+
+
+        JSONObject jsonObject = new JSONObject();
+        if (DataUtil.jsonNotEmpty(ava)) jsonObject.put("availa",ava);
+        if (DataUtil.jsonNotEmpty(war)) jsonObject.put("waring",war);
+        return jsonObject;
+        //return getScoreJson(avaServerSum, avaSqlSum, avaMiddlewareSum, warServerSum, warSqlSum, warMiddlewareSum, avaServerCount, avaSqlCount, avaMiddlewareCount, warServerCount, warSqlCount, warMiddlewareCount);
     }
 
 
