@@ -1,9 +1,11 @@
 package com.cf.crs.service;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cf.crs.entity.CheckAvailaHistory;
+import com.cf.crs.entity.CheckWaringHistory;
 import com.cf.crs.mapper.CheckAvailaHistoryMapper;
 import com.cf.util.http.HttpWebResult;
 import com.cf.util.utils.DataChange;
@@ -129,6 +131,17 @@ public class CheckAvailaHistoryService {
         }
         if (total <= 0) return null;
         return score/total;
+    }
+
+    /**
+     * 考评每天的告警评分
+     */
+    public JSONObject checkByDay(String day,String displayName){
+        if (StringUtils.isEmpty(day))  day = DateUtil.date2String(DateUtil.getYesterday(), DateUtil.DEFAULT);
+        CheckAvailaHistory checkAvailaHistory = checkAvailaHistoryMapper.selectOne(new QueryWrapper<CheckAvailaHistory>().eq("day", day).eq("displayName",displayName));
+        if (checkAvailaHistory == null) return null;
+        return JSON.parseObject(checkAvailaHistory.getScore());
+
     }
 
 }

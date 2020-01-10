@@ -104,6 +104,9 @@ public class RedisTest {
     @Autowired
     ClientLoginService clientLoginService;
 
+    @Autowired
+    CheckReportService checkReportService;
+
     @Test
     public void getServerList() {
         ResultJson json = waringService.analyWaring();
@@ -139,14 +142,20 @@ public class RedisTest {
     public void synWaringHistory(){
         checkWaringHistoryService.synWaringHistory();
     }
+
     @Test
     public void checkByDay(){
-        checkWaringHistoryService.checkByDay("20200108");
+        checkReportService.createByDay(null);
     }
 
     @Test
     public void synSqlAndMiddlewareScore(){
         checkAvailaHistoryService.synSqlAndMiddlewareScore();
+    }
+
+    @Test
+    public void createByWeek(){
+        checkReportService.createByWeek("20200106",2);
     }
 
 }

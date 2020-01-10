@@ -12,6 +12,8 @@ import com.cf.crs.mapper.CheckWaringHistoryMapper;
 import com.cf.util.utils.DataUtil;
 import com.cf.util.utils.DateUtil;
 import com.google.common.collect.Lists;
+import com.sun.org.apache.regexp.internal.RE;
+import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -238,33 +240,33 @@ public class CheckWaringHistoryService {
     /**
      * 考评每天的告警评分
      */
-    public void checkByDay(String day){
+    public JSONObject checkByDay(String day,String displayName){
         if (StringUtils.isEmpty(day))  day = DateUtil.date2String(DateUtil.getYesterday(), DateUtil.DEFAULT);
-        List<CheckWaringHistory> dayHistoryList = checkWaringHistoryMapper.selectList(new QueryWrapper<CheckWaringHistory>().eq("day", day));
-        for (CheckWaringHistory dayHistory : dayHistoryList) {
-            if (dayHistory == null) return;
-            String analyRecord = dayHistory.getAnalyRecord();
-            if (StringUtils.isEmpty(analyRecord)) return;
-            JSONArray analyList = JSONArray.parseArray(analyRecord);
-            JSONObject server = new JSONObject();
-            JSONObject sql = new JSONObject();
-            JSONObject middleware = new JSONObject();
-            for (Object o : analyList) {
-                JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(o));
-                sumWaring(server, jsonObject,"server");
-                sumWaring(sql, jsonObject,"sql");
-                sumWaring(middleware, jsonObject,"middleware");
-            }
-            int size = analyList.size();
-            averageWaring(server,size);
-            averageWaring(sql,size);
-            averageWaring(middleware,size);
-            JSONObject score = new JSONObject();
-            score.put("server",server);
-            score.put("sql",sql);
-            score.put("middleware",middleware);
-            checkWaringHistoryMapper.update(null,new UpdateWrapper<CheckWaringHistory>().set("score",JSON.toJSONString(score)).eq("id",dayHistory.getId()));
+        CheckWaringHistory checkWaringHistory = checkWaringHistoryMapper.selectOne(new QueryWrapper<CheckWaringHistory>().eq("day", day).eq("displayName",displayName));
+        if (checkWaringHistory == null) return null;
+        String analyRecord = checkWaringHistory.getAnalyRecord();
+        if (StringUtils.isEmpty(analyRecord)) return null;
+        JSONArray analyList = JSONArray.parseArray(analyRecord);
+        JSONObject server = new JSONObject();
+        JSONObject sql = new JSONObject();
+        JSONObject middleware = new JSONObject();
+        Integer serverCount = 0;
+        Integer sqlCount = 0;
+        Integer middlewareCount = 0;
+        for (Object o : analyList) {
+            JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(o));
+            if (sumWaring(server, jsonObject,"server"))  serverCount += 1;
+            if (sumWaring(sql, jsonObject,"sql")) sqlCount += 1;
+            if (sumWaring(middleware, jsonObject,"middleware")) middlewareCount += 1;
         }
+        if (serverCount > 0) averageWaring(server,serverCount);
+        if (sqlCount > 0) averageWaring(sql,sqlCount);
+        if (middlewareCount > 0) averageWaring(middleware,middlewareCount);
+        JSONObject score = new JSONObject();
+        if (!server.isEmpty()) score.put("server",server);
+        if (!sql.isEmpty()) score.put("sql",sql);
+        if (!middleware.isEmpty()) score.put("middleware",middleware);
+        return score;
     }
 
     /**
@@ -273,14 +275,16 @@ public class CheckWaringHistoryService {
      * @param jsonObject
      * @param name
      */
-    private void sumWaring(JSONObject server, JSONObject jsonObject,String name) {
+    private boolean sumWaring(JSONObject server, JSONObject jsonObject,String name) {
         JSONObject serverObj = jsonObject.getJSONObject(name);
+        if (serverObj == null || serverObj.isEmpty()) return false;
         Integer critical = serverObj.getIntValue("critical");
         //Integer clear = serverObj.getIntValue("clear");
         Integer warning = serverObj.getIntValue("warning");
         server.put("critical",critical + server.getIntValue("critical"));
         //server.put("clear",clear + server.getIntValue("clear"));
         server.put("warning",warning + server.getIntValue("warning"));
+        return true;
     }
 
     /**
