@@ -96,9 +96,9 @@ public class CheckWaringHistoryService {
         JSONObject waringRecord = new JSONObject();
         analyRecord.put("time",now);
         waringRecord.put("time",now);
-        packRecord("server", analyRecord, waringRecord, (key, list) -> waringService.scoreServe(list, servers, serverNameList));
-        packRecord("sql", analyRecord, waringRecord, (key, list) -> waringService.scoreSql(list, sqlHtml, sqlNameList));
-        packRecord("middleware", analyRecord, waringRecord, (key, list) -> waringService.scoreSql(list, middlewareHtml, middlewareNameList));
+        if (CollectionUtils.isNotEmpty(serverNameList)) packRecord("server", analyRecord, waringRecord, (key, list) -> waringService.scoreServe(list, servers, serverNameList));
+        if (CollectionUtils.isNotEmpty(sqlNameList)) packRecord("sql", analyRecord, waringRecord, (key, list) -> waringService.scoreSql(list, sqlHtml, sqlNameList));
+        if (CollectionUtils.isNotEmpty(middlewareNameList)) packRecord("middleware", analyRecord, waringRecord, (key, list) -> waringService.scoreSql(list, middlewareHtml, middlewareNameList));
         String day = DateUtil.date2String(new Date(), DateUtil.DEFAULT);
         CheckWaringHistory dayHistory = checkWaringHistoryMapper.selectOne(new QueryWrapper<CheckWaringHistory>().eq("day", day).eq("displayName", name));
         if (dayHistory == null) {
