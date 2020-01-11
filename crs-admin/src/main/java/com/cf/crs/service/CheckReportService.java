@@ -89,29 +89,14 @@ public class CheckReportService {
      * @return
      */
     private JSONObject getScoreJson(List<CheckReport> list) {
-        int avaServerSum = 0;
-        int avaSqlSum = 0;
-        int avaMiddlewareSum = 0;
-        int warServerCriticalSum = 0;
-        int warSqlCriticalSum = 0;
-        int warMiddlewareCriticalSum = 0;
-        int warServerWarningSum = 0;
-        int warSqlWarningSum = 0;
-        int warMiddlewareWarningSum = 0;
-        int avaServerCount = 0;
-        int avaSqlCount = 0;
-        int avaMiddlewareCount = 0;
-        int warServerCriticalCount = 0;
-        int warSqlCriticalCount = 0;
-        int warMiddlewareCriticalCount = 0;
-        int warServerWarningCount = 0;
-        int warSqlWarningCount = 0;
-        int warMiddlewareWarningCount = 0;
+        Integer avaServerSum = 0,avaSqlSum = 0,avaMiddlewareSum = 0,warServerCriticalSum = 0,warSqlCriticalSum = 0,warMiddlewareCriticalSum = 0,warServerWarningSum = 0,warSqlWarningSum = 0,warSqlWarningCount = 0;
+        Integer warMiddlewareWarningSum = 0,avaServerCount = 0,avaSqlCount = 0,avaMiddlewareCount = 0,warServerCriticalCount = 0,warSqlCriticalCount = 0,warMiddlewareCriticalCount = 0,warServerWarningCount = 0,warMiddlewareWarningCount = 0;
         for (CheckReport checkReport : list) {
             String reportRecord = checkReport.getReportRecord();
             if(StringUtils.isEmpty(reportRecord)) continue;
             JSONObject jsonObject = JSON.parseObject(reportRecord);
             if (!DataUtil.jsonNotEmpty(jsonObject)) continue;
+
             JSONObject availa = jsonObject.getJSONObject("availa");
             if (DataUtil.jsonNotEmpty(availa)){
                 Integer sql = availa.getInteger("sql");
@@ -130,6 +115,7 @@ public class CheckReportService {
                     avaServerCount += 1;
                 }
             }
+
             JSONObject waring = jsonObject.getJSONObject("waring");
             if (DataUtil.jsonNotEmpty(waring)){
                 //sql
@@ -178,50 +164,32 @@ public class CheckReportService {
             }
 
         }
+        return getResultJson(avaServerSum, avaSqlSum, avaMiddlewareSum, warServerCriticalSum, warSqlCriticalSum, warMiddlewareCriticalSum, warServerWarningSum, warSqlWarningSum, warMiddlewareWarningSum, avaServerCount, avaSqlCount, avaMiddlewareCount, warServerCriticalCount, warSqlCriticalCount, warMiddlewareCriticalCount, warServerWarningCount, warSqlWarningCount, warMiddlewareWarningCount);
+    }
+
+    private JSONObject getResultJson(Integer avaServerSum, Integer avaSqlSum, Integer avaMiddlewareSum, Integer warServerCriticalSum, Integer warSqlCriticalSum, Integer warMiddlewareCriticalSum, Integer warServerWarningSum, Integer warSqlWarningSum, Integer warMiddlewareWarningSum, Integer avaServerCount, Integer avaSqlCount, Integer avaMiddlewareCount, Integer warServerCriticalCount, Integer warSqlCriticalCount, Integer warMiddlewareCriticalCount, Integer warServerWarningCount, Integer warSqlWarningCount, Integer warMiddlewareWarningCount) {
         JSONObject ava = new JSONObject();
         if (avaServerCount > 0) ava.put("server",avaServerSum/avaServerCount);
         if (avaSqlCount > 0) ava.put("sql",avaSqlSum/avaSqlCount);
         if (avaMiddlewareCount > 0) ava.put("middleware",avaMiddlewareSum/avaMiddlewareCount);
         JSONObject war = new JSONObject();
+        JSONObject server = getWaringDeviceJson(warServerCriticalSum, warServerWarningSum, warServerCriticalCount, warServerWarningCount);
+        JSONObject sql = getWaringDeviceJson(warSqlCriticalSum, warSqlWarningSum, warSqlCriticalCount, warSqlWarningCount);
+        JSONObject middleware = getWaringDeviceJson(warMiddlewareCriticalSum, warMiddlewareWarningSum, warMiddlewareCriticalCount, warMiddlewareWarningCount);
+        war.put("server",server);
+        war.put("sql",sql);
+        war.put("middleware",middleware);
+        JSONObject jsonObject = new JSONObject();
+        if (DataUtil.jsonNotEmpty(ava)) jsonObject.put("availa",ava);
+        if (DataUtil.jsonNotEmpty(war)) jsonObject.put("waring",war);
+        return jsonObject;
+    }
 
+    private JSONObject getWaringDeviceJson(int warServerCriticalSum, int warServerWarningSum, int warServerCriticalCount, int warServerWarningCount) {
         JSONObject server = new JSONObject();
         if (warServerCriticalCount > 0) server.put("critical",warServerCriticalSum/warServerCriticalCount);
         if (warServerWarningCount > 0) server.put("waring",warServerWarningSum/warServerWarningCount);
-
-        JSONObject sql = new JSONObject();
-        if (warSqlCriticalCount > 0) sql.put("critical",warSqlCriticalSum/warSqlCriticalCount);
-        if (warSqlWarningCount > 0) sql.put("waring",warSqlWarningSum/warSqlWarningCount);
-
-        JSONObject middleware = new JSONObject();
-        if (warMiddlewareCriticalCount > 0) middleware.put("critical",warMiddlewareCriticalSum/warMiddlewareCriticalCount);
-        if (warMiddlewareWarningCount > 0) middleware.put("waring",warMiddlewareWarningSum/warMiddlewareWarningCount);
-
-
-        JSONObject jsonObject = new JSONObject();
-        if (DataUtil.jsonNotEmpty(ava)) jsonObject.put("availa",ava);
-        if (DataUtil.jsonNotEmpty(war)) jsonObject.put("waring",war);
-        return jsonObject;
-        //return getScoreJson(avaServerSum, avaSqlSum, avaMiddlewareSum, warServerSum, warSqlSum, warMiddlewareSum, avaServerCount, avaSqlCount, avaMiddlewareCount, warServerCount, warSqlCount, warMiddlewareCount);
-    }
-
-
-    /**
-     * 统计评分（周，月）
-     * @return
-     */
-    private JSONObject getScoreJson(int avaServerSum, int avaSqlSum, int avaMiddlewareSum, int warServerSum, int warSqlSum, int warMiddlewareSum, int avaServerCount, int avaSqlCount, int avaMiddlewareCount, int warServerCount, int warSqlCount, int warMiddlewareCount) {
-        JSONObject ava = new JSONObject();
-        if (avaServerCount > 0) ava.put("server",avaServerSum/avaServerCount);
-        if (avaSqlCount > 0) ava.put("sql",avaSqlSum/avaSqlCount);
-        if (avaMiddlewareCount > 0) ava.put("middleware",avaMiddlewareSum/avaMiddlewareCount);
-        JSONObject war = new JSONObject();
-        if (warServerCount > 0) war.put("server",warServerSum/warServerCount);
-        if (warSqlCount > 0) war.put("sql",warSqlSum/warSqlCount);
-        if (warMiddlewareCount > 0) war.put("middleware",warMiddlewareSum/warMiddlewareCount);
-        JSONObject jsonObject = new JSONObject();
-        if (DataUtil.jsonNotEmpty(ava)) jsonObject.put("availa",ava);
-        if (DataUtil.jsonNotEmpty(war)) jsonObject.put("waring",war);
-        return jsonObject;
+        return server;
     }
 
 
