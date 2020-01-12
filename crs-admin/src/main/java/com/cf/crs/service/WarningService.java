@@ -26,7 +26,7 @@ import java.util.List;
  **/
 @Slf4j
 @Service
-public class WaringService {
+public class WarningService {
 
     @Autowired
     RestTemplate restTemplate;

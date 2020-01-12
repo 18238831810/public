@@ -1,7 +1,7 @@
 package com.cf.crs.task;
 
 import com.cf.crs.job.task.ITask;
-import com.cf.crs.service.CheckWaringHistoryService;
+import com.cf.crs.service.CheckWarningHistoryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -16,13 +16,13 @@ import org.springframework.stereotype.Component;
 public class CheckWaringHistoryTask implements ITask{
 
     @Autowired
-    CheckWaringHistoryService checkWaringHistoryService;
+    CheckWarningHistoryService checkWarningHistoryService;
 
     @Override
     public void run(String params) {
         try {
             log.info("同步告警计划开始执行");
-            checkWaringHistoryService.synWaringHistory();
+            checkWarningHistoryService.synWaringHistory();
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

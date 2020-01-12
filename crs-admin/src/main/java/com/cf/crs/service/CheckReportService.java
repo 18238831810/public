@@ -7,17 +7,15 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.cf.crs.entity.CheckReport;
 import com.cf.crs.mapper.CheckAvailaHistoryMapper;
 import com.cf.crs.mapper.CheckReportMapper;
-import com.cf.crs.mapper.CheckWaringHistoryMapper;
+import com.cf.crs.mapper.CheckWarningHistoryMapper;
 import com.cf.util.utils.DataUtil;
 import com.cf.util.utils.DateUtil;
-import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -35,10 +33,10 @@ public class CheckReportService {
     CheckAvailaHistoryMapper checkAvailaHistoryMapper;
 
     @Autowired
-    CheckWaringHistoryMapper checkWaringHistoryMapper;
+    CheckWarningHistoryMapper checkWarningHistoryMapper;
 
     @Autowired
-    CheckWaringHistoryService checkWaringHistoryService;
+    CheckWarningHistoryService checkWarningHistoryService;
 
     @Autowired
     CheckAvailaHistoryService checkAvailaHistoryService;
@@ -47,17 +45,17 @@ public class CheckReportService {
      * 生成日报表
      */
    public void createByDay(String day){
-       checkWaringHistoryService.updateWaringHistory((name,serverNameList,sqlNameList,middlewareNameList)->{
+       checkWarningHistoryService.updateWaringHistory((name, serverNameList, sqlNameList, middlewareNameList)->{
            if (CollectionUtils.isEmpty(serverNameList) && CollectionUtils.isEmpty(sqlNameList) && CollectionUtils.isEmpty(middlewareNameList)) return;
            String time = day;
            if (StringUtils.isEmpty(time))  time = DateUtil.date2String(DateUtil.getYesterday(), DateUtil.DEFAULT);
            //获取日报警评分
-           JSONObject waringJson = checkWaringHistoryService.checkByDay(time, name);
+           JSONObject waringJson = checkWarningHistoryService.checkByDay(time, name);
            //获取可用性评分
            JSONObject avaJson = checkAvailaHistoryService.checkByDay(time, name);
            if(!DataUtil.jsonNotEmpty(waringJson) && !DataUtil.jsonNotEmpty(avaJson)) return;
            JSONObject jsonObject = new JSONObject();
-           if (DataUtil.jsonNotEmpty(waringJson)) jsonObject.put("waring",waringJson);
+           if (DataUtil.jsonNotEmpty(waringJson)) jsonObject.put("warning",waringJson);
            if (DataUtil.jsonNotEmpty(avaJson)) jsonObject.put("availa",avaJson);
 
            insertOrUpdateReport(name, jsonObject, time,1);
@@ -71,7 +69,7 @@ public class CheckReportService {
      * @param type  2:周 3:月
      */
     public void createByWeek(String week,Integer type){
-        checkWaringHistoryService.updateWaringHistory((name,serverNameList,sqlNameList,middlewareNameList)->{
+        checkWarningHistoryService.updateWaringHistory((name, serverNameList, sqlNameList, middlewareNameList)->{
             String time = week;
             if (StringUtils.isEmpty(time))  time = DateUtil.date2String(DateUtil.getYesterday(), DateUtil.DEFAULT);
             //查询所有day统计取平均值
@@ -106,7 +104,7 @@ public class CheckReportService {
                 }
                 Integer middleware = availa.getInteger("middleware");
                 if (middleware != null) {
-                    avaMiddlewareSum += sql;
+                    avaMiddlewareSum += middleware;
                     avaMiddlewareCount += 1;
                 }
                 Integer server = availa.getInteger("server");
@@ -116,7 +114,7 @@ public class CheckReportService {
                 }
             }
 
-            JSONObject waring = jsonObject.getJSONObject("waring");
+            JSONObject waring = jsonObject.getJSONObject("warning");
             if (DataUtil.jsonNotEmpty(waring)){
                 //sql
                 JSONObject sql = waring.getJSONObject("sql");
@@ -126,9 +124,9 @@ public class CheckReportService {
                         warSqlCriticalSum += critical;
                         warSqlCriticalCount += 1;
                     }
-                    Integer war = sql.getInteger("waring");
+                    Integer war = sql.getInteger("warning");
                     if (war != null) {
-                        warSqlWarningSum += critical;
+                        warSqlWarningSum += war;
                         warSqlWarningCount += 1;
                     }
                 }
@@ -140,9 +138,9 @@ public class CheckReportService {
                         warServerCriticalSum += critical;
                         warServerCriticalCount += 1;
                     }
-                    Integer war = server.getInteger("waring");
+                    Integer war = server.getInteger("warning");
                     if (war != null) {
-                        warServerWarningSum += critical;
+                        warServerWarningSum += war;
                         warServerWarningCount += 1;
                     }
                 }
@@ -154,9 +152,9 @@ public class CheckReportService {
                         warMiddlewareCriticalCount += critical;
                         warMiddlewareCriticalCount += 1;
                     }
-                    Integer war = middleware.getInteger("waring");
+                    Integer war = middleware.getInteger("warning");
                     if (war != null) {
-                        warMiddlewareWarningSum += critical;
+                        warMiddlewareWarningSum += war;
                         warMiddlewareWarningCount += 1;
                     }
                 }
@@ -181,14 +179,14 @@ public class CheckReportService {
         war.put("middleware",middleware);
         JSONObject jsonObject = new JSONObject();
         if (DataUtil.jsonNotEmpty(ava)) jsonObject.put("availa",ava);
-        if (DataUtil.jsonNotEmpty(war)) jsonObject.put("waring",war);
+        if (DataUtil.jsonNotEmpty(war)) jsonObject.put("warning",war);
         return jsonObject;
     }
 
     private JSONObject getWaringDeviceJson(int warServerCriticalSum, int warServerWarningSum, int warServerCriticalCount, int warServerWarningCount) {
         JSONObject server = new JSONObject();
         if (warServerCriticalCount > 0) server.put("critical",warServerCriticalSum/warServerCriticalCount);
-        if (warServerWarningCount > 0) server.put("waring",warServerWarningSum/warServerWarningCount);
+        if (warServerWarningCount > 0) server.put("warning",warServerWarningSum/warServerWarningCount);
         return server;
     }
 

@@ -1,10 +1,7 @@
 package com.cf.crs.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.cf.crs.mapper.CheckWaringHistoryMapper;
 import lombok.Data;
-
-import java.io.Serializable;
 
 /**
  * 性能考评统计记录
@@ -13,7 +10,7 @@ import java.io.Serializable;
  **/
 @Data
 @TableName("city_availa_history")
-public class CheckAvailaHistory extends CheckWaringHistory{
+public class CheckAvailaHistory extends CheckWarningHistory {
 
 
 

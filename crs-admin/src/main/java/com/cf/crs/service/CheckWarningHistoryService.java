@@ -4,16 +4,13 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.cf.crs.entity.CheckObject;
-import com.cf.crs.entity.CheckWaringHistory;
+import com.cf.crs.entity.CheckWarningHistory;
 import com.cf.crs.function.MyConsumer;
-import com.cf.crs.mapper.CheckWaringHistoryMapper;
+import com.cf.crs.mapper.CheckWarningHistoryMapper;
 import com.cf.util.utils.DataUtil;
 import com.cf.util.utils.DateUtil;
 import com.google.common.collect.Lists;
-import com.sun.org.apache.regexp.internal.RE;
-import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -32,10 +29,10 @@ import java.util.function.BiFunction;
  **/
 @Slf4j
 @Service
-public class CheckWaringHistoryService {
+public class CheckWarningHistoryService {
 
     @Autowired
-    WaringService waringService;
+    WarningService warningService;
 
     @Autowired
     CheckServerService checkServerService;
@@ -47,7 +44,7 @@ public class CheckWaringHistoryService {
     CheckObjectService checkObjectService;
 
     @Autowired
-    CheckWaringHistoryMapper checkWaringHistoryMapper;
+    CheckWarningHistoryMapper checkWarningHistoryMapper;
 
     /**
      * 统计告警数据
@@ -98,11 +95,11 @@ public class CheckWaringHistoryService {
         JSONObject waringRecord = new JSONObject();
         analyRecord.put("time",now);
         waringRecord.put("time",now);
-        if (CollectionUtils.isNotEmpty(serverNameList)) packRecord("server", analyRecord, waringRecord, (key, list) -> waringService.scoreServe(list, servers, serverNameList));
-        if (CollectionUtils.isNotEmpty(sqlNameList)) packRecord("sql", analyRecord, waringRecord, (key, list) -> waringService.scoreSql(list, sqlHtml, sqlNameList));
-        if (CollectionUtils.isNotEmpty(middlewareNameList)) packRecord("middleware", analyRecord, waringRecord, (key, list) -> waringService.scoreSql(list, middlewareHtml, middlewareNameList));
+        if (CollectionUtils.isNotEmpty(serverNameList)) packRecord("server", analyRecord, waringRecord, (key, list) -> warningService.scoreServe(list, servers, serverNameList));
+        if (CollectionUtils.isNotEmpty(sqlNameList)) packRecord("sql", analyRecord, waringRecord, (key, list) -> warningService.scoreSql(list, sqlHtml, sqlNameList));
+        if (CollectionUtils.isNotEmpty(middlewareNameList)) packRecord("middleware", analyRecord, waringRecord, (key, list) -> warningService.scoreSql(list, middlewareHtml, middlewareNameList));
         String day = DateUtil.date2String(new Date(), DateUtil.DEFAULT);
-        CheckWaringHistory dayHistory = checkWaringHistoryMapper.selectOne(new QueryWrapper<CheckWaringHistory>().eq("day", day).eq("displayName", name));
+        CheckWarningHistory dayHistory = checkWarningHistoryMapper.selectOne(new QueryWrapper<CheckWarningHistory>().eq("day", day).eq("displayName", name));
         if (dayHistory == null) {
             //插入数据
             inserData(name, analyRecord, waringRecord, day);
@@ -112,36 +109,36 @@ public class CheckWaringHistoryService {
     }
 
 
-    private void updateData(String name, JSONObject analyRecord, JSONObject waringRecord, CheckWaringHistory dayHistory) {
+    private void updateData(String name, JSONObject analyRecord, JSONObject waringRecord, CheckWarningHistory dayHistory) {
         String analyRecords = dayHistory.getAnalyRecord();
         JSONArray analyList = new JSONArray();
         if (StringUtils.isNotEmpty(analyRecords)) analyList = JSONArray.parseArray(analyRecords);
         analyList.add(analyRecord);
         dayHistory.setAnalyRecord(JSONArray.toJSONString(analyList));
 
-        String waringRecords = dayHistory.getWaringRecord();
+        String waringRecords = dayHistory.getWarningRecord();
         JSONArray waringList = new JSONArray();
         if (StringUtils.isNotEmpty(waringRecords)) waringList = JSONArray.parseArray(waringRecords);
         waringList.add(waringRecord);
-        dayHistory.setWaringRecord(JSONArray.toJSONString(waringList));
+        dayHistory.setWarningRecord(JSONArray.toJSONString(waringList));
         dayHistory.setDisplayName(name);
-        checkWaringHistoryMapper.updateById(dayHistory);
+        checkWarningHistoryMapper.updateById(dayHistory);
     }
 
     private void inserData(String name, JSONObject analyRecord, JSONObject waringRecord, String day) {
-        CheckWaringHistory checkWaringHistory = new CheckWaringHistory();
-        checkWaringHistory.setDay(day);
-        checkWaringHistory.setMonth(day.substring(0,6));
-        checkWaringHistory.setYear(day.substring(0,4));
-        checkWaringHistory.setWeek(DateUtil.getWeekByDate(new Date()));
+        CheckWarningHistory checkWarningHistory = new CheckWarningHistory();
+        checkWarningHistory.setDay(day);
+        checkWarningHistory.setMonth(day.substring(0,6));
+        checkWarningHistory.setYear(day.substring(0,4));
+        checkWarningHistory.setWeek(DateUtil.getWeekByDate(new Date()));
         ArrayList<Object> analyRecords = Lists.newArrayList();
         analyRecords.add(analyRecord);
-        checkWaringHistory.setAnalyRecord(JSONArray.toJSONString(analyRecords));
+        checkWarningHistory.setAnalyRecord(JSONArray.toJSONString(analyRecords));
         ArrayList<Object> waringRecords = Lists.newArrayList();
         waringRecords.add(waringRecord);
-        checkWaringHistory.setWaringRecord(JSONArray.toJSONString(waringRecords));
-        checkWaringHistory.setDisplayName(name);
-        checkWaringHistoryMapper.insert(checkWaringHistory);
+        checkWarningHistory.setWarningRecord(JSONArray.toJSONString(waringRecords));
+        checkWarningHistory.setDisplayName(name);
+        checkWarningHistoryMapper.insert(checkWarningHistory);
     }
 
     /**
@@ -242,9 +239,9 @@ public class CheckWaringHistoryService {
      */
     public JSONObject checkByDay(String day,String displayName){
         if (StringUtils.isEmpty(day))  day = DateUtil.date2String(DateUtil.getYesterday(), DateUtil.DEFAULT);
-        CheckWaringHistory checkWaringHistory = checkWaringHistoryMapper.selectOne(new QueryWrapper<CheckWaringHistory>().eq("day", day).eq("displayName",displayName));
-        if (checkWaringHistory == null) return null;
-        String analyRecord = checkWaringHistory.getAnalyRecord();
+        CheckWarningHistory checkWarningHistory = checkWarningHistoryMapper.selectOne(new QueryWrapper<CheckWarningHistory>().eq("day", day).eq("displayName",displayName));
+        if (checkWarningHistory == null) return null;
+        String analyRecord = checkWarningHistory.getAnalyRecord();
         if (StringUtils.isEmpty(analyRecord)) return null;
         JSONArray analyList = JSONArray.parseArray(analyRecord);
         JSONObject server = new JSONObject();

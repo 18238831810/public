@@ -18,7 +18,7 @@ import org.springframework.web.client.RestTemplate;
  **/
 @Slf4j
 @Service
-public class WaringInfoService {
+public class WarningInfoService {
 
     @Value("${check.server.url}")
     String ServerUrl;

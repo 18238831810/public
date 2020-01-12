@@ -13,7 +13,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cf.AdminApplication;
 import com.cf.crs.common.redis.RedisUtils;
-import com.cf.crs.entity.CheckWaringHistory;
 import com.cf.crs.service.*;
 import com.cf.crs.sys.entity.SysUserEntity;
 import com.cf.util.http.ResultJson;
@@ -46,7 +45,7 @@ public class RedisTest {
     SynUserService synUserService;
 
     @Autowired
-    CheckWaringHistoryService checkWaringHistoryService;
+    CheckWarningHistoryService checkWarningHistoryService;
 
     @Autowired
     CheckAvailaHistoryService checkAvailaHistoryService;
@@ -99,7 +98,7 @@ public class RedisTest {
     }
 
     @Autowired
-    WaringService waringService;
+    WarningService warningService;
 
     @Autowired
     ClientLoginService clientLoginService;
@@ -109,7 +108,7 @@ public class RedisTest {
 
     @Test
     public void getServerList() {
-        ResultJson json = waringService.analyWaring();
+        ResultJson json = warningService.analyWaring();
         System.out.println(json.getData());
     }
     @Test
@@ -134,13 +133,13 @@ public class RedisTest {
     }
     @Test
     public void getOrderJson(){
-        JSONObject orderJson = waringService.getOrderJson();
+        JSONObject orderJson = warningService.getOrderJson();
         System.out.println(JSON.toJSONString(orderJson));
     }
 
     @Test
     public void synWaringHistory(){
-        checkWaringHistoryService.synWaringHistory();
+        checkWarningHistoryService.synWaringHistory();
     }
 
     @Test

@@ -1,8 +1,7 @@
 package com.cf.crs.mapper;
 
 import com.cf.crs.common.dao.BaseDao;
-import com.cf.crs.entity.CheckMode;
-import com.cf.crs.entity.CheckWaringHistory;
+import com.cf.crs.entity.CheckWarningHistory;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -10,5 +9,5 @@ import org.apache.ibatis.annotations.Mapper;
  * 2019/10/16
  **/
 @Mapper
-public interface CheckWaringHistoryMapper extends BaseDao<CheckWaringHistory> {
+public interface CheckWarningHistoryMapper extends BaseDao<CheckWarningHistory> {
 }

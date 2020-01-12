@@ -11,8 +11,8 @@ import java.io.Serializable;
  * 2019/10/16
  **/
 @Data
-@TableName("city_waring_history")
-public class CheckWaringHistory implements Serializable {
+@TableName("city_warning_history")
+public class CheckWarningHistory implements Serializable {
 
     /*`id` int(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
             `day` varchar(20) DEFAULT '0' COMMENT '天（年月日）',
@@ -34,7 +34,7 @@ public class CheckWaringHistory implements Serializable {
 
     private String analyRecord;
 
-    private String waringRecord;
+    private String warningRecord;
 
     private String score;
 

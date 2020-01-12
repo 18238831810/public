@@ -1,11 +1,9 @@
 package com.cf.crs.service;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cf.crs.entity.CheckAvailaHistory;
-import com.cf.crs.entity.CheckWaringHistory;
 import com.cf.crs.mapper.CheckAvailaHistoryMapper;
 import com.cf.util.http.HttpWebResult;
 import com.cf.util.utils.DataChange;
@@ -31,7 +29,7 @@ import java.util.List;
 public class CheckAvailaHistoryService {
 
     @Autowired
-    WaringService waringService;
+    WarningService warningService;
 
     @Autowired
     CheckServerService checkServerService;
@@ -46,11 +44,11 @@ public class CheckAvailaHistoryService {
     CheckAvailaHistoryMapper checkAvailaHistoryMapper;
 
     @Autowired
-    CheckWaringHistoryService checkWaringHistoryService;
+    CheckWarningHistoryService checkWarningHistoryService;
 
 
     public void synSqlAndMiddlewareScore(){
-        checkWaringHistoryService.updateWaringHistory((name,serverNameList,sqlNameList,middlewareNameList)->{
+        checkWarningHistoryService.updateWaringHistory((name, serverNameList, sqlNameList, middlewareNameList)->{
             Integer sqlScore = getAvgScoreForSql(sqlNameList);
             Integer middlewareScore = getAvgScoreForSql(middlewareNameList);
             Integer serverScore = checkAvailabilt(serverNameList, 1);

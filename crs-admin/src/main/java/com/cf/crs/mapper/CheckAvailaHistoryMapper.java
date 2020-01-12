@@ -2,7 +2,6 @@ package com.cf.crs.mapper;
 
 import com.cf.crs.common.dao.BaseDao;
 import com.cf.crs.entity.CheckAvailaHistory;
-import com.cf.crs.entity.CheckWaringHistory;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
