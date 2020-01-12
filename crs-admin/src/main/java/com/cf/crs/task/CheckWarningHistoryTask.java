@@ -12,8 +12,8 @@ import org.springframework.stereotype.Component;
  * 2019/10/16
  **/
 @Slf4j
-@Component("checkWaringHistoryTask")
-public class CheckWaringHistoryTask implements ITask{
+@Component("checkWarningHistoryTask")
+public class CheckWarningHistoryTask implements ITask{
 
     @Autowired
     CheckWarningHistoryService checkWarningHistoryService;
@@ -22,7 +22,7 @@ public class CheckWaringHistoryTask implements ITask{
     public void run(String params) {
         try {
             log.info("同步告警计划开始执行");
-            checkWarningHistoryService.synWaringHistory();
+            checkWarningHistoryService.synWarningHistory();
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

@@ -2,7 +2,7 @@ package com.cf.crs.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
-import io.swagger.models.auth.In;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
@@ -10,31 +10,33 @@ import lombok.Data;
  * 2019/10/22
  **/
 @Data
+@ApiModel(value = "考评报表")
 @TableName("city_check_report")
 public class CheckReport {
 
-   /* `id` int(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
-            `time` varchar(20) DEFAULT '0' COMMENT '考评时间',
-            `type` int(20) NOT NULL DEFAULT '1' COMMENT '1:日 2:周 3:月 4:年',
-            `reportRecord` text COMMENT '报表记录',
-            `score` int(11) DEFAULT NULL COMMENT '评分',
-            `displayName` varchar(255) DEFAULT NULL COMMENT '考评对象',*/
+    private Integer id;
 
-   private Integer id;
+    @ApiModelProperty(value = "日")
+    private String day;
 
-   private String day;
-
+    @ApiModelProperty(value = "周")
     private String week;
 
+    @ApiModelProperty(value = "月")
     private String month;
 
+    @ApiModelProperty(value = "年")
     private String year;
 
-   private Integer type;
+    @ApiModelProperty(value = "周")
+    private Integer type;
 
-   private String reportRecord;
+    @ApiModelProperty(value = "考评评分详情")
+    private String reportRecord;
 
-   private Integer score;
+    @ApiModelProperty(value = "考评总分")
+    private Integer score;
 
-   private String displayName;
+    @ApiModelProperty(value = "考评对象标识")
+    private String displayName;
 }

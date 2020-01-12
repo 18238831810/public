@@ -8,6 +8,8 @@ import com.cf.crs.entity.CheckReport;
 import com.cf.crs.mapper.CheckAvailaHistoryMapper;
 import com.cf.crs.mapper.CheckReportMapper;
 import com.cf.crs.mapper.CheckWarningHistoryMapper;
+import com.cf.util.http.HttpWebResult;
+import com.cf.util.http.ResultJson;
 import com.cf.util.utils.DataUtil;
 import com.cf.util.utils.DateUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -218,6 +220,11 @@ public class CheckReportService {
         else if(type == 2) return "week";
         else if(type == 3) return "month";
         else return "year";
+    }
+
+    public ResultJson<List<CheckReport>> getReport(Integer type, String time){
+        List<CheckReport> list = checkReportMapper.selectList(new QueryWrapper<CheckReport>().eq("type", type).eq(checkType(type), time));
+        return HttpWebResult.getMonoSucResult(list);
     }
 
 }

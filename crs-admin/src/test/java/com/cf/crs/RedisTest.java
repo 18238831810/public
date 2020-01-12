@@ -139,7 +139,7 @@ public class RedisTest {
 
     @Test
     public void synWaringHistory(){
-        checkWarningHistoryService.synWaringHistory();
+        checkWarningHistoryService.synWarningHistory();
     }
 
     @Test
@@ -154,7 +154,7 @@ public class RedisTest {
 
     @Test
     public void createByWeek(){
-        checkReportService.createByWeek("20200106",2);
+        checkReportService.createByWeek("202001",3);
     }
 
 }

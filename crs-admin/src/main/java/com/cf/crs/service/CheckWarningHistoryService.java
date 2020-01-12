@@ -49,7 +49,7 @@ public class CheckWarningHistoryService {
     /**
      * 统计告警数据
      */
-    public void synWaringHistory(){
+    public void synWarningHistory(){
         //获取服务器信息
         JSONObject servers = checkServerService.getServers();
         //获取sql信息
