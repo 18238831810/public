@@ -5,6 +5,10 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cf.util.http.HttpWebResult;
 import com.cf.util.http.ResultJson;
+import com.cf.util.utils.DataUtil;
+import com.cf.util.utils.DateUtil;
+import com.google.common.collect.Lists;
+import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -19,6 +23,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author frank
@@ -206,6 +211,32 @@ public class WarningService {
         result.put("resolved",resolved);
         result.put("closed",closed);
         return result;
+    }
+
+    /**
+     *
+     * @param type  1:Open 2:close 3:Resolved
+     * @return
+     */
+    public Object checkOrderList(Integer type){
+        JSONObject orderJson = getOrderJson();
+        if (!DataUtil.jsonNotEmpty(orderJson)) return Lists.newArrayList();
+        JSONObject operation = orderJson.getJSONObject("operation");
+        if (!DataUtil.jsonNotEmpty(operation)) return Lists.newArrayList();
+        JSONArray details = operation.getJSONArray("details");
+        if (type == null) return details;
+        return details.stream().filter(obj -> {
+            JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(obj));
+            String typeStr = typeString(type);
+            if (typeStr.equalsIgnoreCase(jsonObject.getString("STATUS"))) return true;
+            return false;
+        }).collect(Collectors.toList());
+    }
+
+    public String typeString(Integer type){
+        if (type == 1) return "open";
+        if (type == 2) return "close";
+        else return "Resolved";
     }
 
 }

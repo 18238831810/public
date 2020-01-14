@@ -1,6 +1,7 @@
 package com.cf.crs.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cf.crs.entity.WaringParam;
 import com.cf.util.http.HttpWebResult;
 import com.cf.util.http.ResultJson;
 import com.google.common.collect.Lists;
@@ -44,6 +45,9 @@ public class CheckSqlService {
     @Autowired
     CheckServerService checkServerService;
 
+    @Autowired
+    WarningService warningService;
+
     /**
      * 获取设备列表
      * @param type 1:数据库 2:中间件 3:服务器
@@ -52,6 +56,7 @@ public class CheckSqlService {
     public ResultJson<List<JSONObject>> getCheckList(Integer type,Integer waringType){
         if (type == null) return HttpWebResult.getMonoError("请选择查询设备类型");
         if (type == 3) return checkServerService.serverList(waringType);
+        if (type == 5) return HttpWebResult.getMonoSucResult(warningService.checkOrderList(waringType));
         return sqlList(type, waringType);
     }
 
