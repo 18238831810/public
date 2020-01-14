@@ -28,7 +28,7 @@ public class CheckSqlController {
     CheckSqlService checkSqlService;
 
 
-    @ApiOperation("获取设备列表(服务器，中间件，数据库)")
+    @ApiOperation("获取设备列表(服务器，中间件，数据库，互联网设备，工单)")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType="query", name = "type", value = "1:数据库 2:中间件 3:服务器 4:物联网设备,5;工单", required = true, dataType = "Integer"),
             @ApiImplicitParam(paramType="query", name = "waringType", value = "(不传代表所有信息)1:严重 2:一般 3:正常 (工单 1:Open 2:close 3:Resolved)", required = false, dataType = "Integer")
