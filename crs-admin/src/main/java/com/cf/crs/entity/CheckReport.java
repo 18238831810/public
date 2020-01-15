@@ -39,4 +39,7 @@ public class CheckReport {
 
     @ApiModelProperty(value = "考评对象标识")
     private String displayName;
+
+    @ApiModelProperty(value = "是否及格0：不及格 1：及格")
+    private Integer isPass;
 }
