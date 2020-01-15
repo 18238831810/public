@@ -19,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -43,6 +44,29 @@ public class CheckReportService {
 
     @Autowired
     CheckAvailaHistoryService checkAvailaHistoryService;
+
+    public static void main(String[] args) {
+        int s = LocalDate.now().getDayOfWeek().getValue();
+        System.out.println(s);
+        String weekByDate = DateUtil.getWeekByDate((DateUtil.getYesterday()));
+        System.out.println(weekByDate);
+    }
+
+    public void synData(){
+        //生成昨天的日表报数据
+        createByDay(null);
+        //生成上周的周报表数据
+        int day = LocalDate.now().getDayOfWeek().getValue();
+        if (day == 1) {
+            //生成上周的周报表数据
+            createByWeek(null,2);
+        }
+        int month = LocalDate.now().getDayOfMonth();
+        if (month == 1) {
+            //生成上周的周报表数据
+            createByWeek(null,3);
+        }
+    }
 
     /**
      * 生成日报表
@@ -69,12 +93,14 @@ public class CheckReportService {
     /**
      * 生成周,月报表
      * @param week  日期
-     * @param type  2:周 3:月
+     * @param type  2:周 3:月 4:年
      */
     public void createByWeek(String week,Integer type){
         checkWarningHistoryService.updateWaringHistory((name, serverNameList, sqlNameList, middlewareNameList)->{
             String time = week;
-            if (StringUtils.isEmpty(time))  time = DateUtil.date2String(DateUtil.getYesterday(), DateUtil.DEFAULT);
+            if (StringUtils.isEmpty(time))  time = DateUtil.getWeekByDate((DateUtil.getYesterday()));
+            if (type == 3) time = time.substring(0,6);
+            else if (type == 4) time = time.substring(0,4);
             //查询所有day统计取平均值
             List<CheckReport> list = checkReportMapper.selectList(new QueryWrapper<CheckReport>().eq("type", 1).eq(checkType(type), time).eq("displayName", name));
             if (CollectionUtils.isEmpty(list)) return;
