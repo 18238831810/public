@@ -28,7 +28,7 @@ public class CheckReport {
     @ApiModelProperty(value = "年")
     private String year;
 
-    @ApiModelProperty(value = "周")
+    @ApiModelProperty(value = "考评类型 1:日 2:周 3:月 4:年")
     private Integer type;
 
     @ApiModelProperty(value = "考评评分详情")

@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.cf.crs.entity.CheckReport;
+import com.cf.crs.entity.CheckWarningHistory;
 import com.cf.crs.mapper.CheckAvailaHistoryMapper;
 import com.cf.crs.mapper.CheckReportMapper;
 import com.cf.crs.mapper.CheckWarningHistoryMapper;
@@ -224,6 +225,18 @@ public class CheckReportService {
 
     public ResultJson<List<CheckReport>> getReport(Integer type, String time){
         List<CheckReport> list = checkReportMapper.selectList(new QueryWrapper<CheckReport>().eq("type", type).eq(checkType(type), time));
+        return HttpWebResult.getMonoSucResult(list);
+    }
+
+
+    public ResultJson<List<CheckReport>> setReportScore(Integer type, String time,String displayName,Integer score){
+        checkReportMapper.update(null,new UpdateWrapper<CheckReport>().eq("type", type).eq(checkType(type), time).eq("displayName",displayName).set("score",score));
+        return HttpWebResult.getMonoSucStr();
+    }
+
+
+    public ResultJson<List<CheckWarningHistory>> getReportWarningDetails(Integer type, String time,String displayName){
+        List<CheckWarningHistory> list = checkWarningHistoryMapper.selectList(new QueryWrapper<CheckWarningHistory>().eq(checkType(type), time).eq("displayName", displayName));
         return HttpWebResult.getMonoSucResult(list);
     }
 

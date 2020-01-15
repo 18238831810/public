@@ -1,6 +1,8 @@
 package com.cf.crs.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -11,6 +13,7 @@ import java.io.Serializable;
  * 2019/10/16
  **/
 @Data
+@ApiModel(value = "告警记录")
 @TableName("city_warning_history")
 public class CheckWarningHistory implements Serializable {
 
@@ -24,20 +27,28 @@ public class CheckWarningHistory implements Serializable {
 
     private Integer id;
 
+    @ApiModelProperty(value = "日")
     private String day;
 
+    @ApiModelProperty(value = "周")
     private String week;
 
+    @ApiModelProperty(value = "月")
     private String month;
 
+    @ApiModelProperty(value = "年")
     private String year;
 
+    @ApiModelProperty(value = "考评得分记录")
     private String analyRecord;
 
+    @ApiModelProperty(value = "告警记录")
     private String warningRecord;
 
+    @ApiModelProperty(value = "得分")
     private String score;
 
+    @ApiModelProperty(value = "考评对象标识")
     private String displayName;
 
 }
