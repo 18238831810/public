@@ -83,6 +83,7 @@ public class CheckSqlService {
             jsonObject.put("name",row.attr("RESOURCEID"));
             jsonObject.put("displayName",row.attr("DISPLAYNAME"));
             jsonObject.put("status",row.attr("HEALTHSTATUS"));
+            jsonObject.put("type",row.attr("TYPESHORTNAME"));
             list.add(jsonObject);
         });
         if (waringType == null)  return HttpWebResult.getMonoSucResult(list);
