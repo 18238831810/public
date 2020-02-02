@@ -17,5 +17,5 @@ public class SysUser implements Serializable {
     private Integer id;
     private String username;
     private String password;
-    private Integer auth;
+    private String auth;
 }

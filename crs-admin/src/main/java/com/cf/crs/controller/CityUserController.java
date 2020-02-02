@@ -34,7 +34,7 @@ public class CityUserController {
             @ApiImplicitParam(paramType="query", name = "auth", value = "用户角色 0:无权限，1:管理员 2:普通权限(角色id,多个角色id以逗号隔开)", required = true, dataType = "String")
     })
     @GetMapping("/setAuth")
-    public Object selectList(Integer id,String auth){
-        return cityUserService.setAuth(id,auth);
+    public Object setRole(Integer id,String auth){
+        return cityUserService.setRole(id,auth);
     }
 }

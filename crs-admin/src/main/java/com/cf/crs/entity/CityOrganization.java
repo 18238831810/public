@@ -24,6 +24,7 @@ public class CityOrganization implements Serializable {
     private Integer isDisabled;
     private Long createAt;
     private Long updateAt;
+    private String auth;
 
 
 
