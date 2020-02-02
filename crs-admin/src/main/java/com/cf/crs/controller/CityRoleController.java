@@ -37,7 +37,7 @@ public class CityRoleController {
     public Object updateRole(CityRole cityRole){
         return cityRoleService.updateRole(cityRole);
     }
-    @ApiOperation("新增角色")
+    @ApiOperation("删除角色")
     @GetMapping("/deleteRole")
     public Object deleteRole(Integer id){
         return cityRoleService.deleteRole(id);
