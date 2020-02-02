@@ -33,9 +33,10 @@ public class CityUserService {
         return HttpWebResult.getMonoSucResult(list);
     }
 
-    public ResultJson<String> setAuth(Integer id,Integer auth){
+    public ResultJson<String> setAuth(Integer id,String auth){
         if (id == null || auth == null) return HttpWebResult.getMonoError("参数不能为空");
         cityUserMapper.update(null, new UpdateWrapper<CityUser>().set("auth", auth).eq("id", id));
         return HttpWebResult.getMonoSucStr();
     }
+
 }

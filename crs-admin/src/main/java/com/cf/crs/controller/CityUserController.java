@@ -31,10 +31,10 @@ public class CityUserController {
     @ApiOperation("设置用户权限")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType="query", name = "id", value = "用户id", required = true, dataType = "Integer"),
-            @ApiImplicitParam(paramType="query", name = "auth", value = "用户权限 0:无权限，1:管理员 2:普通权限", required = true, dataType = "Integer")
+            @ApiImplicitParam(paramType="query", name = "auth", value = "用户角色 0:无权限，1:管理员 2:普通权限(角色id,多个角色id以逗号隔开)", required = true, dataType = "String")
     })
     @GetMapping("/setAuth")
-    public Object selectList(Integer id,Integer auth){
+    public Object selectList(Integer id,String auth){
         return cityUserService.setAuth(id,auth);
     }
 }
