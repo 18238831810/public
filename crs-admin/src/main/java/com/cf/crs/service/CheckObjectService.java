@@ -2,6 +2,7 @@ package com.cf.crs.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.cf.crs.entity.CheckObject;
 import com.cf.crs.mapper.CheckObjectMapper;
 import com.cf.util.http.HttpWebResult;
@@ -39,6 +40,7 @@ public class CheckObjectService {
         return checkObjectMapper.selectById(1);
     }
 
+
     /**
      * 设置考评对象
      * @param list
@@ -49,15 +51,28 @@ public class CheckObjectService {
             if (StringUtils.isEmpty(list)) return HttpWebResult.getMonoError("考评对象不能为空");
             //json校验
             JSON.parseArray(list);
-            final CheckObject checkObject = new CheckObject();
-            checkObject.setId(1);
-            checkObject.setObject(list);
-            checkObjectMapper.updateById(checkObject);
+            checkObjectMapper.update(null,new UpdateWrapper<CheckObject>().eq("id",1).set("object",list));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             return HttpWebResult.getMonoError(e.getMessage());
         }
         return HttpWebResult.getMonoSucStr();
     }
-
+    /**
+     * 设置安全信息
+     * @param list
+     * @return
+     */
+    public ResultJson<String> updateCheckSafe(String list){
+        try {
+            if (StringUtils.isEmpty(list)) return HttpWebResult.getMonoError("考评安全信息不能为空");
+            //json校验
+            JSON.parseArray(list);
+            checkObjectMapper.update(null,new UpdateWrapper<CheckObject>().eq("id",1).set("safe",list));
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return HttpWebResult.getMonoError(e.getMessage());
+        }
+        return HttpWebResult.getMonoSucStr();
+    }
 }

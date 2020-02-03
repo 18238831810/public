@@ -14,4 +14,6 @@ public class CheckObject {
     private Integer id;
 
     private String object;
+
+    private String safe;
 }

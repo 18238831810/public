@@ -9,7 +9,6 @@ import com.cf.crs.entity.CityUser;
 import com.cf.crs.entity.SysUser;
 import com.cf.crs.mapper.CityUserMapper;
 import com.cf.crs.mapper.SysUserMapper;
-import com.cf.crs.sys.service.SysUserService;
 import com.cf.util.http.HttpWebResult;
 import com.cf.util.http.ResultJson;
 import com.cf.util.utils.CacheKey;
@@ -82,8 +81,8 @@ public class ClientLoginService {
         //验证第三方用户登录权限
         CityUser cityUser = cityUserMapper.selectOne(new QueryWrapper<CityUser>().eq("username", loginName));
         if (cityUser == null) return HttpWebResult.getMonoError("不存在此用户");
-        Integer auth = cityUser.getAuth();
-        if (auth == null || auth == 0) return HttpWebResult.getMonoError("此用户没有登录权限");
+        String auth = cityUser.getAuth();
+        if (StringUtils.isEmpty(auth) || "0".equalsIgnoreCase(auth)) return HttpWebResult.getMonoError("此用户没有登录权限");
         return createToken(cityUser);
     }
 
