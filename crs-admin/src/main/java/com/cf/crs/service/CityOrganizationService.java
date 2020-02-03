@@ -1,5 +1,6 @@
 package com.cf.crs.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.cf.crs.entity.CityOrganization;
 import com.cf.crs.mapper.CityOrganizationMapper;
@@ -8,11 +9,21 @@ import com.cf.util.http.ResultJson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class CityOrganizationService {
 
     @Autowired
     CityOrganizationMapper cityOrganizationMapper;
+
+    /**
+     * 获取所有部门
+     * @return
+     */
+    public ResultJson<List<CityOrganization>> getOrganizationList(){
+        return HttpWebResult.getMonoSucResult(cityOrganizationMapper.selectList(new QueryWrapper<CityOrganization>()));
+    }
 
     /**
      * 设置角色
