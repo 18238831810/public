@@ -6,6 +6,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,17 +29,17 @@ public class CityRoleController {
     }
 
     @ApiOperation("新增角色")
-    @GetMapping("/addRole")
+    @PostMapping("/addRole")
     public Object addRole(CityRole cityRole){
         return cityRoleService.addRole(cityRole);
     }
     @ApiOperation("修改角色")
-    @GetMapping("/updateRole")
+    @PostMapping("/updateRole")
     public Object updateRole(CityRole cityRole){
         return cityRoleService.updateRole(cityRole);
     }
     @ApiOperation("删除角色")
-    @GetMapping("/deleteRole")
+    @PostMapping("/deleteRole")
     public Object deleteRole(Integer id){
         return cityRoleService.deleteRole(id);
     }
