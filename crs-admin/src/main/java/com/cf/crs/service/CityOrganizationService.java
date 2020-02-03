@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.cf.crs.entity.CityOrganization;
 import com.cf.crs.mapper.CityOrganizationMapper;
 import com.cf.util.http.HttpWebResult;
+import com.cf.util.http.ResultJson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +20,7 @@ public class CityOrganizationService {
      * @param auth
      * @return
      */
-    public Object setRole(Integer id,String auth){
+    public ResultJson<String> setRole(Integer id, String auth){
         return HttpWebResult.getMonoSucResult(cityOrganizationMapper.update(null, new UpdateWrapper<CityOrganization>().eq("id", id).set("auth", auth)));
     }
 }
