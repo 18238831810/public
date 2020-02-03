@@ -38,7 +38,7 @@ public class CheckObjectController {
     }
 
     @ApiOperation("保存考评安全信息")
-    @PostMapping("/updateCheckObject")
+    @PostMapping("/updateCheckSafe")
     public ResultJson<String> updateCheckSafe(String list){
         return checkObjectService.updateCheckSafe(list);
     }
