@@ -35,6 +35,10 @@ public class CheckObjectService {
         CheckObject checkObject = getObject();
         return HttpWebResult.getMonoSucResult(checkObject != null?JSON.parseArray(checkObject.getObject()): Lists.newArrayList());
     }
+    public ResultJson<JSONArray> getCheckSafe(){
+        CheckObject checkObject = getObject();
+        return HttpWebResult.getMonoSucResult(checkObject != null?JSON.parseArray(checkObject.getSafe()): Lists.newArrayList());
+    }
 
     public CheckObject getObject() {
         return checkObjectMapper.selectById(1);

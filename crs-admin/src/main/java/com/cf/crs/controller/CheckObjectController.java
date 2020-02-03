@@ -31,6 +31,12 @@ public class CheckObjectController {
         return checkObjectService.getCheckObject();
     }
 
+    @ApiOperation("获取考评安全信息")
+    @GetMapping("/getCheckSafe")
+    public ResultJson<JSONArray> getCheckSafe(){
+        return checkObjectService.getCheckSafe();
+    }
+
     @ApiOperation("保存考评对象")
     @PostMapping("/updateCheckObject")
     public ResultJson<String> updateCheckObject(String list){
