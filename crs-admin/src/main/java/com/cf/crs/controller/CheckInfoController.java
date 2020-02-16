@@ -50,7 +50,7 @@ public class CheckInfoController {
         return checkInfoService.updateCheckInfo(checkInfo);
     }
 
-    @ApiOperation("修改考评对象信息")
+    @ApiOperation("删除考评对象信息或考评设备")
     @GetMapping("/deleteCheckInfo")
     @ApiImplicitParam(paramType="query", name = "id", value = "考评对象id", required = true, dataType = "Integer")
     public ResultJson<String> deleteCheckInfo(Integer id){
