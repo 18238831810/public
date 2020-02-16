@@ -59,6 +59,7 @@ public class CheckInfoService {
         checkInfo.setType(0);
         return HttpWebResult.getMonoSucResult(checkInfoMapper.insert(checkInfo));
     }
+
     /**
      * 修改考评对象信息
      * @return
@@ -67,5 +68,38 @@ public class CheckInfoService {
         return HttpWebResult.getMonoSucResult(checkInfoMapper.update(null, new UpdateWrapper<CheckInfo>().eq("id", checkInfo.getId()).
                 set("name", checkInfo.getName()).set("displayName", checkInfo.getDisplayName()).set("email", checkInfo.getEmail()).set("informationSecurity", checkInfo.getInformationSecurity()).set("automatic", checkInfo.getAutomatic())));
     }
+    /**
+     * 删除考评对象信息或设备
+     * @return
+     */
+    public ResultJson<String> deleteCheckInfo(Integer id){
+        return HttpWebResult.getMonoSucResult(checkInfoMapper.delete(new QueryWrapper<CheckInfo>().eq("id",id).or().eq("parentId",id)));
+    }
+
+    /**
+     * 编辑考评对象信息安全
+     * @return
+     */
+    public ResultJson<String> updateCheckInfoSecurity(CheckInfo checkInfo){
+        return HttpWebResult.getMonoSucResult(checkInfoMapper.update(null, new UpdateWrapper<CheckInfo>().eq("id", checkInfo.getId()).
+        set("informationSecurity",checkInfo.getInformationSecurity())));
+    }
+
+    /**
+     * 新增考评对象设备
+     * @return
+     */
+    public ResultJson<String> addCheckDevice(CheckInfo checkInfo){
+        return HttpWebResult.getMonoSucResult(checkInfoMapper.insert(checkInfo));
+    }
+
+    /**
+     * 修改考评对象信息
+     * @return
+     */
+    public ResultJson<String> updateCheckDevice(CheckInfo checkInfo){
+        return HttpWebResult.getMonoSucResult(checkInfoMapper.updateById(checkInfo));
+    }
+
 
 }
