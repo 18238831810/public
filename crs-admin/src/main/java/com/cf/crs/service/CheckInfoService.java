@@ -54,7 +54,7 @@ public class CheckInfoService {
      * 新增考评对象信息
      * @return
      */
-    public ResultJson<List<String>> addCheckInfo(CheckInfo checkInfo){
+    public ResultJson<String> addCheckInfo(CheckInfo checkInfo){
         checkInfo.setParentId(0);
         checkInfo.setType(0);
         return HttpWebResult.getMonoSucResult(checkInfoMapper.insert(checkInfo));
@@ -63,7 +63,7 @@ public class CheckInfoService {
      * 修改考评对象信息
      * @return
      */
-    public ResultJson<List<String>> updateCheckInfo(CheckInfo checkInfo){
+    public ResultJson<String> updateCheckInfo(CheckInfo checkInfo){
         return HttpWebResult.getMonoSucResult(checkInfoMapper.update(null, new UpdateWrapper<CheckInfo>().eq("id", checkInfo.getId()).
                 set("name", checkInfo.getName()).set("displayName", checkInfo.getDisplayName()).set("email", checkInfo.getEmail()).set("informationSecurity", checkInfo.getInformationSecurity()).set("automatic", checkInfo.getAutomatic())));
     }

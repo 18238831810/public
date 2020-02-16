@@ -35,5 +35,17 @@ public class CheckInfoController {
         return checkInfoService.getCheckInfo();
     }
 
+    @ApiOperation("新增考评对象信息")
+    @GetMapping("/addCheckInfo")
+    public ResultJson<String> addCheckInfo(CheckInfo checkInfo){
+        return checkInfoService.addCheckInfo(checkInfo);
+    }
+
+    @ApiOperation("修改考评对象信息")
+    @GetMapping("/updateCheckInfo")
+    public ResultJson<String> updateCheckInfo(CheckInfo checkInfo){
+        return checkInfoService.updateCheckInfo(checkInfo);
+    }
+
 
 }
