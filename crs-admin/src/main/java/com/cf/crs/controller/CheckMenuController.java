@@ -6,6 +6,7 @@ import com.cf.util.http.ResultJson;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,8 +27,8 @@ public class CheckMenuController {
     CheckMenuService checkMenuService;
 
 
-    @ApiOperation("获取考评模型")
-    @PostMapping("/getCheckMenu")
+    @ApiOperation("获取考评菜单")
+    @GetMapping("/getCheckMenu")
     public ResultJson<List<CheckMenu>> getCheckMenu(){
         return checkMenuService.getCheckMenu();
     }
