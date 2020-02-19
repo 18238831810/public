@@ -101,5 +101,23 @@ public class CheckInfoService {
         return HttpWebResult.getMonoSucResult(checkInfoMapper.updateById(checkInfo));
     }
 
+    /**
+     * 获取考评计划
+     * @return
+     */
+    public ResultJson<List<CheckInfo>> getCheckPlan(){
+        return HttpWebResult.getMonoSucResult(checkInfoMapper.selectList(new QueryWrapper<CheckInfo>().eq("type",0).eq("parentId",0)));
+    }
+
+    /**
+     * 编辑考评计划
+     * @return
+     */
+    public ResultJson<String> updateCheckPlan(CheckInfo checkInfo){
+        Long id = checkInfo.getId();
+        return HttpWebResult.getMonoSucResult(checkInfoMapper.update(null,new UpdateWrapper<CheckInfo>().eq(id != null && id > 0,"id",checkInfo.getId()).eq("type",0).eq("parentId",0).set("checkPlan",checkInfo.getCheckPlan()).
+                set("checkStartTime",checkInfo.getCheckStartTime()).set("checkEndTime",checkInfo.getCheckEndTime())));
+    }
+
 
 }

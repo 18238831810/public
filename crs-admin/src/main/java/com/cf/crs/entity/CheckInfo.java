@@ -53,6 +53,15 @@ public class CheckInfo implements Serializable {
     @ApiModelProperty(value = "考评设备")
     private Map<Integer, List<CheckInfo>> deviceList;
 
+    @ApiModelProperty(value = "考评计划（cron表达式）")
+    private String checkPlan;
+
+    @ApiModelProperty(value = "考评计划开始时间")
+    private Long checkStartTime;
+
+    @ApiModelProperty(value = "考评计划结束时间")
+    private Long checkEndTime;
+
 
 
 

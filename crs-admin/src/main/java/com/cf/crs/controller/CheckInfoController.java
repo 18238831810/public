@@ -12,6 +12,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
@@ -39,26 +40,26 @@ public class CheckInfoController {
     }
 
     @ApiOperation("新增考评对象信息")
-    @GetMapping("/addCheckInfo")
+    @PostMapping("/addCheckInfo")
     public ResultJson<String> addCheckInfo(CheckInfo checkInfo){
         return checkInfoService.addCheckInfo(checkInfo);
     }
 
     @ApiOperation("修改考评对象信息")
-    @GetMapping("/updateCheckInfo")
+    @PostMapping("/updateCheckInfo")
     public ResultJson<String> updateCheckInfo(CheckInfo checkInfo){
         return checkInfoService.updateCheckInfo(checkInfo);
     }
 
     @ApiOperation("删除考评对象信息或考评设备")
-    @GetMapping("/deleteCheckInfo")
+    @PostMapping("/deleteCheckInfo")
     @ApiImplicitParam(paramType="query", name = "id", value = "考评对象id", required = true, dataType = "Integer")
     public ResultJson<String> deleteCheckInfo(Integer id){
         return checkInfoService.deleteCheckInfo(id);
     }
 
     @ApiOperation("编辑考评对象信息安全")
-    @GetMapping("/updateCheckInfoSecurity")
+    @PostMapping("/updateCheckInfoSecurity")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType="query", name = "id", value = "考评对象id", required = true, dataType = "Integer"),
             @ApiImplicitParam(paramType="query", name = "informationSecurity", value = "信息安全（json字符串）", required = true, dataType = "Integer")
@@ -69,15 +70,27 @@ public class CheckInfoController {
     }
 
     @ApiOperation("新增考评设备")
-    @GetMapping("/addCheckDevice")
+    @PostMapping("/addCheckDevice")
     public ResultJson<String> addCheckDevice(CheckInfo checkInfo){
         return checkInfoService.addCheckDevice(checkInfo);
     }
 
     @ApiOperation("修改考评设备")
-    @GetMapping("/updateCheckDevice")
+    @PostMapping("/updateCheckDevice")
     public ResultJson<String> updateCheckDevice(CheckInfo checkInfo){
         return checkInfoService.updateCheckDevice(checkInfo);
+    }
+
+    @ApiOperation("获取考评计划")
+    @GetMapping("/getCheckPlan")
+    public ResultJson<List<CheckInfo>> getCheckPlan(){
+        return checkInfoService.getCheckPlan();
+    }
+
+    @ApiOperation("修改考评计划(全局配置时id传0)")
+    @PostMapping("/updateCheckPlan")
+    public ResultJson<String> updateCheckPlan(CheckInfo checkInfo){
+        return checkInfoService.updateCheckPlan(checkInfo);
     }
 
 
