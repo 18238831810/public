@@ -2,8 +2,8 @@ spring:
   #redis配置
   redis:
     database: 2
-    host: 47.106.199.193
-    port: 1371
+    host: 127.0.0.1
+    port: 6379
     password: '*&(*%QWaf4534!123dsg'
     timeout: 20000ms  # 连接超时时长（毫秒）
     jedis:
@@ -21,7 +21,7 @@ spring:
         master:
           username: city
           password: '!#456QWEasd&'
-          url: jdbc:mysql://47.106.199.193:3306/citymanager?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT
+          url: jdbc:mysql://127.0.0.1:3306/citymanager?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT
           driver-class-name: com.mysql.cj.jdbc.Driver
           druid: # 以下参数针对每个库可以重新设置druid参数
             initial-size: 10
