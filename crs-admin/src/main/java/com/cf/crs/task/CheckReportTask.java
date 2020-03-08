@@ -23,7 +23,7 @@ public class CheckReportTask implements ITask{
     public void run(String params) {
         try {
             log.info("生成报表计划开始执行");
-            checkReportService.synData();
+            //checkReportService.synData();
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
