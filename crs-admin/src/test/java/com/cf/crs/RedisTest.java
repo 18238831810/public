@@ -144,7 +144,7 @@ public class RedisTest {
 
     @Test
     public void checkByDay(){
-        checkReportService.createByDay(null);
+        //checkReportService.createByDay(null);
     }
 
     @Test
@@ -154,7 +154,7 @@ public class RedisTest {
 
     @Test
     public void createByWeek(){
-        checkReportService.createByWeek("202001",3);
+        //checkReportService.createByWeek("202001",3);
     }
 
 }
