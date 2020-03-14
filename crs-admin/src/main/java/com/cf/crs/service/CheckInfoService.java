@@ -66,7 +66,7 @@ public class CheckInfoService {
      */
     public ResultJson<String> updateCheckInfo(CheckInfo checkInfo){
         return HttpWebResult.getMonoSucResult(checkInfoMapper.update(null, new UpdateWrapper<CheckInfo>().eq("id", checkInfo.getId()).
-                set("name", checkInfo.getName()).set("displayName", checkInfo.getDisplayName()).set("email", checkInfo.getEmail()).set("automatic", checkInfo.getAutomatic())));
+                set("name", checkInfo.getName()).set("displayName", checkInfo.getDisplayName()).set("checkItems", checkInfo.getCheckItems()).set("email", checkInfo.getEmail()).set("automatic", checkInfo.getAutomatic())));
     }
     /**
      * 删除考评对象信息或设备
