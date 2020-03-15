@@ -119,7 +119,10 @@ public class CheckInfoService {
      * @return
      */
     public ResultJson<List<CheckInfo>> getCheckPlan(){
-        return HttpWebResult.getMonoSucResult(checkInfoMapper.selectList(new QueryWrapper<CheckInfo>().eq("type",0).eq("parentId",0)));
+        List<CheckInfo> checkInfos = checkInfoMapper.selectList(new QueryWrapper<CheckInfo>().eq("type", 0).eq("parentId", 0));
+        CheckInfo checkInfo = (CheckInfo) redisUtils.get(CacheKey.CHECK_PLAN);
+        if (checkInfo != null) checkInfos.add(checkInfo);
+        return HttpWebResult.getMonoSucResult(checkInfos);
     }
 
     /**
@@ -129,8 +132,9 @@ public class CheckInfoService {
     public ResultJson<String> updateCheckPlan(CheckInfo checkInfo){
         Long id = checkInfo.getId();
         if (id == 0) redisUtils.set(CacheKey.CHECK_PLAN,checkInfo);
-        return HttpWebResult.getMonoSucResult(checkInfoMapper.update(null,new UpdateWrapper<CheckInfo>().eq(id != null && id > 0,"id",checkInfo.getId()).eq("type",0).eq("parentId",0).set("checkPlan",checkInfo.getCheckPlan()).
-                set("checkStartTime",checkInfo.getCheckStartTime()).set("checkEndTime",checkInfo.getCheckEndTime())));
+        else checkInfoMapper.update(null,new UpdateWrapper<CheckInfo>().eq(id > 0,"id",checkInfo.getId()).eq("type",0).eq("parentId",0).set("checkPlan",checkInfo.getCheckPlan()).
+                set("checkStartTime",checkInfo.getCheckStartTime()).set("checkEndTime",checkInfo.getCheckEndTime()))
+        return HttpWebResult.getMonoSucStr();
     }
 
 
