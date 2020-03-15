@@ -1,11 +1,14 @@
 package com.cf.crs.service;
 
+import cn.hutool.cache.impl.FIFOCache;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.cf.crs.common.redis.RedisUtils;
 import com.cf.crs.entity.CheckInfo;
 import com.cf.crs.mapper.CheckInfoMapper;
 import com.cf.util.http.HttpWebResult;
 import com.cf.util.http.ResultJson;
+import com.cf.util.utils.CacheKey;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -28,6 +31,8 @@ public class CheckInfoService {
     @Autowired
     CheckInfoMapper checkInfoMapper;
 
+    @Autowired
+    RedisUtils redisUtils;
     /**
      * 获取对象信息
      * @return
@@ -123,6 +128,7 @@ public class CheckInfoService {
      */
     public ResultJson<String> updateCheckPlan(CheckInfo checkInfo){
         Long id = checkInfo.getId();
+        if (id == 0) redisUtils.set(CacheKey.CHECK_PLAN,checkInfo);
         return HttpWebResult.getMonoSucResult(checkInfoMapper.update(null,new UpdateWrapper<CheckInfo>().eq(id != null && id > 0,"id",checkInfo.getId()).eq("type",0).eq("parentId",0).set("checkPlan",checkInfo.getCheckPlan()).
                 set("checkStartTime",checkInfo.getCheckStartTime()).set("checkEndTime",checkInfo.getCheckEndTime())));
     }

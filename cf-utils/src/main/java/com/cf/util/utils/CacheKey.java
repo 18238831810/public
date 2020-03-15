@@ -11,9 +11,10 @@ package com.cf.util.utils;
  */
 public class CacheKey {
 
-	//游客身份标识（主要用于极验）
+
 	public static  final  String USER_TOKEN ="user:token";
 
 
+	public static  final  String CHECK_PLAN ="check:plan";
 }
  
