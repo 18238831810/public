@@ -133,7 +133,7 @@ public class CheckInfoService {
         Long id = checkInfo.getId();
         if (id == 0) redisUtils.set(CacheKey.CHECK_PLAN,checkInfo);
         else checkInfoMapper.update(null,new UpdateWrapper<CheckInfo>().eq(id > 0,"id",checkInfo.getId()).eq("type",0).eq("parentId",0).set("checkPlan",checkInfo.getCheckPlan()).
-                set("checkStartTime",checkInfo.getCheckStartTime()).set("checkEndTime",checkInfo.getCheckEndTime()))
+                set("checkStartTime",checkInfo.getCheckStartTime()).set("checkEndTime",checkInfo.getCheckEndTime()));
         return HttpWebResult.getMonoSucStr();
     }
 
