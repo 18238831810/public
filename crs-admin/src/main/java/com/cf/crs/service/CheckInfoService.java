@@ -1,16 +1,14 @@
 package com.cf.crs.service;
 
-import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.cf.crs.entity.CheckInfo;
-import com.cf.crs.entity.CheckMenu;
 import com.cf.crs.mapper.CheckInfoMapper;
-import com.cf.crs.mapper.CheckMenuMapper;
 import com.cf.util.http.HttpWebResult;
 import com.cf.util.http.ResultJson;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -90,7 +88,17 @@ public class CheckInfoService {
      * @return
      */
     public ResultJson<String> addCheckDevice(CheckInfo checkInfo){
-        return HttpWebResult.getMonoSucResult(checkInfoMapper.insert(checkInfo));
+        String name = checkInfo.getName();
+        String displayName = checkInfo.getDisplayName();
+        String[] nameList = name.split(",");
+        String[] displayNameList = displayName.split(",");
+        for (int i = 0; i < nameList.length; i++) {
+            if (StringUtils.isEmpty(nameList[i]) || StringUtils.isEmpty(displayNameList[i])) continue;
+            checkInfo.setName(nameList[i]);
+            checkInfo.setDisplayName(displayNameList[i]);
+            checkInfoMapper.insert(checkInfo);
+        }
+        return HttpWebResult.getMonoSucStr();
     }
 
     /**
