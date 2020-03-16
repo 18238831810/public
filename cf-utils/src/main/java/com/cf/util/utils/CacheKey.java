@@ -16,5 +16,7 @@ public class CacheKey {
 
 
 	public static  final  String CHECK_PLAN ="check:plan";
+
+	public static  final  String USER_NAME_TOKEN ="user:name:token";
 }
  
