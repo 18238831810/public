@@ -48,6 +48,8 @@ public class ClientLoginService {
     }
 
     public ResultJson login(String userName,String password,String code){
+        Object o = redisUtils.get(CacheKey.USER_NAME_TOKEN + ":" + userName);
+        if (o != null && StringUtils.isNotEmpty(o.toString())) return HttpWebResult.getMonoError("此用户已登录");
         //第三方登录
         if (StringUtils.isNotEmpty(code)) return getUser(code);
 
@@ -57,7 +59,7 @@ public class ClientLoginService {
         String md5Password = DigestUtils.md5DigestAsHex(password.getBytes());
         if (!md5Password.equalsIgnoreCase(sysUser.getPassword())) return HttpWebResult.getMonoError("密码错误");
         sysUser.setPassword(null);
-        return createToken(sysUser);
+        return createToken(sysUser.getUsername(),sysUser);
     }
 
 
@@ -84,11 +86,12 @@ public class ClientLoginService {
         if (cityUser == null) return HttpWebResult.getMonoError("不存在此用户");
         String auth = cityUser.getAuth();
         if (StringUtils.isEmpty(auth) || "0".equalsIgnoreCase(auth)) return HttpWebResult.getMonoError("此用户没有登录权限");
-        return createToken(cityUser);
+        return createToken(cityUser.getUsername(),cityUser);
     }
 
-    private ResultJson createToken(Object sysUser) {
+    private ResultJson createToken(String userName,Object sysUser) {
         String token = CacheKey.USER_TOKEN + ":"+System.currentTimeMillis();
+        redisUtils.set(CacheKey.USER_NAME_TOKEN+":"+userName,token,60*60*2);
         //验证成功，返回token和用户信息
         redisUtils.set(token,sysUser,60*60*2);
         return HttpWebResult.getMonoSucResult(token,sysUser);
