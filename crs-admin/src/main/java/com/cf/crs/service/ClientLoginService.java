@@ -47,6 +47,11 @@ public class ClientLoginService {
         System.out.println(md5Password);
     }
 
+    public ResultJson logout(String userName){
+        redisUtils.delete(CacheKey.USER_NAME_TOKEN + ":" + userName);
+        return HttpWebResult.getMonoSucStr();
+    }
+
     public ResultJson login(String userName,String password,String code){
         Object o = redisUtils.get(CacheKey.USER_NAME_TOKEN + ":" + userName);
         if (o != null && StringUtils.isNotEmpty(o.toString())) return HttpWebResult.getMonoError("此用户已登录");
