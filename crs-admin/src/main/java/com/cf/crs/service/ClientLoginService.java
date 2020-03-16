@@ -43,7 +43,7 @@ public class ClientLoginService {
     RedisUtils redisUtils;
 
     public static void main(String[] args) {
-        String md5Password = DigestUtils.md5DigestAsHex("123456".getBytes());
+        String md5Password = DigestUtils.md5DigestAsHex("SzcgKp#@4479".getBytes());
         System.out.println(md5Password);
     }
 
@@ -56,6 +56,7 @@ public class ClientLoginService {
         if (sysUser == null) return HttpWebResult.getMonoError("用户名错误");
         String md5Password = DigestUtils.md5DigestAsHex(password.getBytes());
         if (!md5Password.equalsIgnoreCase(sysUser.getPassword())) return HttpWebResult.getMonoError("密码错误");
+        sysUser.setPassword(null);
         return createToken(sysUser);
     }
 
