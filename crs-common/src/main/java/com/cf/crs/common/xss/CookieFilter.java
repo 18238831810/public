@@ -9,7 +9,6 @@
 package com.cf.crs.common.xss;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.protocol.HTTP;
 
 import javax.servlet.*;
 import javax.servlet.http.Cookie;
