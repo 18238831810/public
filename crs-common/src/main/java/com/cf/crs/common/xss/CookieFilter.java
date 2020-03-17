@@ -8,16 +8,19 @@
 
 package com.cf.crs.common.xss;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apache.http.protocol.HTTP;
+
 import javax.servlet.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
  * cookie过滤
  * @author Mark sunlightcs@gmail.com
  */
+@Slf4j
 public class CookieFilter implements Filter {
 
 
@@ -27,6 +30,7 @@ public class CookieFilter implements Filter {
             throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) request;
         String scheme = req.getScheme();
+        log.info("cookie filter:{}", scheme);
         if ("HTTPS".equalsIgnoreCase(scheme)){
             Cookie[] cookies = req.getCookies();
             for(Cookie cookie : cookies) {
