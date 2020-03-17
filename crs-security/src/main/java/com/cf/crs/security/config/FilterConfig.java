@@ -8,6 +8,7 @@
 
 package com.cf.crs.security.config;
 
+import com.cf.crs.common.xss.CookieFilter;
 import com.cf.crs.common.xss.XssFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -45,5 +46,14 @@ public class FilterConfig {
         registration.setName("xssFilter");
         registration.setOrder(Integer.MAX_VALUE);
         return registration;
+    }
+
+    @Bean
+    public FilterRegistrationBean cookieFilterRegistration() {
+        FilterRegistrationBean bean = new FilterRegistrationBean();
+        bean.setFilter(new CookieFilter());
+        bean.addUrlPatterns("/*");
+        return bean;
+
     }
 }
