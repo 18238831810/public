@@ -108,7 +108,7 @@ mybatis-plus:
 check:
   sql: # 考评sql配置
     url: http://192.168.1.72:9090
-    sqlType: MYSQL-DB-server,PostgreSQL
+    sqlType: MYSQL-DB-server,PostgreSQL,MongDB,Redis
     apikey: 154e1ff58e5e66db2a8e524b41eff082
     middlewareType: Tomcat-server
   server:
