@@ -1,10 +1,13 @@
 package com.cf.crs.service;
 
+import cn.hutool.core.util.ArrayUtil;
+import com.alibaba.druid.sql.visitor.functions.If;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cf.crs.common.redis.RedisUtils;
 import com.cf.crs.config.config.ClientConfig;
+import com.cf.crs.entity.CityRole;
 import com.cf.crs.entity.CityUser;
 import com.cf.crs.entity.SysUser;
 import com.cf.crs.mapper.CityUserMapper;
@@ -12,12 +15,17 @@ import com.cf.crs.mapper.SysUserMapper;
 import com.cf.util.http.HttpWebResult;
 import com.cf.util.http.ResultJson;
 import com.cf.util.utils.CacheKey;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.*;
 
 /**
  * @author frank
@@ -42,6 +50,9 @@ public class ClientLoginService {
     @Autowired
     RedisUtils redisUtils;
 
+    @Autowired
+    CityRoleService cityRoleService;
+
     public static void main(String[] args) {
         String md5Password = DigestUtils.md5DigestAsHex("SzcgKp#@4479".getBytes());
         System.out.println(md5Password);
@@ -65,6 +76,34 @@ public class ClientLoginService {
         if (!md5Password.equalsIgnoreCase(sysUser.getPassword())) return HttpWebResult.getMonoError("密码错误");
         sysUser.setPassword(null);
         return createToken(sysUser.getUsername(),sysUser);
+    }
+
+
+    /**
+     * 获取用户的菜单和考评对象权限
+     * @param auth 用户的角色id（多个id以逗号隔开）
+     * @return
+     */
+    public Map<String, Set> getMenuIds(String auth) {
+        Map<String, Set> menus = Maps.newHashMap();
+        //菜单列表
+        Set menuSet = Sets.newHashSet();
+        //考评对象列表
+        Set disPlaySet = Sets.newHashSet();
+        if (StringUtils.isNotEmpty(auth)){
+            List<CityRole> roleList = cityRoleService.getRoleList(auth);
+            if (!CollectionUtils.isEmpty(roleList)) {
+                roleList.forEach(role -> {
+                    String auths = role.getAuth();
+                    String displayNameList = role.getDisplayNameList();
+                    if (StringUtils.isNotEmpty(auths)) menuSet.addAll(Arrays.asList(auths.split(",")));
+                    if (StringUtils.isNotEmpty(displayNameList)) menuSet.addAll(Arrays.asList(displayNameList.split(",")));
+                });
+            }
+        }
+        menus.put("menu",menuSet);
+        menus.put("display",disPlaySet);
+        return menus;
     }
 
 

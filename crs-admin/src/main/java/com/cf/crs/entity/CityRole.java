@@ -27,9 +27,9 @@ public class CityRole implements Serializable {
     private String remark;
 
     @ApiModelProperty(value = "菜单权限（菜单id,多个id以逗号隔开）")
-    private Integer auth;
+    private String auth;
 
     @ApiModelProperty(value = "考评对象权限（多个考评对象以逗号隔开）")
-    private Integer displayNameList;
+    private String displayNameList;
 
 }
