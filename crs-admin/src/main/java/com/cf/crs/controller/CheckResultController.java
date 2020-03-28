@@ -2,6 +2,7 @@ package com.cf.crs.controller;
 
 import com.cf.crs.entity.CheckResult;
 import com.cf.crs.service.CheckResultService;
+import com.cf.util.http.HttpWebResult;
 import com.cf.util.http.ResultJson;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -30,6 +31,13 @@ public class CheckResultController {
     @GetMapping("/getCheckResult")
     public ResultJson<List<CheckResult>> getCheckInfo(){
         return checkResultService.getCheckResult();
+    }
+
+    @ApiOperation("手动考评")
+    @GetMapping("/startCheck")
+    public ResultJson<List<CheckResult>> startCheck(Long id,Integer type){
+        checkResultService.startCheck(id,type);
+        return HttpWebResult.getMonoSucStr();
     }
 
 

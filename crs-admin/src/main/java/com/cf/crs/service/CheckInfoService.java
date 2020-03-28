@@ -39,6 +39,11 @@ public class CheckInfoService {
      * @return
      */
     public ResultJson<List<CheckInfo>> getCheckInfo(){
+        List<CheckInfo> result = getCheckInfoList();
+        return HttpWebResult.getMonoSucResult(result);
+    }
+
+    public List<CheckInfo> getCheckInfoList() {
         List<CheckInfo> list = checkInfoMapper.selectList(new QueryWrapper<CheckInfo>());
         List<CheckInfo> result = Lists.newArrayList();
         for (CheckInfo checkInfo : list) {
@@ -51,7 +56,7 @@ public class CheckInfoService {
                 result.add(checkInfo);
             }
         }
-        return HttpWebResult.getMonoSucResult(result);
+        return result;
     }
 
     /**
