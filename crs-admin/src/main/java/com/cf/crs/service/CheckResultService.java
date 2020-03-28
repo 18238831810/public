@@ -20,9 +20,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 考评菜单
@@ -48,6 +47,9 @@ public class CheckResultService {
     @Autowired
     CheckModeMapper checkModeMapper;
 
+    @Autowired
+    WarningService warningService;
+
     /**
      * 获取考评结果
      * @return
@@ -62,6 +64,9 @@ public class CheckResultService {
         }
         return HttpWebResult.getMonoSucResult(list);
     }
+
+
+
 
 
     /**
@@ -241,28 +246,7 @@ public class CheckResultService {
         //信息安全考评结束
 
         //技术考评
-        JSONObject technology = checkMode.getJSONObject("technology");
-        JSONArray deviceTxt = technology.getJSONArray("deviceTxt");
-        for (Object o : deviceTxt) {
-            JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(o));
-            Integer id = jsonObject.getInteger("id");
-            if (id == 0){
-                //服务器
-                Integer score = jsonObject.getInteger("fraction");
-                scoreTotal += score;
-                checkResult.setServerDevice(1);
-            }else if(id == 1){
-                //数据库
-                Integer score = jsonObject.getInteger("fraction");
-                scoreTotal += score;
-                checkResult.setSqlDevice(1);
-            }else if(id == 2){
-                //中间件
-                Integer score = jsonObject.getInteger("fraction");
-                scoreTotal += score;
-                checkResult.setMiddleware(1);
-            }
-        }
+        scoreTotal = checkTechnology(checkInfo, checkResult, scoreTotal, checkMode, checkItemList);
         //技术考评评结束
         Integer total = checkMode.getInteger("objectTotal");
         //考评总分
@@ -276,6 +260,151 @@ public class CheckResultService {
         checkResult.setTime(System.currentTimeMillis());
         checkResult.setCheckId(checkInfo.getId());
         checkResultMapper.insert(checkResult);
+    }
+
+    /**
+     * 技术考评
+     * @param checkInfo
+     * @param checkResult
+     * @param scoreTotal
+     * @param checkMode
+     * @param checkItemList
+     * @return
+     */
+    private int checkTechnology(CheckInfo checkInfo, CheckResult checkResult, int scoreTotal, JSONObject checkMode, List<String> checkItemList) {
+        JSONObject technology = checkMode.getJSONObject("technology");
+        JSONArray deviceTxt = technology.getJSONArray("deviceTxt");
+        Map<Integer, List<CheckInfo>> deviceList = checkInfo.getDeviceList();
+        for (Object o : deviceTxt) {
+            //技术考评
+            scoreTotal = checkTechnology(checkResult, scoreTotal, checkItemList, deviceList, o);
+        }
+        return scoreTotal;
+    }
+
+    /**
+     * 技术考评
+     * @param checkResult
+     * @param scoreTotal
+     * @param checkItemList
+     * @param deviceList
+     * @param o
+     * @return
+     */
+    private int checkTechnology(CheckResult checkResult, int scoreTotal, List<String> checkItemList, Map<Integer, List<CheckInfo>> deviceList, Object o) {
+        JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(o));
+        Integer id = jsonObject.getInteger("id");
+        if (id == 0){
+            //考评服务器
+            scoreTotal = checkServer(checkResult, scoreTotal, checkItemList, deviceList, jsonObject);
+        }else if(id == 1){
+            //考评数据库
+            scoreTotal = checkSql(checkResult, scoreTotal, checkItemList, deviceList, jsonObject);
+        }else if(id == 2){
+            //考评中间件
+            scoreTotal = checkMiddleware(checkResult, scoreTotal, checkItemList, deviceList, jsonObject);
+        }
+        return scoreTotal;
+    }
+
+    /**
+     * 考评中间件
+     * @param checkResult
+     * @param scoreTotal
+     * @param checkItemList
+     * @param deviceList
+     * @param jsonObject
+     * @return
+     */
+    private int checkMiddleware(CheckResult checkResult, int scoreTotal, List<String> checkItemList, Map<Integer, List<CheckInfo>> deviceList, JSONObject jsonObject) {
+        //中间件
+        List<String> deviceNameList = getDeviceNameList(deviceList, "3");
+        //考评对象是否存在数据库和考评对象是否需要考评数据库
+        if (CollectionUtils.isNotEmpty(deviceNameList) && checkItemList.contains("12")){
+            //需要考评数据库
+            JSONObject serverWaring = warningService.getSqlWaring(2,deviceNameList);
+            Integer critical = serverWaring.getInteger("critical");
+            Integer warning = serverWaring.getInteger("warning");
+            if (critical > jsonObject.getInteger("maxHeight") || warning > jsonObject.getInteger("minHeight")){
+                checkResult.setMiddleware(0);
+                return scoreTotal;
+            }
+        }
+        Integer score = jsonObject.getInteger("fraction");
+        scoreTotal += score;
+        checkResult.setMiddleware(1);
+        return scoreTotal;
+    }
+
+    /**
+     * 考评数据库
+     * @param checkResult
+     * @param scoreTotal
+     * @param checkItemList
+     * @param deviceList
+     * @param jsonObject
+     * @return
+     */
+    private int checkSql(CheckResult checkResult, int scoreTotal, List<String> checkItemList, Map<Integer, List<CheckInfo>> deviceList, JSONObject jsonObject) {
+        //数据库
+        List<String> deviceNameList = getDeviceNameList(deviceList, "2");
+        //考评对象是否存在数据库和考评对象是否需要考评数据库
+        if (CollectionUtils.isNotEmpty(deviceNameList) && checkItemList.contains("11")){
+            //需要考评数据库
+            JSONObject serverWaring = warningService.getSqlWaring(1,deviceNameList);
+            Integer critical = serverWaring.getInteger("critical");
+            Integer warning = serverWaring.getInteger("warning");
+            if (critical > jsonObject.getInteger("maxHeight") || warning > jsonObject.getInteger("minHeight")){
+                checkResult.setSqlDevice(0);
+                return scoreTotal;
+            }
+        }
+        Integer score = jsonObject.getInteger("fraction");
+        scoreTotal += score;
+        checkResult.setSqlDevice(1);
+        return scoreTotal;
+    }
+
+    /**
+     * 考评服务器
+     * @param checkResult
+     * @param scoreTotal
+     * @param checkItemList
+     * @param deviceList
+     * @param jsonObject
+     * @return
+     */
+    private int checkServer(CheckResult checkResult, int scoreTotal, List<String> checkItemList, Map<Integer, List<CheckInfo>> deviceList, JSONObject jsonObject) {
+        //服务器
+        List<String> deviceNameList = getDeviceNameList(deviceList, "1");
+        //考评对象是否存在服务器和考评对象是否需要考评服务器
+        if (CollectionUtils.isNotEmpty(deviceNameList) && checkItemList.contains("10")){
+            //需要考评服务器
+            JSONObject serverWaring = warningService.getServerWaring(deviceNameList);
+            Integer critical = serverWaring.getInteger("critical");
+            Integer warning = serverWaring.getInteger("warning");
+            if (critical > jsonObject.getInteger("maxHeight") || warning > jsonObject.getInteger("minHeight")){
+                checkResult.setServerDevice(0);
+                return scoreTotal;
+            }
+        }
+        Integer score = jsonObject.getInteger("fraction");
+        scoreTotal += score;
+        checkResult.setServerDevice(1);
+        return scoreTotal;
+    }
+
+    /**
+     * 获取考评设备列表
+     * @param deviceList
+     * @param type  1：服务器，2：数据库 3：中间件
+     * @return
+     */
+    private List<String>  getDeviceNameList(Map<Integer, List<CheckInfo>> deviceList,String type) {
+        if (!DataUtil.mapNotEmpty(deviceList)) return null;
+        List<CheckInfo> CheckInfoList = deviceList.get(type);
+        if (CollectionUtils.isEmpty(CheckInfoList)) return null;
+        return CheckInfoList.stream().map(CheckInfo::getName).collect(Collectors.toList());
     }
 
     private JSONObject getCheckMode() {

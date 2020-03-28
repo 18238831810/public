@@ -71,6 +71,10 @@ public class WarningService {
         return scoreServe(record, servers,null);
     }
 
+    public JSONObject getServerWaring(List<String> deviceNameList){
+        JSONObject servers = checkServerService.getServers();
+        return scoreServe(null, servers,deviceNameList);
+    }
 
     public JSONObject scoreServe(List record, JSONObject servers,List<String> deviceNameList) {
         JSONObject jsonObject = new JSONObject();
@@ -116,6 +120,11 @@ public class WarningService {
     public JSONObject analySql(Integer type,List record){
         String html = checkSqlService.getCheckSqlList(type);
         return scoreSql(record, html,null);
+    }
+
+    public JSONObject getSqlWaring(Integer type,List<String> deviceNameList){
+        String html = checkSqlService.getCheckSqlList(type);
+        return scoreSql(null, html, deviceNameList);
     }
 
     public JSONObject scoreSql(List record, String html,List<String> deviceNameList) {
