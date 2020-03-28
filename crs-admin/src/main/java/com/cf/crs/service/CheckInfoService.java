@@ -142,11 +142,11 @@ public class CheckInfoService {
      * 获取所有考评对象的名称
      * @return
      */
-    public Map<Long, String> getCheckInfoName(){
+    public Map<String, String> getCheckInfoName(){
         List<CheckInfo> list = checkInfoMapper.selectList(new QueryWrapper<CheckInfo>().eq("parentId", 0));
-        Map<Long, String> map = Maps.newHashMap();
+        Map<String, String> map = Maps.newHashMap();
         for (CheckInfo checkInfo : list) {
-            map.put(checkInfo.getId(),checkInfo.getName());
+            map.put(String.valueOf(checkInfo.getId()),checkInfo.getName());
         }
         return map;
     }

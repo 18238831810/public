@@ -45,9 +45,9 @@ public class CheckResultService {
     public ResultJson<List<CheckResult>> getCheckResult(){
         List<CheckResult> list = checkResultMapper.selectList(new QueryWrapper<CheckResult>());
         if (CollectionUtils.isEmpty(list)) return HttpWebResult.getMonoSucResult(Lists.newArrayList());
-        Map<Long, String> map = checkInfoService.getCheckInfoName();
+        Map<String, String> map = checkInfoService.getCheckInfoName();
         for (CheckResult checkResult : list) {
-            String name = map.get(checkResult.getCheckId());
+            String name = map.get(String.valueOf(checkResult.getCheckId()));
             if (StringUtils.isNotEmpty(name)) checkResult.setName(name);
         }
         return HttpWebResult.getMonoSucResult(list);
