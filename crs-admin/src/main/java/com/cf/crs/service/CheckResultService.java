@@ -85,7 +85,7 @@ public class CheckResultService {
     public void startCheck(CheckInfo checkInfo,Integer type){
         //获取考评项目
         String checkItems = checkInfo.getCheckItems();
-        if (StringUtils.isNotEmpty(checkItems)) {
+        if (StringUtils.isEmpty(checkItems)) {
             log.info("{}未设置考评项目");
             return;
         }
