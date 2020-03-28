@@ -37,10 +37,10 @@ public class CheckResult implements Serializable {
     private Integer iot;
 
     @ApiModelProperty(value = "服务器设备")
-    private Integer server;
+    private Integer serverDevice;
 
     @ApiModelProperty(value = "数据库")
-    private Integer sql;
+    private Integer sqlDevice;
 
     @ApiModelProperty(value = "中间件")
     private Integer middleware;
