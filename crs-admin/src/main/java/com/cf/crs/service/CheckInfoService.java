@@ -10,6 +10,7 @@ import com.cf.util.http.HttpWebResult;
 import com.cf.util.http.ResultJson;
 import com.cf.util.utils.CacheKey;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -135,6 +136,19 @@ public class CheckInfoService {
         else checkInfoMapper.update(null,new UpdateWrapper<CheckInfo>().eq(id > 0,"id",checkInfo.getId()).eq("type",0).eq("parentId",0).set("checkPlan",checkInfo.getCheckPlan()).
                 set("checkStartTime",checkInfo.getCheckStartTime()).set("checkEndTime",checkInfo.getCheckEndTime()));
         return HttpWebResult.getMonoSucStr();
+    }
+
+    /**
+     * 获取所有考评对象的名称
+     * @return
+     */
+    public Map<Long, String> getCheckInfoName(){
+        List<CheckInfo> list = checkInfoMapper.selectList(new QueryWrapper<CheckInfo>().eq("parentId", 0));
+        Map<Long, String> map = Maps.newHashMap();
+        for (CheckInfo checkInfo : list) {
+            map.put(checkInfo.getId(),checkInfo.getName());
+        }
+        return map;
     }
 
 
