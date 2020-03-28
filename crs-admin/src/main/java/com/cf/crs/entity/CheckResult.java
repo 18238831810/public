@@ -55,7 +55,7 @@ public class CheckResult implements Serializable {
     private Integer type;
 
     @ApiModelProperty(value = "考评时间")
-    private Integer time;
+    private Long time;
 
     @TableField(exist=false)
     @ApiModelProperty(value = "考评对象名称")
