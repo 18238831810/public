@@ -233,7 +233,7 @@ public class CheckResultService {
         //信息安全考评结束
 
         //技术考评
-        JSONArray technology = business.getJSONArray("technology");
+        JSONArray technology = checkMode.getJSONArray("technology");
         for (Object o : technology) {
             JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(o));
             Integer id = jsonObject.getInteger("id");
