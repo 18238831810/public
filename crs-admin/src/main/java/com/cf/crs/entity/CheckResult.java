@@ -25,7 +25,7 @@ public class CheckResult implements Serializable {
     private Long id;
 
     @ApiModelProperty(value = "考评对象id")
-    private Integer checkId;
+    private Long checkId;
 
     @ApiModelProperty(value = "业务健康度(所有考评结果（0:不达标，1:达标）)")
     private Integer health;

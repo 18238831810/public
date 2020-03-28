@@ -109,29 +109,31 @@ public class CheckResultService {
             if (id == 0){
                 Integer score = jsonObject.getInteger("fraction");
                 //页面可用性
+                scoreTotal += score;
                 if (checkItemList.contains("4")){
                     //考评业务监测,暂不考评
                     checkResult.setHealth(1);
-                    scoreTotal =+ score;
                 }else{
                     checkResult.setHealth(1);
-                    scoreTotal =+ score;
                 }
             }else if(id == 1){
                 //页面响应时间
                 Integer score = jsonObject.getInteger("fraction");
-                scoreTotal =+ score;
+                scoreTotal += score;
             }else if(id == 2){
                 //数据质量
                 Integer score = jsonObject.getInteger("fraction");
-                scoreTotal =+ score;
+                scoreTotal += score;
             }else if(id == 3){
                 //数据共享
                 Integer score = jsonObject.getInteger("fraction");
-                scoreTotal =+ score;
+                scoreTotal += score;
             }
         }
-        if (checkResult.getHealth() == null) checkResult.setHealth(business.getInteger("healthTotal"));
+        if (checkResult.getHealth() == null) {
+            business.getInteger("healthTotal");
+            checkResult.setHealth(1);
+        }
         //业务健康考评结束
 
         //信息安全
@@ -141,42 +143,45 @@ public class CheckResultService {
             Integer id = jsonObject.getInteger("id");
             if (id == 0) {
                 Integer score = jsonObject.getInteger("fraction");
-                scoreTotal = +score;
+                scoreTotal += score;
             } else if (id == 1) {
                 //
                 Integer score = jsonObject.getInteger("fraction");
-                scoreTotal = +score;
+                scoreTotal += score;
             } else if (id == 2) {
                 //
                 Integer score = jsonObject.getInteger("fraction");
-                scoreTotal = +score;
+                scoreTotal += score;
             } else if (id == 3) {
                 //
                 Integer score = jsonObject.getInteger("fraction");
-                scoreTotal = +score;
+                scoreTotal += score;
             } else if (id == 4) {
                 //
                 Integer score = jsonObject.getInteger("fraction");
-                scoreTotal = +score;
+                scoreTotal += score;
             } else if (id == 5) {
                 //
                 Integer score = jsonObject.getInteger("fraction");
-                scoreTotal = +score;
+                scoreTotal += score;
             } else if (id == 6) {
                 //
                 Integer score = jsonObject.getInteger("fraction");
-                scoreTotal = +score;
+                scoreTotal += score;
             } else if (id == 7) {
                 //
                 Integer score = jsonObject.getInteger("fraction");
-                scoreTotal = +score;
+                scoreTotal += score;
             } else if (id == 8) {
                 //
                 Integer score = jsonObject.getInteger("fraction");
-                scoreTotal = +score;
+                scoreTotal += score;
             }
         }
-        if (checkResult.getSafe() == null) checkResult.setSafe(business.getInteger("internetTotal"));
+        if (checkResult.getSafe() == null) {
+            business.getInteger("internetTotal");
+            checkResult.setSafe(1);
+        }
         //信息安全考评结束
 
         //物联网设备
@@ -186,50 +191,53 @@ public class CheckResultService {
             Integer id = jsonObject.getInteger("id");
             if (id == 0) {
                 Integer score = jsonObject.getInteger("fraction");
-                scoreTotal = +score;
+                scoreTotal += score;
             } else if (id == 1) {
                 //
                 Integer score = jsonObject.getInteger("fraction");
-                scoreTotal = +score;
+                scoreTotal += score;
             } else if (id == 2) {
                 //
                 Integer score = jsonObject.getInteger("fraction");
-                scoreTotal = +score;
+                scoreTotal += score;
             } else if (id == 3) {
                 //
                 Integer score = jsonObject.getInteger("fraction");
-                scoreTotal = +score;
+                scoreTotal += score;
             } else if (id == 4) {
                 //
                 Integer score = jsonObject.getInteger("fraction");
-                scoreTotal = +score;
+                scoreTotal += score;
             } else if (id == 5) {
                 //
                 Integer score = jsonObject.getInteger("fraction");
-                scoreTotal = +score;
+                scoreTotal += score;
             } else if (id == 6) {
                 //
                 Integer score = jsonObject.getInteger("fraction");
-                scoreTotal = +score;
+                scoreTotal += score;
             } else if (id == 7) {
                 //
                 Integer score = jsonObject.getInteger("fraction");
-                scoreTotal = +score;
+                scoreTotal += score;
             } else if (id == 8) {
                 //
                 Integer score = jsonObject.getInteger("fraction");
-                scoreTotal = +score;
+                scoreTotal += score;
             }else if (id == 9) {
                 //
                 Integer score = jsonObject.getInteger("fraction");
-                scoreTotal = +score;
+                scoreTotal += score;
             }else if (id == 10) {
                 //
                 Integer score = jsonObject.getInteger("fraction");
-                scoreTotal = +score;
+                scoreTotal += score;
             }
         }
-        if (checkResult.getIot() == null) checkResult.setIot(business.getInteger("internetTotal"));
+        if (checkResult.getIot() == null) {
+            business.getInteger("internetTotal");
+            checkResult.setIot(1);
+        }
         //信息安全考评结束
 
         //技术考评
@@ -241,23 +249,24 @@ public class CheckResultService {
             if (id == 0){
                 //服务器
                 Integer score = jsonObject.getInteger("fraction");
-                scoreTotal =+ score;
-                checkResult.setServerDevice(score);
+                scoreTotal += score;
+                checkResult.setServerDevice(1);
             }else if(id == 1){
                 //数据库
                 Integer score = jsonObject.getInteger("fraction");
-                scoreTotal =+ score;
-                checkResult.setSqlDevice(score);
+                scoreTotal += score;
+                checkResult.setSqlDevice(1);
             }else if(id == 2){
                 //中间件
                 Integer score = jsonObject.getInteger("fraction");
-                scoreTotal =+ score;
-                checkResult.setMiddleware(score);
+                scoreTotal += score;
+                checkResult.setMiddleware(1);
             }
         }
         //技术考评评结束
         Integer total = checkMode.getInteger("objectTotal");
         //考评总分
+        log.info("scoreTotal:{}",scoreTotal);
         if (scoreTotal >= total) checkResult.setResult(1);
         else checkResult.setResult(0);
 
@@ -265,6 +274,7 @@ public class CheckResultService {
         checkResult.setType(type);
         //考评时间
         checkResult.setTime(System.currentTimeMillis());
+        checkResult.setCheckId(checkInfo.getId());
         checkResultMapper.insert(checkResult);
     }
 
