@@ -107,7 +107,7 @@ public class CheckResultService {
             JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(o));
             Integer id = jsonObject.getInteger("id");
             if (id == 0){
-                Integer score = jsonObject.getInteger("jsonObject");
+                Integer score = jsonObject.getInteger("fraction");
                 //页面可用性
                 if (checkItemList.contains("4")){
                     //考评业务监测,暂不考评
@@ -119,15 +119,15 @@ public class CheckResultService {
                 }
             }else if(id == 1){
                 //页面响应时间
-                Integer score = jsonObject.getInteger("jsonObject");
+                Integer score = jsonObject.getInteger("fraction");
                 scoreTotal =+ score;
             }else if(id == 2){
                 //数据质量
-                Integer score = jsonObject.getInteger("jsonObject");
+                Integer score = jsonObject.getInteger("fraction");
                 scoreTotal =+ score;
             }else if(id == 3){
                 //数据共享
-                Integer score = jsonObject.getInteger("jsonObject");
+                Integer score = jsonObject.getInteger("fraction");
                 scoreTotal =+ score;
             }
         }
@@ -140,39 +140,39 @@ public class CheckResultService {
             JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(o));
             Integer id = jsonObject.getInteger("id");
             if (id == 0) {
-                Integer score = jsonObject.getInteger("jsonObject");
+                Integer score = jsonObject.getInteger("fraction");
                 scoreTotal = +score;
             } else if (id == 1) {
                 //
-                Integer score = jsonObject.getInteger("jsonObject");
+                Integer score = jsonObject.getInteger("fraction");
                 scoreTotal = +score;
             } else if (id == 2) {
                 //
-                Integer score = jsonObject.getInteger("jsonObject");
+                Integer score = jsonObject.getInteger("fraction");
                 scoreTotal = +score;
             } else if (id == 3) {
                 //
-                Integer score = jsonObject.getInteger("jsonObject");
+                Integer score = jsonObject.getInteger("fraction");
                 scoreTotal = +score;
             } else if (id == 4) {
                 //
-                Integer score = jsonObject.getInteger("jsonObject");
+                Integer score = jsonObject.getInteger("fraction");
                 scoreTotal = +score;
             } else if (id == 5) {
                 //
-                Integer score = jsonObject.getInteger("jsonObject");
+                Integer score = jsonObject.getInteger("fraction");
                 scoreTotal = +score;
             } else if (id == 6) {
                 //
-                Integer score = jsonObject.getInteger("jsonObject");
+                Integer score = jsonObject.getInteger("fraction");
                 scoreTotal = +score;
             } else if (id == 7) {
                 //
-                Integer score = jsonObject.getInteger("jsonObject");
+                Integer score = jsonObject.getInteger("fraction");
                 scoreTotal = +score;
             } else if (id == 8) {
                 //
-                Integer score = jsonObject.getInteger("jsonObject");
+                Integer score = jsonObject.getInteger("fraction");
                 scoreTotal = +score;
             }
         }
@@ -185,47 +185,47 @@ public class CheckResultService {
             JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(o));
             Integer id = jsonObject.getInteger("id");
             if (id == 0) {
-                Integer score = jsonObject.getInteger("jsonObject");
+                Integer score = jsonObject.getInteger("fraction");
                 scoreTotal = +score;
             } else if (id == 1) {
                 //
-                Integer score = jsonObject.getInteger("jsonObject");
+                Integer score = jsonObject.getInteger("fraction");
                 scoreTotal = +score;
             } else if (id == 2) {
                 //
-                Integer score = jsonObject.getInteger("jsonObject");
+                Integer score = jsonObject.getInteger("fraction");
                 scoreTotal = +score;
             } else if (id == 3) {
                 //
-                Integer score = jsonObject.getInteger("jsonObject");
+                Integer score = jsonObject.getInteger("fraction");
                 scoreTotal = +score;
             } else if (id == 4) {
                 //
-                Integer score = jsonObject.getInteger("jsonObject");
+                Integer score = jsonObject.getInteger("fraction");
                 scoreTotal = +score;
             } else if (id == 5) {
                 //
-                Integer score = jsonObject.getInteger("jsonObject");
+                Integer score = jsonObject.getInteger("fraction");
                 scoreTotal = +score;
             } else if (id == 6) {
                 //
-                Integer score = jsonObject.getInteger("jsonObject");
+                Integer score = jsonObject.getInteger("fraction");
                 scoreTotal = +score;
             } else if (id == 7) {
                 //
-                Integer score = jsonObject.getInteger("jsonObject");
+                Integer score = jsonObject.getInteger("fraction");
                 scoreTotal = +score;
             } else if (id == 8) {
                 //
-                Integer score = jsonObject.getInteger("jsonObject");
+                Integer score = jsonObject.getInteger("fraction");
                 scoreTotal = +score;
             }else if (id == 9) {
                 //
-                Integer score = jsonObject.getInteger("jsonObject");
+                Integer score = jsonObject.getInteger("fraction");
                 scoreTotal = +score;
             }else if (id == 10) {
                 //
-                Integer score = jsonObject.getInteger("jsonObject");
+                Integer score = jsonObject.getInteger("fraction");
                 scoreTotal = +score;
             }
         }
@@ -239,17 +239,17 @@ public class CheckResultService {
             Integer id = jsonObject.getInteger("id");
             if (id == 0){
                 //服务器
-                Integer score = jsonObject.getInteger("jsonObject");
+                Integer score = jsonObject.getInteger("fraction");
                 scoreTotal =+ score;
                 checkResult.setServerDevice(score);
             }else if(id == 1){
                 //数据库
-                Integer score = jsonObject.getInteger("jsonObject");
+                Integer score = jsonObject.getInteger("fraction");
                 scoreTotal =+ score;
                 checkResult.setSqlDevice(score);
             }else if(id == 2){
                 //中间件
-                Integer score = jsonObject.getInteger("jsonObject");
+                Integer score = jsonObject.getInteger("fraction");
                 scoreTotal =+ score;
                 checkResult.setMiddleware(score);
             }
