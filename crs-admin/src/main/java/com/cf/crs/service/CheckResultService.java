@@ -318,7 +318,7 @@ public class CheckResultService {
      */
     private int checkMiddleware(CheckResult checkResult, int scoreTotal, List<String> checkItemList, Map<String, List<CheckInfo>> deviceList, JSONObject jsonObject) {
         //中间件
-        List<String> deviceNameList = getDeviceNameList(deviceList, "3");
+        List<String> deviceNameList = getDeviceNameList(deviceList, "2");
         //考评对象是否存在数据库和考评对象是否需要考评数据库
         if (CollectionUtils.isNotEmpty(deviceNameList) && checkItemList.contains("12")){
             //需要考评数据库
@@ -347,7 +347,7 @@ public class CheckResultService {
      */
     private int checkSql(CheckResult checkResult, int scoreTotal, List<String> checkItemList, Map<String, List<CheckInfo>> deviceList, JSONObject jsonObject) {
         //数据库
-        List<String> deviceNameList = getDeviceNameList(deviceList, "2");
+        List<String> deviceNameList = getDeviceNameList(deviceList, "1");
         //考评对象是否存在数据库和考评对象是否需要考评数据库
         if (CollectionUtils.isNotEmpty(deviceNameList) && checkItemList.contains("11")){
             //需要考评数据库
@@ -376,7 +376,7 @@ public class CheckResultService {
      */
     private int checkServer(CheckResult checkResult, int scoreTotal, List<String> checkItemList, Map<String, List<CheckInfo>> deviceList, JSONObject jsonObject) {
         //服务器
-        List<String> deviceNameList = getDeviceNameList(deviceList, "1");
+        List<String> deviceNameList = getDeviceNameList(deviceList, "3");
         //考评对象是否存在服务器和考评对象是否需要考评服务器
         if (CollectionUtils.isNotEmpty(deviceNameList) && checkItemList.contains("10")){
             //需要考评服务器
