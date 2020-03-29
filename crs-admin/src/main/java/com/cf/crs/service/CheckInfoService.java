@@ -16,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -52,7 +53,9 @@ public class CheckInfoService {
                 Long id = checkInfo.getId();
                 //获取考评对象所属设备
                 Map<Integer, List<CheckInfo>> map = list.stream().filter(checkDevice -> (checkDevice.getParentId() != 0 || checkDevice.getType() != 0) && (long) checkDevice.getParentId() == id).collect(Collectors.groupingBy(CheckInfo::getType));
-                checkInfo.setDeviceList(map);
+                HashMap<String, List<CheckInfo>> deviceMap = Maps.newHashMap();
+                map.keySet().forEach(key -> deviceMap.put(String.valueOf(key),map.get(key)));
+                checkInfo.setDeviceList(deviceMap);
                 result.add(checkInfo);
             }
         }

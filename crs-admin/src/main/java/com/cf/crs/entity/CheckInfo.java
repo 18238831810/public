@@ -51,7 +51,7 @@ public class CheckInfo implements Serializable {
 
     @TableField(exist = false)
     @ApiModelProperty(value = "考评设备")
-    private Map<Integer, List<CheckInfo>> deviceList;
+    private Map<String, List<CheckInfo>> deviceList;
 
     @ApiModelProperty(value = "考评计划（cron表达式）")
     private String checkPlan;

@@ -274,7 +274,7 @@ public class CheckResultService {
     private int checkTechnology(CheckInfo checkInfo, CheckResult checkResult, int scoreTotal, JSONObject checkMode, List<String> checkItemList) {
         JSONObject technology = checkMode.getJSONObject("technology");
         JSONArray deviceTxt = technology.getJSONArray("deviceTxt");
-        Map<Integer, List<CheckInfo>> deviceList = checkInfo.getDeviceList();
+        Map<String, List<CheckInfo>> deviceList = checkInfo.getDeviceList();
         for (Object o : deviceTxt) {
             //技术考评
             scoreTotal = checkTechnology(checkResult, scoreTotal, checkItemList, deviceList, o);
@@ -291,7 +291,7 @@ public class CheckResultService {
      * @param o
      * @return
      */
-    private int checkTechnology(CheckResult checkResult, int scoreTotal, List<String> checkItemList, Map<Integer, List<CheckInfo>> deviceList, Object o) {
+    private int checkTechnology(CheckResult checkResult, int scoreTotal, List<String> checkItemList, Map<String, List<CheckInfo>> deviceList, Object o) {
         JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(o));
         Integer id = jsonObject.getInteger("id");
         if (id == 0){
@@ -316,7 +316,7 @@ public class CheckResultService {
      * @param jsonObject
      * @return
      */
-    private int checkMiddleware(CheckResult checkResult, int scoreTotal, List<String> checkItemList, Map<Integer, List<CheckInfo>> deviceList, JSONObject jsonObject) {
+    private int checkMiddleware(CheckResult checkResult, int scoreTotal, List<String> checkItemList, Map<String, List<CheckInfo>> deviceList, JSONObject jsonObject) {
         //中间件
         List<String> deviceNameList = getDeviceNameList(deviceList, "3");
         //考评对象是否存在数据库和考评对象是否需要考评数据库
@@ -345,7 +345,7 @@ public class CheckResultService {
      * @param jsonObject
      * @return
      */
-    private int checkSql(CheckResult checkResult, int scoreTotal, List<String> checkItemList, Map<Integer, List<CheckInfo>> deviceList, JSONObject jsonObject) {
+    private int checkSql(CheckResult checkResult, int scoreTotal, List<String> checkItemList, Map<String, List<CheckInfo>> deviceList, JSONObject jsonObject) {
         //数据库
         List<String> deviceNameList = getDeviceNameList(deviceList, "2");
         //考评对象是否存在数据库和考评对象是否需要考评数据库
@@ -374,7 +374,7 @@ public class CheckResultService {
      * @param jsonObject
      * @return
      */
-    private int checkServer(CheckResult checkResult, int scoreTotal, List<String> checkItemList, Map<Integer, List<CheckInfo>> deviceList, JSONObject jsonObject) {
+    private int checkServer(CheckResult checkResult, int scoreTotal, List<String> checkItemList, Map<String, List<CheckInfo>> deviceList, JSONObject jsonObject) {
         //服务器
         List<String> deviceNameList = getDeviceNameList(deviceList, "1");
         //考评对象是否存在服务器和考评对象是否需要考评服务器
@@ -400,7 +400,7 @@ public class CheckResultService {
      * @param type  1：服务器，2：数据库 3：中间件
      * @return
      */
-    private List<String>  getDeviceNameList(Map<Integer, List<CheckInfo>> deviceList,String type) {
+    private List<String>  getDeviceNameList(Map<String, List<CheckInfo>> deviceList,String type) {
         if (!DataUtil.mapNotEmpty(deviceList)) return null;
         List<CheckInfo> CheckInfoList = deviceList.get(type);
         if (CollectionUtils.isEmpty(CheckInfoList)) return null;
