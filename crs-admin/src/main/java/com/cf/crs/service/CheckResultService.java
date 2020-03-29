@@ -55,7 +55,7 @@ public class CheckResultService {
      * @return
      */
     public ResultJson<List<CheckResult>> getCheckResult(){
-        List<CheckResult> list = checkResultMapper.selectList(new QueryWrapper<CheckResult>());
+        List<CheckResult> list = checkResultMapper.selectList(new QueryWrapper<CheckResult>().orderByDesc("time"));
         if (CollectionUtils.isEmpty(list)) return HttpWebResult.getMonoSucResult(Lists.newArrayList());
         Map<String, String> map = checkInfoService.getCheckInfoName();
         for (CheckResult checkResult : list) {
