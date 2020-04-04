@@ -50,6 +50,7 @@ public class CheckResultService {
     @Autowired
     WarningService warningService;
 
+
     /**
      * 获取考评结果
      * @return
@@ -111,28 +112,55 @@ public class CheckResultService {
         for (Object o : health) {
             JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(o));
             Integer id = jsonObject.getInteger("id");
+            Integer score = jsonObject.getInteger("fraction");
             if (id == 0){
-                Integer score = jsonObject.getInteger("fraction");
                 //页面可用性
-                scoreTotal += score;
-                if (checkItemList.contains("4")){
-                    //考评业务监测,暂不考评
-                    checkResult.setHealth(1);
+                if (checkItemList.contains("7")){
+                    //需要考评,考评页面可用性
+                    checkResult.setBusinessCondition(jsonObject.getString("qualification"));
+                    checkResult.setBusinessVaule("正常");
+                    scoreTotal += score;
                 }else{
-                    checkResult.setHealth(1);
+                    //不需要考评
+                    //checkResult.setBusinessVaule(DEFAULTVALUE);
+                    scoreTotal += score;
                 }
             }else if(id == 1){
-                //页面响应时间
-                Integer score = jsonObject.getInteger("fraction");
-                scoreTotal += score;
+                //业务监测
+                if (checkItemList.contains("4")){
+                    //需要考评,业务监测
+                    checkResult.setResponseCondition(jsonObject.getString("qualification"));
+                    checkResult.setResponseVaule("正常");
+                    scoreTotal += score;
+                }else{
+                    //不需要考评
+                    //checkResult.setBusinessVaule(DEFAULTVALUE);
+                    scoreTotal += score;
+                }
             }else if(id == 2){
                 //数据质量
-                Integer score = jsonObject.getInteger("fraction");
-                scoreTotal += score;
+                if (checkItemList.contains("5")){
+                    //需要考评,业务监测
+                    checkResult.setDataQualityCondition(jsonObject.getString("qualification"));
+                    checkResult.setDataQualityVaule("95");
+                    scoreTotal += score;
+                }else{
+                    //不需要考评
+                    //checkResult.setDataQualityVaule(DEFAULTVALUE);
+                    scoreTotal += score;
+                }
             }else if(id == 3){
                 //数据共享
-                Integer score = jsonObject.getInteger("fraction");
-                scoreTotal += score;
+                if (checkItemList.contains("6")){
+                    //需要考评,业务监测
+                    checkResult.setDataSharingCondition(jsonObject.getString("qualification"));
+                    checkResult.setDataSharingVaule("正常");
+                    scoreTotal += score;
+                }else{
+                    //不需要考评
+                    //checkResult.setDataSharingVaule(DEFAULTVALUE);
+                    scoreTotal += score;
+                }
             }
         }
         if (checkResult.getHealth() == null) {
@@ -143,43 +171,38 @@ public class CheckResultService {
 
         //信息安全
         JSONArray security = business.getJSONArray("security");
+        //获取用户设置的信息安全设置
+        String informationSecurity = checkInfo.getInformationSecurity();
         for (Object o : security) {
             JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(o));
             Integer id = jsonObject.getInteger("id");
+            Integer score = jsonObject.getInteger("fraction");
             if (id == 0) {
-                Integer score = jsonObject.getInteger("fraction");
+                //安全漏洞
                 scoreTotal += score;
             } else if (id == 1) {
-                //
-                Integer score = jsonObject.getInteger("fraction");
+                //病毒攻击
                 scoreTotal += score;
             } else if (id == 2) {
-                //
-                Integer score = jsonObject.getInteger("fraction");
+                //端口扫描
                 scoreTotal += score;
             } else if (id == 3) {
-                //
-                Integer score = jsonObject.getInteger("fraction");
+                //强力攻击
                 scoreTotal += score;
             } else if (id == 4) {
-                //
-                Integer score = jsonObject.getInteger("fraction");
+                //木马后门攻击
                 scoreTotal += score;
             } else if (id == 5) {
-                //
-                Integer score = jsonObject.getInteger("fraction");
+                //拒绝访问攻击
                 scoreTotal += score;
             } else if (id == 6) {
-                //
-                Integer score = jsonObject.getInteger("fraction");
+                //缓冲区溢出攻击
                 scoreTotal += score;
             } else if (id == 7) {
-                //
-                Integer score = jsonObject.getInteger("fraction");
+                //网络蠕虫攻击
                 scoreTotal += score;
             } else if (id == 8) {
-                //
-                Integer score = jsonObject.getInteger("fraction");
+                //ip碎片攻击
                 scoreTotal += score;
             }
         }
@@ -194,48 +217,39 @@ public class CheckResultService {
         for (Object o : internet) {
             JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(o));
             Integer id = jsonObject.getInteger("id");
+            Integer score = jsonObject.getInteger("fraction");
             if (id == 0) {
-                Integer score = jsonObject.getInteger("fraction");
+                //执法车
                 scoreTotal += score;
             } else if (id == 1) {
-                //
-                Integer score = jsonObject.getInteger("fraction");
+                //绿化车辆
                 scoreTotal += score;
             } else if (id == 2) {
-                //
-                Integer score = jsonObject.getInteger("fraction");
+                //环卫车
                 scoreTotal += score;
             } else if (id == 3) {
-                //
-                Integer score = jsonObject.getInteger("fraction");
+                //摄像头
                 scoreTotal += score;
             } else if (id == 4) {
-                //
-                Integer score = jsonObject.getInteger("fraction");
+                //执法仪
                 scoreTotal += score;
             } else if (id == 5) {
-                //
-                Integer score = jsonObject.getInteger("fraction");
+                //对讲机
                 scoreTotal += score;
             } else if (id == 6) {
-                //
-                Integer score = jsonObject.getInteger("fraction");
+                //环卫工牌
                 scoreTotal += score;
             } else if (id == 7) {
-                //
-                Integer score = jsonObject.getInteger("fraction");
+                //公厕一体机
                 scoreTotal += score;
             } else if (id == 8) {
-                //
-                Integer score = jsonObject.getInteger("fraction");
+                //果壳箱监测仪
                 scoreTotal += score;
             }else if (id == 9) {
-                //
-                Integer score = jsonObject.getInteger("fraction");
+                //气体监测仪
                 scoreTotal += score;
             }else if (id == 10) {
-                //
-                Integer score = jsonObject.getInteger("fraction");
+                //避险设备
                 scoreTotal += score;
             }
         }
@@ -322,10 +336,14 @@ public class CheckResultService {
         //考评对象是否存在数据库和考评对象是否需要考评数据库
         if (CollectionUtils.isNotEmpty(deviceNameList) && checkItemList.contains("12")){
             //需要考评数据库
+            Integer maxHeight = jsonObject.getInteger("maxHeight");
+            Integer minHeight = jsonObject.getInteger("minHeight");
+            checkResult.setMiddlewareCondition("严重告警数:"+maxHeight+",故障告警数:"+minHeight);
             JSONObject serverWaring = warningService.getSqlWaring(2,deviceNameList);
             Integer critical = serverWaring.getInteger("critical");
             Integer warning = serverWaring.getInteger("warning");
-            if (critical > jsonObject.getInteger("maxHeight") || warning > jsonObject.getInteger("minHeight")){
+            checkResult.setMiddlewareVaule("严重告警数:"+critical+",故障告警数:"+warning);
+            if (critical > maxHeight || warning > minHeight){
                 checkResult.setMiddleware(0);
                 return scoreTotal;
             }
@@ -351,10 +369,14 @@ public class CheckResultService {
         //考评对象是否存在数据库和考评对象是否需要考评数据库
         if (CollectionUtils.isNotEmpty(deviceNameList) && checkItemList.contains("11")){
             //需要考评数据库
+            Integer maxHeight = jsonObject.getInteger("maxHeight");
+            Integer minHeight = jsonObject.getInteger("minHeight");
+            checkResult.setSqlCondition("严重告警数:"+maxHeight+",故障告警数:"+minHeight);
             JSONObject serverWaring = warningService.getSqlWaring(1,deviceNameList);
             Integer critical = serverWaring.getInteger("critical");
             Integer warning = serverWaring.getInteger("warning");
-            if (critical > jsonObject.getInteger("maxHeight") || warning > jsonObject.getInteger("minHeight")){
+            checkResult.setSqlVaule("严重告警数:"+critical+",故障告警数:"+warning);
+            if (critical > maxHeight || warning > minHeight){
                 checkResult.setSqlDevice(0);
                 return scoreTotal;
             }
@@ -380,10 +402,15 @@ public class CheckResultService {
         //考评对象是否存在服务器和考评对象是否需要考评服务器
         if (CollectionUtils.isNotEmpty(deviceNameList) && checkItemList.contains("10")){
             //需要考评服务器
+            Integer maxHeight = jsonObject.getInteger("maxHeight");
+            Integer minHeight = jsonObject.getInteger("minHeight");
+            checkResult.setServerCondition("严重告警数:"+maxHeight+",故障告警数:"+minHeight);
+
             JSONObject serverWaring = warningService.getServerWaring(deviceNameList);
             Integer critical = serverWaring.getInteger("critical");
             Integer warning = serverWaring.getInteger("warning");
-            if (critical > jsonObject.getInteger("maxHeight") || warning > jsonObject.getInteger("minHeight")){
+            checkResult.setServerVaule("严重告警数:"+critical+",故障告警数:"+warning);
+            if (critical >  maxHeight || warning > minHeight){
                 checkResult.setServerDevice(0);
                 return scoreTotal;
             }
@@ -412,6 +439,7 @@ public class CheckResultService {
         String rule = checkMode.getRule();
         return JSON.parseObject(rule);
     }
+
 
 
 }
