@@ -62,6 +62,12 @@ public class CheckInfo implements Serializable {
     @ApiModelProperty(value = "考评计划结束时间")
     private Long checkEndTime;
 
+    @ApiModelProperty(value = "上次考评时间")
+    private Long lastCheckTime;
+
+    @ApiModelProperty(value = "上次考评结果")
+    private Integer lastCheckResult;
+
 
 
 

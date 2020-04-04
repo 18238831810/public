@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.cf.crs.entity.CheckInfo;
 import com.cf.crs.entity.CheckMode;
 import com.cf.crs.entity.CheckResult;
@@ -49,6 +50,8 @@ public class CheckResultService {
 
     @Autowired
     WarningService warningService;
+
+
 
 
     /**
@@ -271,9 +274,11 @@ public class CheckResultService {
         //考评类型
         checkResult.setType(type);
         //考评时间
-        checkResult.setTime(System.currentTimeMillis());
+        long now = System.currentTimeMillis();
+        checkResult.setTime(now);
         checkResult.setCheckId(checkInfo.getId());
         checkResultMapper.insert(checkResult);
+        checkInfoMapper.update(null,new UpdateWrapper<CheckInfo>().eq("id",checkResult.getCheckId()).set("lastCheckTime",now).set("lastCheckResult",checkResult.getResult()));
     }
 
     /**
