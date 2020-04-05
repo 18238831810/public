@@ -65,7 +65,7 @@ public class ClientLoginService {
 
     public ResultJson login(String userName,String password,String code){
         Object o = redisUtils.get(CacheKey.USER_NAME_TOKEN + ":" + userName);
-        if (o != null && StringUtils.isNotEmpty(o.toString())) return HttpWebResult.getMonoError("此用户已登录");
+        if (o != null && StringUtils.isNotEmpty(o.toString())) return HttpWebResult.getMonoError("此用户登录过于频繁，请10s再进行登录操作");
         //第三方登录
         if (StringUtils.isNotEmpty(code)) return getUser(code);
 
@@ -135,7 +135,7 @@ public class ClientLoginService {
 
     private ResultJson createToken(String userName,Object sysUser) {
         String token = CacheKey.USER_TOKEN + ":"+System.currentTimeMillis();
-        redisUtils.set(CacheKey.USER_NAME_TOKEN+":"+userName,token,60*60*2);
+        redisUtils.set(CacheKey.USER_NAME_TOKEN+":"+userName,token,10);
         //验证成功，返回token和用户信息
         redisUtils.set(token,sysUser,60*60*2);
         return HttpWebResult.getMonoSucResult(token,sysUser);
