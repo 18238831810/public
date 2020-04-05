@@ -29,9 +29,11 @@ public class CityRoleService {
     @Autowired
     CityRoleMapper cityRoleMapper;
 
+    @Autowired
+    CityMenuService cityMenuService;
 
     /**
-     * 查询多有角色
+     * 查询所有有角色
      * @return
      */
     public ResultJson<List<CityRole>> getRoleList(){
@@ -43,6 +45,7 @@ public class CityRoleService {
      * @return
      */
     public List<CityRole> getRoleList(String ids){
+        if ("1".equalsIgnoreCase(ids) || "2".equalsIgnoreCase(ids)) return cityRoleMapper.selectList(new QueryWrapper<CityRole>());
         if(StringUtils.isEmpty(ids)) return Lists.newArrayList();
         List<Integer> collect = Arrays.stream(ids.split(",")).filter(id -> NumberUtils.isNumber(id)).map(id -> Integer.parseInt(id)).collect(Collectors.toList());
         return cityRoleMapper.selectList(new QueryWrapper<CityRole>().in("id",collect));

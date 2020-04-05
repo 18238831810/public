@@ -1,15 +1,15 @@
 package com.cf.crs.service;
 
-import cn.hutool.core.util.ArrayUtil;
-import com.alibaba.druid.sql.visitor.functions.If;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cf.crs.common.redis.RedisUtils;
 import com.cf.crs.config.config.ClientConfig;
+import com.cf.crs.entity.CityMenu;
 import com.cf.crs.entity.CityRole;
 import com.cf.crs.entity.CityUser;
 import com.cf.crs.entity.SysUser;
+import com.cf.crs.mapper.CityMenuMapper;
 import com.cf.crs.mapper.CityUserMapper;
 import com.cf.crs.mapper.SysUserMapper;
 import com.cf.util.http.HttpWebResult;
@@ -25,7 +25,10 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author frank
@@ -53,6 +56,9 @@ public class ClientLoginService {
     @Autowired
     CityRoleService cityRoleService;
 
+    @Autowired
+    CityMenuMapper cityMenuMapper;
+
     public static void main(String[] args) {
         String md5Password = DigestUtils.md5DigestAsHex("SzcgKp#@4479".getBytes());
         System.out.println(md5Password);
@@ -75,7 +81,7 @@ public class ClientLoginService {
         String md5Password = DigestUtils.md5DigestAsHex(password.getBytes());
         if (!md5Password.equalsIgnoreCase(sysUser.getPassword())) return HttpWebResult.getMonoError("密码错误");
         sysUser.setPassword(null);
-        return createToken(sysUser.getUsername(),sysUser);
+        return createToken(sysUser.getUsername(),sysUser,sysUser.getAuth());
     }
 
 
@@ -86,6 +92,8 @@ public class ClientLoginService {
      */
     public Map<String, Set> getMenuIds(String auth) {
         Map<String, Set> menus = Maps.newHashMap();
+        //菜单id列表
+        Set menuIdSet = Sets.newHashSet();
         //菜单列表
         Set menuSet = Sets.newHashSet();
         //考评对象列表
@@ -96,11 +104,18 @@ public class ClientLoginService {
                 roleList.forEach(role -> {
                     String auths = role.getAuth();
                     String displayNameList = role.getDisplayNameList();
-                    if (StringUtils.isNotEmpty(auths)) menuSet.addAll(Arrays.asList(auths.split(",")));
-                    if (StringUtils.isNotEmpty(displayNameList)) menuSet.addAll(Arrays.asList(displayNameList.split(",")));
+                    if (StringUtils.isNotEmpty(auths)) menuIdSet.addAll(Arrays.asList(auths.split(",")));
+                    if (StringUtils.isNotEmpty(displayNameList)) disPlaySet.addAll(Arrays.asList(displayNameList.split(",")));
                 });
             }
         }
+        List<CityMenu> menuList = cityMenuMapper.selectList(new QueryWrapper<CityMenu>());
+
+        menuList.forEach(menu -> {
+            Long id = menu.getId();
+            if (menuIdSet.contains(String.valueOf(id)) || "1".equalsIgnoreCase(auth)) menuSet.add(menu);
+        });
+        //menus.put("menuId",menuIdSet);
         menus.put("menu",menuSet);
         menus.put("display",disPlaySet);
         return menus;
@@ -130,14 +145,15 @@ public class ClientLoginService {
         if (cityUser == null) return HttpWebResult.getMonoError("不存在此用户");
         String auth = cityUser.getAuth();
         if (StringUtils.isEmpty(auth) || "0".equalsIgnoreCase(auth)) return HttpWebResult.getMonoError("此用户没有登录权限");
-        return createToken(cityUser.getUsername(),cityUser);
+        return createToken(cityUser.getUsername(),cityUser, cityUser.getAuth());
     }
 
-    private ResultJson createToken(String userName,Object sysUser) {
+    private ResultJson createToken(String userName,Object sysUser,String auth) {
         String token = CacheKey.USER_TOKEN + ":"+System.currentTimeMillis();
         redisUtils.set(CacheKey.USER_NAME_TOKEN+":"+userName,token,10);
         //验证成功，返回token和用户信息
         redisUtils.set(token,sysUser,60*60*2);
+        redisUtils.set(token+":menu",getMenuIds(auth),60*60*2);
         return HttpWebResult.getMonoSucResult(token,sysUser);
     }
 

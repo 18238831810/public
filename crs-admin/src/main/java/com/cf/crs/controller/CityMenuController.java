@@ -1,7 +1,9 @@
 package com.cf.crs.controller;
 
+import com.cf.crs.entity.CityMenu;
 import com.cf.crs.service.CityMenuService;
 import com.cf.crs.service.CityUserService;
+import com.cf.util.http.ResultJson;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -10,6 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author frank
@@ -24,8 +30,14 @@ public class CityMenuController {
     CityMenuService cityMenuService;
 
     @ApiOperation("获取所有菜单")
-    @GetMapping("/getUserList")
-    public Object selectList(){
+    @GetMapping("/getMeanList")
+    public ResultJson<List<CityMenu>> selectMenuList(){
         return cityMenuService.getMenuList();
+    }
+
+    @ApiOperation("获取用户对应的菜单")
+    @GetMapping("/getMenuListByUser")
+    public ResultJson<Map<String, Set>> selectMenuListByUser(){
+        return cityMenuService.getMenuListByToken();
     }
 }
