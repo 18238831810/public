@@ -21,7 +21,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -173,44 +175,75 @@ public class CheckResultService {
         //业务健康考评结束
 
         //信息安全
-        JSONArray security = business.getJSONArray("security");
-        //获取用户设置的信息安全设置
         String informationSecurity = checkInfo.getInformationSecurity();
-        for (Object o : security) {
-            JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(o));
-            Integer id = jsonObject.getInteger("id");
-            Integer score = jsonObject.getInteger("fraction");
-            if (id == 0) {
-                //安全漏洞
-                scoreTotal += score;
-            } else if (id == 1) {
-                //病毒攻击
-                scoreTotal += score;
-            } else if (id == 2) {
-                //端口扫描
-                scoreTotal += score;
-            } else if (id == 3) {
-                //强力攻击
-                scoreTotal += score;
-            } else if (id == 4) {
-                //木马后门攻击
-                scoreTotal += score;
-            } else if (id == 5) {
-                //拒绝访问攻击
-                scoreTotal += score;
-            } else if (id == 6) {
-                //缓冲区溢出攻击
-                scoreTotal += score;
-            } else if (id == 7) {
-                //网络蠕虫攻击
-                scoreTotal += score;
-            } else if (id == 8) {
-                //ip碎片攻击
-                scoreTotal += score;
+        if (checkItemList.contains("8") && StringUtils.isNotEmpty(informationSecurity)){
+            //需要考评
+            JSONArray security = business.getJSONArray("security");
+            JSONArray securityArray = JSONArray.parseArray(informationSecurity);
+            //获取用户设置的信息安全设置
+            for (Object o : security) {
+                JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(o));
+                Integer id = jsonObject.getInteger("id");
+                Integer score = jsonObject.getInteger("fraction");
+                if (id == 0) {
+                    //安全漏洞
+                    JSONObject leak = getCheckSafeByType(securityArray, "leak");
+                    if (DataUtil.jsonNotEmpty(leak)){
+                        //获取到安全漏洞设置信息
+                        String leakPercent = leak.getString("leakPercent");
+                        Integer percentSet = jsonObject.getInteger("percent");
+                        String resultSet = "加固比率:"+percentSet;
+                        String result = "";
+                        if (StringUtils.isNotEmpty(leakPercent)){
+                            //比对加固比率
+                            int percent = Integer.parseInt(leakPercent);
+                            if (percent < percentSet) {
+                                //加固比率不符合，直接算不达标
+                                result = "加固比率:"+percent;
+                                checkResult.setSecurityBreachCondition(resultSet);
+                                checkResult.setSecurityBreachVaule(result);
+                                checkResult.setSecurityBreachStatus(0);
+                            }else{
+                                //加固比率达标，比对
+
+                            }
+                        }
+                    }else{
+                        scoreTotal += score;
+                    }
+                } else if (id == 1) {
+                    //病毒攻击
+                    scoreTotal += score;
+                } else if (id == 2) {
+                    //端口扫描
+                    scoreTotal += score;
+                } else if (id == 3) {
+                    //强力攻击
+                    scoreTotal += score;
+                } else if (id == 4) {
+                    //木马后门攻击
+                    scoreTotal += score;
+                } else if (id == 5) {
+                    //拒绝访问攻击
+                    scoreTotal += score;
+                } else if (id == 6) {
+                    //缓冲区溢出攻击
+                    scoreTotal += score;
+                } else if (id == 7) {
+                    //网络蠕虫攻击
+                    scoreTotal += score;
+                } else if (id == 8) {
+                    //ip碎片攻击
+                    scoreTotal += score;
+                }
             }
-        }
-        if (checkResult.getSafe() == null) {
-            business.getInteger("internetTotal");
+            if (checkResult.getSafe() == null) {
+                checkResult.setSafe(1);
+            }
+        }else{
+            //不需要考评
+            Integer score = business.getInteger("securityTotal");
+            scoreTotal += score;
             checkResult.setSafe(1);
         }
         //信息安全考评结束
@@ -279,6 +312,15 @@ public class CheckResultService {
         checkResult.setCheckId(checkInfo.getId());
         checkResultMapper.insert(checkResult);
         checkInfoMapper.update(null,new UpdateWrapper<CheckInfo>().eq("id",checkResult.getCheckId()).set("lastCheckTime",now).set("lastCheckResult",checkResult.getResult()));
+    }
+
+    private JSONObject getCheckSafeByType(JSONArray securityArray,String type) {
+        for (Object obj : securityArray) {
+            JSONObject json = JSON.parseObject(JSON.toJSONString(obj));
+            String id = json.getString("id");
+            if ("type".equalsIgnoreCase(id)) return json;
+        }
+        return null;
     }
 
     /**
