@@ -1,6 +1,7 @@
 package com.cf.crs.config.config;
 
 import com.cf.crs.config.interceptor.ActionInterceptor;
+import com.cf.crs.config.interceptor.AuthTokenHandlerInterceptorAdapter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -18,6 +19,11 @@ public class InterceptorConfig extends WebMvcConfigurationSupport {
     @Bean
     public ActionInterceptor getActionInterceptor() {
         return new ActionInterceptor();
+    }
+
+    @Bean
+    public AuthTokenHandlerInterceptorAdapter getAuthInterceptor() {
+        return new AuthTokenHandlerInterceptorAdapter();
     }
 
     @Override
@@ -46,6 +52,8 @@ public class InterceptorConfig extends WebMvcConfigurationSupport {
         registry.addInterceptor(getActionInterceptor())
                 /*放行swagger*/
                 .excludePathPatterns("/swagger-resources/**", "/v2/**", "/swagger-ui.html/**", "/modeler.html/**");
+
+        registry.addInterceptor(getAuthInterceptor()).addPathPatterns("/city/**");
         super.addInterceptors(registry);
     }
 
