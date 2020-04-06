@@ -70,16 +70,15 @@ public class ClientLoginService {
     }
 
     public ResultJson login(String userName,String password,String code){
-        Object o = redisUtils.get(CacheKey.USER_NAME_TOKEN + ":" + userName);
-        if (o != null && StringUtils.isNotEmpty(o.toString())) return HttpWebResult.getMonoError("此用户登录过于频繁，请10s再进行登录操作");
         //第三方登录
         if (StringUtils.isNotEmpty(code)) return getUser(code);
-
         //自己用户登录
         SysUser sysUser = sysUserMapper.selectOne(new QueryWrapper<SysUser>().eq("username", userName));
         if (sysUser == null) return HttpWebResult.getMonoError("用户名或密码错误");
         String md5Password = DigestUtils.md5DigestAsHex(password.getBytes());
         if (!md5Password.equalsIgnoreCase(sysUser.getPassword())) return HttpWebResult.getMonoError("用户名或密码错误");
+        Object o = redisUtils.get(CacheKey.USER_NAME_TOKEN + ":" + userName);
+        if (o != null && StringUtils.isNotEmpty(o.toString())) return HttpWebResult.getMonoError("此用户登录过于频繁，请10s再进行登录操作");
         sysUser.setPassword(null);
         return createToken(sysUser.getUsername(),sysUser,sysUser.getAuth());
     }
@@ -134,17 +133,21 @@ public class ClientLoginService {
         if (StringUtils.isEmpty(access_token)) {
             //获取token失败
             log.info("获取iam登录token失败");
-            return HttpWebResult.getMonoError(result.getString("msg"));
+            //return HttpWebResult.getMonoError(result.getString("msg"));
+            return HttpWebResult.getMonoError("用户名或密码错误");
         }
         JSONObject user = getUserByToken(access_token);
         String loginName = user.getString("loginName");
-        if (StringUtils.isEmpty(loginName)) return HttpWebResult.getMonoError(user.getString("msg"));
+        if (StringUtils.isEmpty(loginName)) {
+            //return HttpWebResult.getMonoError(user.getString("msg"));
+            return HttpWebResult.getMonoError("用户名或密码错误");
+        }
 
         //验证第三方用户登录权限
         CityUser cityUser = cityUserMapper.selectOne(new QueryWrapper<CityUser>().eq("username", loginName));
-        if (cityUser == null) return HttpWebResult.getMonoError("不存在此用户");
+        if (cityUser == null) return HttpWebResult.getMonoError("用户名或密码错误");
         String auth = cityUser.getAuth();
-        if (StringUtils.isEmpty(auth) || "0".equalsIgnoreCase(auth)) return HttpWebResult.getMonoError("此用户没有登录权限");
+        if (StringUtils.isEmpty(auth) || "0".equalsIgnoreCase(auth)) return HttpWebResult.getMonoError("用户名或密码错误");
         return createToken(cityUser.getUsername(),cityUser, cityUser.getAuth());
     }
 
