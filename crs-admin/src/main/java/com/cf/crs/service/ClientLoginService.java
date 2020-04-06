@@ -77,9 +77,9 @@ public class ClientLoginService {
 
         //自己用户登录
         SysUser sysUser = sysUserMapper.selectOne(new QueryWrapper<SysUser>().eq("username", userName));
-        if (sysUser == null) return HttpWebResult.getMonoError("用户名错误");
+        if (sysUser == null) return HttpWebResult.getMonoError("用户名或密码错误");
         String md5Password = DigestUtils.md5DigestAsHex(password.getBytes());
-        if (!md5Password.equalsIgnoreCase(sysUser.getPassword())) return HttpWebResult.getMonoError("密码错误");
+        if (!md5Password.equalsIgnoreCase(sysUser.getPassword())) return HttpWebResult.getMonoError("用户名或密码错误");
         sysUser.setPassword(null);
         return createToken(sysUser.getUsername(),sysUser,sysUser.getAuth());
     }
