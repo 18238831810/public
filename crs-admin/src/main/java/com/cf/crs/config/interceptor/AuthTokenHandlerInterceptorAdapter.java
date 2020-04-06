@@ -12,6 +12,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>Description: </p>
@@ -45,6 +46,7 @@ public class AuthTokenHandlerInterceptorAdapter extends HandlerInterceptorAdapte
             log.error("token.error:[{}]", request.getRequestURI());
             throw new UnauthorizedException();
         }
+        redisTemplate.expire(token,2, TimeUnit.HOURS);
         return true;
     }
 
