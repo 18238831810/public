@@ -26,13 +26,13 @@ public class CheckObjectController {
 
 
     @ApiOperation("获取考评对象")
-    @GetMapping("/getCheckObject")
+    @PostMapping("/getCheckObject")
     public ResultJson<JSONArray> getCheckObject(){
         return checkObjectService.getCheckObject();
     }
 
     @ApiOperation("获取考评安全信息")
-    @GetMapping("/getCheckSafe")
+    @PostMapping("/getCheckSafe")
     public ResultJson<JSONArray> getCheckSafe(){
         return checkObjectService.getCheckSafe();
     }

@@ -28,7 +28,7 @@ public class CheckPlanController {
 
 
     @ApiOperation("获取考评计划")
-    @GetMapping("/getCheckPlan")
+    @PostMapping("/getCheckPlan")
     public ResultJson<List<CheckPlan>> getCheckPlan(){
         return checkPlanService.getCheckPlan();
     }

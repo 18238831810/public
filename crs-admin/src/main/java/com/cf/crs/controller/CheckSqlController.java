@@ -9,6 +9,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,7 +34,7 @@ public class CheckSqlController {
             @ApiImplicitParam(paramType="query", name = "type", value = "1:数据库 2:中间件 3:服务器 4:物联网设备,5;工单", required = true, dataType = "Integer"),
             @ApiImplicitParam(paramType="query", name = "waringType", value = "(不传代表所有信息)1:严重 2:一般 3:正常 (工单 1:Open 2:close 3:Resolved)", required = false, dataType = "Integer")
     })
-    @GetMapping("/getCheckSqlList")
+    @PostMapping("/getCheckSqlList")
     public ResultJson<List<JSONObject>> getCheckSqlList(Integer type,Integer waringType){
         return checkSqlService.getCheckList(type,waringType);
     }

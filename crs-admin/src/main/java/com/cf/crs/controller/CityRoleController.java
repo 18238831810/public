@@ -23,7 +23,7 @@ public class CityRoleController {
     CityRoleService cityRoleService;
 
     @ApiOperation("获取所有角色")
-    @GetMapping("/getRoleList")
+    @PostMapping("/getRoleList")
     public Object selectList(){
         return cityRoleService.getRoleList();
     }

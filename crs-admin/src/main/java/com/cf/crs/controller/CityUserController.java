@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,7 +24,7 @@ public class CityUserController {
     CityUserService cityUserService;
 
     @ApiOperation("获取所有用户")
-    @GetMapping("/getUserList")
+    @PostMapping("/getUserList")
     public Object selectList(){
         return cityUserService.selectList();
     }
@@ -33,7 +34,7 @@ public class CityUserController {
             @ApiImplicitParam(paramType="query", name = "id", value = "用户id", required = true, dataType = "Integer"),
             @ApiImplicitParam(paramType="query", name = "auth", value = "用户角色 0:无权限，1:管理员 2:普通权限(角色id,多个角色id以逗号隔开)", required = true, dataType = "String")
     })
-    @GetMapping("/setAuth")
+    @PostMapping("/setAuth")
     public Object setRole(Integer id,String auth){
         return cityUserService.setRole(id,auth);
     }

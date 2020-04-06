@@ -9,7 +9,7 @@ import com.cf.util.http.ResultJson;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,13 +31,13 @@ public class WaringController {
 
 
     @ApiOperation("首页告警统计")
-    @GetMapping("/getWaring")
+    @PostMapping("/getWaring")
     public ResultJson<JSONObject> getWaring(){
         return warningService.analyWaring();
     }
 
     @ApiOperation("获取告警统计信息")
-    @GetMapping("/listAlarms")
+    @PostMapping("/listAlarms")
     public ResultJson<JSONArray> listAlarms(WaringParam waringParam){
         return warningInfoService.listAlarms(waringParam);
     }

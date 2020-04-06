@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,13 +31,13 @@ public class CityMenuController {
     CityMenuService cityMenuService;
 
     @ApiOperation("获取所有菜单")
-    @GetMapping("/getMeanList")
+    @PostMapping("/getMeanList")
     public ResultJson<List<CityMenu>> selectMenuList(){
         return cityMenuService.getMenuList();
     }
 
     @ApiOperation("获取用户对应的菜单")
-    @GetMapping("/getMenuListByUser")
+    @PostMapping("/getMenuListByUser")
     public ResultJson<Map<String, Set>> selectMenuListByUser(){
         return cityMenuService.getMenuListByToken();
     }

@@ -28,7 +28,7 @@ public class CheckMenuController {
 
 
     @ApiOperation("获取考评菜单")
-    @GetMapping("/getCheckMenu")
+    @PostMapping("/getCheckMenu")
     public ResultJson<List<CheckMenu>> getCheckMenu(){
         return checkMenuService.getCheckMenu();
     }
