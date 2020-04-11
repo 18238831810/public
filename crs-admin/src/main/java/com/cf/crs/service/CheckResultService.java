@@ -195,7 +195,7 @@ public class CheckResultService {
                     //获取安全漏洞比率设置
                     String condition = "";
                     Integer percent = jsonObject.getInteger("percent");
-                    condition += "加固比率:" + percent;
+                    condition += "加固比率>=" + percent;
                     //获取漏洞比率
                     JSONArray deviceTxtCondition = jsonObject.getJSONArray("deviceTxt");
                     //服务器
@@ -203,37 +203,37 @@ public class CheckResultService {
                     condition += " 服务器:";
                     //危机漏洞
                     Integer serverMaxHeightCondition = serveCondition.getInteger("maxHeight");
-                    condition += " 危机漏洞:"+ serverMaxHeightCondition;
+                    condition += " 危机漏洞<="+ serverMaxHeightCondition;
                     //高分险漏洞
                     Integer serverMidHeightCondition = serveCondition.getInteger("midHeight");
-                    condition += " 高分险漏洞:"+ serverMidHeightCondition;
+                    condition += " 高分险漏洞<="+ serverMidHeightCondition;
                     //中风险漏洞
                     Integer serverMinHeightCondition = serveCondition.getInteger("minHeight");
-                    condition += " 中风险漏洞:"+ serverMinHeightCondition;
+                    condition += " 中风险漏洞<="+ serverMinHeightCondition;
 
                     JSONObject sqlCondition = (JSONObject)deviceTxtCondition.get(1);
-                    condition += " 数据库:";
+                    condition += " 数据库<=";
                     //危机漏洞
                     Integer sqlMaxHeightCondition = sqlCondition.getInteger("maxHeight");
-                    condition += " 危机漏洞:"+ sqlMaxHeightCondition;
+                    condition += " 危机漏洞<="+ sqlMaxHeightCondition;
                     //高分险漏洞
                     Integer sqlMidHeightCondition = sqlCondition.getInteger("midHeight");
-                    condition += " 高分险漏洞:"+ sqlMidHeightCondition;
+                    condition += " 高分险漏洞<="+ sqlMidHeightCondition;
                     //中风险漏洞
                     Integer sqlMinHeightCondition = sqlCondition.getInteger("minHeight");
-                    condition += " 中风险漏洞:"+ sqlMinHeightCondition;
+                    condition += " 中风险漏洞<="+ sqlMinHeightCondition;
 
                     JSONObject middlewareCondition = (JSONObject)deviceTxtCondition.get(2);
-                    condition += " 中间件:";
+                    condition += " 中间件<=";
                     //危机漏洞
                     Integer middlewareMaxHeightCondition = middlewareCondition.getInteger("maxHeight");
-                    condition += " 危机漏洞:"+ middlewareMaxHeightCondition;
+                    condition += " 危机漏洞<="+ middlewareMaxHeightCondition;
                     //高分险漏洞
                     Integer middlewareMidHeightCondition = middlewareCondition.getInteger("midHeight");
-                    condition += " 高分险漏洞:"+ middlewareMidHeightCondition;
+                    condition += " 高分险漏洞<="+ middlewareMidHeightCondition;
                     //中风险漏洞
                     Integer middlewareMinHeightCondition = middlewareCondition.getInteger("minHeight");
-                    condition += " 中风险漏洞:"+ middlewareMinHeightCondition;
+                    condition += " 中风险漏洞<="+ middlewareMinHeightCondition;
                     checkResult.setSecurityBreachCondition(condition);
 
 
@@ -242,7 +242,7 @@ public class CheckResultService {
                     //获取加固比率
                     Integer leakPercent = leak.getInteger("leakPercent");
                     if(leakPercent != null) {
-                        securityValue+= "加固比率>=" + leakPercent;
+                        securityValue+= "加固比率:" + leakPercent;
                         if (leakPercent < percent){
                             checkResult.setSecurityBreachStatus(0);
                             checkResult.setSafe(0);
@@ -256,7 +256,7 @@ public class CheckResultService {
                     //危机漏洞
                     Integer serverMaxHeight = serve.getInteger("maxHeight");
                     if (serverMaxHeight != null) {
-                        securityValue+= " 危机漏洞<="+ serverMaxHeight;
+                        securityValue+= " 危机漏洞:"+ serverMaxHeight;
                         if (serverMaxHeight > serverMaxHeightCondition){
                             checkResult.setSecurityBreachStatus(0);
                             checkResult.setSafe(0);
@@ -265,7 +265,7 @@ public class CheckResultService {
                     //高分险漏洞
                     Integer serverMidHeight = serve.getInteger("midHeight");
                     if (serverMidHeight != null) {
-                        securityValue+= " 高分险漏洞<="+ serverMidHeight;
+                        securityValue+= " 高分险漏洞:"+ serverMidHeight;
                         if (serverMidHeight > serverMidHeightCondition){
                             checkResult.setSecurityBreachStatus(0);
                             checkResult.setSafe(0);
@@ -274,7 +274,7 @@ public class CheckResultService {
                     //中风险漏洞
                     Integer serverMinHeight = serve.getInteger("minHeight");
                     if (serverMinHeight != null) {
-                        securityValue+= " 中风险漏洞<="+ serverMinHeight;
+                        securityValue+= " 中风险漏洞:"+ serverMinHeight;
                         if (serverMinHeight > serverMinHeightCondition){
                             checkResult.setSecurityBreachStatus(0);
                             checkResult.setSafe(0);
@@ -286,7 +286,7 @@ public class CheckResultService {
                     //危机漏洞
                     Integer sqlMaxHeight = sql.getInteger("maxHeight");
                     if (sqlMaxHeight != null) {
-                        securityValue+= " 危机漏洞<="+ sqlMaxHeight;
+                        securityValue+= " 危机漏洞:"+ sqlMaxHeight;
                         if (sqlMaxHeight > sqlMaxHeightCondition){
                             checkResult.setSecurityBreachStatus(0);
                             checkResult.setSafe(0);
@@ -295,7 +295,7 @@ public class CheckResultService {
                     //高分险漏洞
                     Integer sqlMidHeight = sql.getInteger("midHeight");
                     if (sqlMidHeight != null) {
-                        securityValue+= " 高分险漏洞<="+ sqlMidHeight;
+                        securityValue+= " 高分险漏洞:"+ sqlMidHeight;
                         if (sqlMidHeight > sqlMidHeightCondition){
                             checkResult.setSecurityBreachStatus(0);
                             checkResult.setSafe(0);
@@ -304,7 +304,7 @@ public class CheckResultService {
                     //中风险漏洞
                     Integer sqlMinHeight = sql.getInteger("minHeight");
                     if (sqlMinHeight != null) {
-                        securityValue+= " 中风险漏洞<="+ sqlMinHeight;
+                        securityValue+= " 中风险漏洞:"+ sqlMinHeight;
                         if (sqlMinHeight > sqlMinHeightCondition){
                             checkResult.setSecurityBreachStatus(0);
                             checkResult.setSafe(0);
@@ -316,7 +316,7 @@ public class CheckResultService {
                     //危机漏洞
                     Integer middlewareMaxHeight = middleware.getInteger("maxHeight");
                     if (middlewareMaxHeight != null) {
-                        securityValue+= " 危机漏洞<="+ middlewareMaxHeight;
+                        securityValue+= " 危机漏洞:"+ middlewareMaxHeight;
                         if (middlewareMaxHeight > middlewareMaxHeightCondition){
                             checkResult.setSecurityBreachStatus(0);
                             checkResult.setSafe(0);
@@ -325,7 +325,7 @@ public class CheckResultService {
                     //高分险漏洞
                     Integer middlewareMidHeight = middleware.getInteger("midHeight");
                     if (middlewareMidHeight != null) {
-                        securityValue+= " 高分险漏洞<="+ middlewareMidHeight;
+                        securityValue+= " 高分险漏洞:"+ middlewareMidHeight;
                         if (middlewareMidHeight > middlewareMidHeightCondition){
                             checkResult.setSecurityBreachStatus(0);
                             checkResult.setSafe(0);
@@ -334,13 +334,16 @@ public class CheckResultService {
                     //中风险漏洞
                     Integer middlewareMinHeight = middleware.getInteger("minHeight");
                     if (middlewareMinHeight != null) {
-                        securityValue+= " 中风险漏洞<="+ middlewareMinHeight;
+                        securityValue+= " 中风险漏洞:"+ middlewareMinHeight;
                         if (middlewareMinHeight > middlewareMinHeightCondition){
                             checkResult.setSecurityBreachStatus(0);
                             checkResult.setSafe(0);
                         }
                     }
-                    if (StringUtils.isNotEmpty(securityValue)) checkResult.setSecurityBreachVaule(securityValue);
+                    if (securityValue.endsWith("中间件:")) securityValue = securityValue.replace("中间件:","").trim();
+                    if (securityValue.endsWith("数据库:")) securityValue = securityValue.replace("数据库:","").trim();
+                    if (securityValue.endsWith("服务器:")) securityValue = securityValue.replace("服务器:","").trim();
+                    if (StringUtils.isNotEmpty(securityValue)) checkResult.setSecurityBreachVaule(securityValue.trim());
                     if (checkResult.getSafe() != 0) scoreTotal += score;
                 } else if (id == 1) {
                     //病毒攻击
