@@ -83,7 +83,11 @@ public class CheckResultService {
             List<CheckInfo> list = checkInfoService.getCheckInfoList();
             for (CheckInfo checkInfo : list) {
                 if (DataUtil.checkIsUsable(id) && !checkInfo.getId().equals(id)) continue;
-                startCheck(checkInfo,type);
+                try {
+                    startCheck(checkInfo,type);
+                } catch (Exception e) {
+                    log.info(e.getMessage(),e);
+                }
             }
         } catch (Exception e) {
             log.info(e.getMessage(),e);
