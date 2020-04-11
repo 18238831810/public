@@ -111,6 +111,8 @@ check:
     sqlType: MYSQL-DB-server,PostgreSQL,MongoDB,Redis
     apikey: 154e1ff58e5e66db2a8e524b41eff082
     middlewareType: Tomcat-server
+    seq: UrlSeq
+    monitor: UrlMonitor
   server:
     url: http://192.168.1.72:8060
     name: Server

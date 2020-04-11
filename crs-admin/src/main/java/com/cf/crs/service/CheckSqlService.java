@@ -42,6 +42,14 @@ public class CheckSqlService {
     @Value("${check.sql.middlewareType}")
     private String middlewareType;
 
+     @Value("${check.sql.seq}")
+    private String seq;
+
+     @Value("${check.sql.monitor}")
+    private String monitor;
+
+
+
     @Autowired
     CheckServerService checkServerService;
 
@@ -50,7 +58,7 @@ public class CheckSqlService {
 
     /**
      * 获取设备列表
-     * @param type 1:数据库 2:中间件 3:服务器
+     * @param type 1:数据库 2:中间件 3:服务器 4 :物联网设备 5:工单 6:业务监测 7:页面可用性
      * @return
      */
     public ResultJson<List<JSONObject>> getCheckList(Integer type,Integer waringType){
@@ -113,7 +121,17 @@ public class CheckSqlService {
      * @return
      */
     public String getCheckSqlList(Integer type){
-        return getCheckSqlList(type==1?sqlType:middlewareType);
+        String deviceType = "";
+        if (type == 1){
+            deviceType = sqlType;
+        }else if(type == 2){
+            deviceType = middlewareType;
+        }else if(type == 6){
+            deviceType = seq;
+        }else if(type == 7){
+            deviceType = monitor;
+        }
+        return getCheckSqlList(deviceType);
     }
 
     /**
