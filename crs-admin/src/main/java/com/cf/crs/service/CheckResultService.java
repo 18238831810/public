@@ -187,54 +187,300 @@ public class CheckResultService {
                 Integer score = jsonObject.getInteger("fraction");
                 if (id == 0) {
                     //安全漏洞
-                    JSONObject leak = getCheckSafeByType(securityArray, "leak");
-                    if (DataUtil.jsonNotEmpty(leak)){
-                        //获取到安全漏洞设置信息
-                        String leakPercent = leak.getString("leakPercent");
-                        Integer percentSet = jsonObject.getInteger("percent");
-                        String resultSet = "加固比率:"+percentSet;
-                        String result = "";
-                        if (StringUtils.isNotEmpty(leakPercent)){
-                            //比对加固比率
-                            int percent = Integer.parseInt(leakPercent);
-                            if (percent < percentSet) {
-                                //加固比率不符合，直接算不达标
-                                result = "加固比率:"+percent;
-                                checkResult.setSecurityBreachCondition(resultSet);
-                                checkResult.setSecurityBreachVaule(result);
-                                checkResult.setSecurityBreachStatus(0);
-                            }else{
-                                //加固比率达标，比对
+                    //获取安全漏洞比率设置
+                    String condition = "";
+                    Integer percent = jsonObject.getInteger("percent");
+                    condition += "加固比率:" + percent;
+                    //获取漏洞比率
+                    JSONArray deviceTxtCondition = jsonObject.getJSONArray("deviceTxt");
+                    //服务器
+                    JSONObject serveCondition = (JSONObject)deviceTxtCondition.get(0);
+                    condition += " 服务器:";
+                    //危机漏洞
+                    Integer serverMaxHeightCondition = serveCondition.getInteger("maxHeight");
+                    condition += " 危机漏洞:"+ serverMaxHeightCondition;
+                    //高分险漏洞
+                    Integer serverMidHeightCondition = serveCondition.getInteger("midHeight");
+                    condition += " 高分险漏洞:"+ serverMidHeightCondition;
+                    //中风险漏洞
+                    Integer serverMinHeightCondition = serveCondition.getInteger("minHeight");
+                    condition += " 中风险漏洞:"+ serverMinHeightCondition;
 
-                            }
+                    JSONObject sqlCondition = (JSONObject)deviceTxtCondition.get(1);
+                    condition += " 数据库:";
+                    //危机漏洞
+                    Integer sqlMaxHeightCondition = sqlCondition.getInteger("maxHeight");
+                    condition += " 危机漏洞:"+ sqlMaxHeightCondition;
+                    //高分险漏洞
+                    Integer sqlMidHeightCondition = sqlCondition.getInteger("midHeight");
+                    condition += " 高分险漏洞:"+ sqlMidHeightCondition;
+                    //中风险漏洞
+                    Integer sqlMinHeightCondition = sqlCondition.getInteger("minHeight");
+                    condition += " 中风险漏洞:"+ sqlMinHeightCondition;
+
+                    JSONObject middlewareCondition = (JSONObject)deviceTxtCondition.get(2);
+                    condition += " 中间件:";
+                    //危机漏洞
+                    Integer middlewareMaxHeightCondition = middlewareCondition.getInteger("maxHeight");
+                    condition += " 危机漏洞:"+ middlewareMaxHeightCondition;
+                    //高分险漏洞
+                    Integer middlewareMidHeightCondition = middlewareCondition.getInteger("midHeight");
+                    condition += " 高分险漏洞:"+ middlewareMidHeightCondition;
+                    //中风险漏洞
+                    Integer middlewareMinHeightCondition = middlewareCondition.getInteger("minHeight");
+                    condition += " 中风险漏洞:"+ middlewareMinHeightCondition;
+                    checkResult.setSecurityBreachCondition(condition);
+
+
+                    String securityValue= "";
+                    JSONObject leak = getCheckSafeByType(securityArray, "leak");
+                    //获取加固比率
+                    Integer leakPercent = leak.getInteger("leakPercent");
+                    if(leakPercent != null) {
+                        securityValue+= "加固比率>=" + leakPercent;
+                        if (leakPercent < percent){
+                            checkResult.setSecurityBreachStatus(0);
+                            checkResult.setSafe(0);
                         }
-                    }else{
-                        scoreTotal += score;
                     }
+                    //获取漏洞比率
+                    JSONArray deviceTxt = leak.getJSONArray("deviceTxt");
+                    //服务器
+                    JSONObject serve = (JSONObject)deviceTxt.get(0);
+                    securityValue+= " 服务器:";
+                    //危机漏洞
+                    Integer serverMaxHeight = serve.getInteger("maxHeight");
+                    if (serverMaxHeight != null) {
+                        securityValue+= " 危机漏洞<="+ serverMaxHeight;
+                        if (serverMaxHeight > serverMaxHeightCondition){
+                            checkResult.setSecurityBreachStatus(0);
+                            checkResult.setSafe(0);
+                        }
+                    }
+                    //高分险漏洞
+                    Integer serverMidHeight = serve.getInteger("midHeight");
+                    if (serverMidHeight != null) {
+                        securityValue+= " 高分险漏洞<="+ serverMidHeight;
+                        if (serverMidHeight > serverMidHeightCondition){
+                            checkResult.setSecurityBreachStatus(0);
+                            checkResult.setSafe(0);
+                        }
+                    }
+                    //中风险漏洞
+                    Integer serverMinHeight = serve.getInteger("minHeight");
+                    if (serverMinHeight != null) {
+                        securityValue+= " 中风险漏洞<="+ serverMinHeight;
+                        if (serverMinHeight > serverMinHeightCondition){
+                            checkResult.setSecurityBreachStatus(0);
+                            checkResult.setSafe(0);
+                        }
+                    }
+
+                    JSONObject sql = (JSONObject)deviceTxt.get(1);
+                    securityValue+= " 数据库:";
+                    //危机漏洞
+                    Integer sqlMaxHeight = sql.getInteger("maxHeight");
+                    if (sqlMaxHeight != null) {
+                        securityValue+= " 危机漏洞<="+ sqlMaxHeight;
+                        if (sqlMaxHeight > sqlMaxHeightCondition){
+                            checkResult.setSecurityBreachStatus(0);
+                            checkResult.setSafe(0);
+                        }
+                    }
+                    //高分险漏洞
+                    Integer sqlMidHeight = sql.getInteger("midHeight");
+                    if (sqlMidHeight != null) {
+                        securityValue+= " 高分险漏洞<="+ sqlMidHeight;
+                        if (sqlMidHeight > sqlMidHeightCondition){
+                            checkResult.setSecurityBreachStatus(0);
+                            checkResult.setSafe(0);
+                        }
+                    }
+                    //中风险漏洞
+                    Integer sqlMinHeight = sql.getInteger("minHeight");
+                    if (sqlMinHeight != null) {
+                        securityValue+= " 中风险漏洞<="+ sqlMinHeight;
+                        if (sqlMinHeight > sqlMinHeightCondition){
+                            checkResult.setSecurityBreachStatus(0);
+                            checkResult.setSafe(0);
+                        }
+                    }
+
+                    JSONObject middleware = (JSONObject)deviceTxt.get(2);
+                    securityValue+= " 中间件:";
+                    //危机漏洞
+                    Integer middlewareMaxHeight = middleware.getInteger("maxHeight");
+                    if (middlewareMaxHeight != null) {
+                        securityValue+= " 危机漏洞<="+ middlewareMaxHeight;
+                        if (middlewareMaxHeight > middlewareMaxHeightCondition){
+                            checkResult.setSecurityBreachStatus(0);
+                            checkResult.setSafe(0);
+                        }
+                    }
+                    //高分险漏洞
+                    Integer middlewareMidHeight = middleware.getInteger("midHeight");
+                    if (middlewareMidHeight != null) {
+                        securityValue+= " 高分险漏洞<="+ middlewareMidHeight;
+                        if (middlewareMidHeight > middlewareMidHeightCondition){
+                            checkResult.setSecurityBreachStatus(0);
+                            checkResult.setSafe(0);
+                        }
+                    }
+                    //中风险漏洞
+                    Integer middlewareMinHeight = middleware.getInteger("minHeight");
+                    if (middlewareMinHeight != null) {
+                        securityValue+= " 中风险漏洞<="+ middlewareMinHeight;
+                        if (middlewareMinHeight > middlewareMinHeightCondition){
+                            checkResult.setSecurityBreachStatus(0);
+                            checkResult.setSafe(0);
+                        }
+                    }
+                    if (StringUtils.isNotEmpty(securityValue)) checkResult.setSecurityBreachVaule(securityValue);
+                    if (checkResult.getSafe() != 0) scoreTotal += score;
                 } else if (id == 1) {
                     //病毒攻击
-                    scoreTotal += score;
+                    //获取病毒攻击配置
+                    JSONObject virus = getCheckSafeByType(securityArray, "virus");
+                    //查杀比率设置值
+                    Integer virusPercent = virus.getInteger("virusPercent");
+                    //病毒数量设置值
+                    Integer virusNum = virus.getInteger("virusNum");
+
+                    //查杀比率达标值
+                    Integer percent = jsonObject.getInteger("percent");
+                    //病毒数量达标值
+                    Integer num = jsonObject.getInteger("num");
+                    checkResult.setVirusAttackCondition("查杀比率>="+percent+" 病毒数量<="+num);
+                    String virusAttackVaule = "";
+                    if(virusPercent != null) {
+                        virusAttackVaule += "查杀比率:"+virusPercent;
+                        if (virusPercent < percent){
+                            checkResult.setVirusAttackStatus(0);
+                            checkResult.setSafe(0);
+                        }
+                    }
+                    if (virusNum != null){
+                        virusAttackVaule += (" 病毒数量" + virusNum);
+                        if(virusNum > num){
+                            checkResult.setVirusAttackStatus(0);
+                            checkResult.setSafe(0);
+                        }
+                    }
+                    if (StringUtils.isNotEmpty(virusAttackVaule)) checkResult.setVirusAttackVaule(virusAttackVaule);
+                    if (checkResult.getSafe() != 0) scoreTotal += score;
                 } else if (id == 2) {
                     //端口扫描
-                    scoreTotal += score;
+                    JSONObject port = getCheckSafeByType(securityArray, "port");
+                    //获取端口扫描设置值
+                    Integer portNum = port.getInteger("portNum");
+                    //获取端口扫描达标值
+                    Integer num = jsonObject.getInteger("num");
+                    checkResult.setPortScanCondition("端口扫描<="+num);
+                    if(portNum != null){
+                        checkResult.setPortScanVaule("端口扫描:"+portNum);
+                        if (portNum > num){
+                            checkResult.setPortScanStatus(0);
+                            checkResult.setSafe(0);
+                        }
+                    }
+                    //病毒攻击
+                    if (checkResult.getSafe() != 0) scoreTotal += score;
                 } else if (id == 3) {
                     //强力攻击
-                    scoreTotal += score;
+                    JSONObject strong = getCheckSafeByType(securityArray, "strong");
+                    //获取强力攻击设置值
+                    Integer strongNum = strong.getInteger("strongNum");
+                    //获取强力攻击达标值
+                    Integer num = jsonObject.getInteger("num");
+                    checkResult.setForceAttackCondition("强力攻击<="+num);
+                    if(strongNum != null){
+                        checkResult.setForceAttackVaule("强力攻击:"+strongNum);
+                        if (strongNum > num){
+                            checkResult.setForceAttackStatus(0);
+                            checkResult.setSafe(0);
+                        }
+                    }
+                    if (checkResult.getSafe() != 0) scoreTotal += score;
                 } else if (id == 4) {
                     //木马后门攻击
-                    scoreTotal += score;
+                    JSONObject trojan = getCheckSafeByType(securityArray, "trojan");
+                    //获取木马后门攻击设置值
+                    Integer trojanNum = trojan.getInteger("trojanNum");
+                    //获取木马后门攻击达标值
+                    Integer num = jsonObject.getInteger("num");
+                    checkResult.setTrojanAttackCondition("木马后门攻击<="+num);
+                    if(trojanNum != null){
+                        checkResult.setTrojanAttackVaule("木马后门攻击:"+trojanNum);
+                        if (trojanNum > num){
+                            checkResult.setTrojanAttackStatus(0);
+                            checkResult.setSafe(0);
+                        }
+                    }
+                    if (checkResult.getSafe() != 0) scoreTotal += score;
                 } else if (id == 5) {
                     //拒绝访问攻击
-                    scoreTotal += score;
+                    JSONObject refuse = getCheckSafeByType(securityArray, "refuse");
+                    //获取拒绝访问攻击设置值
+                    Integer refuseNum = refuse.getInteger("refuseNum");
+                    //获取拒绝访问攻击达标值
+                    Integer num = jsonObject.getInteger("num");
+                    checkResult.setDeniedAttacCondition("拒绝访问攻击<="+num);
+                    if(refuseNum != null){
+                        checkResult.setDeniedAttackVaule("拒绝访问攻击:"+refuseNum);
+                        if (refuseNum > num){
+                            checkResult.setDeniedAttacStatus(0);
+                            checkResult.setSafe(0);
+                        }
+                    }
+                    if (checkResult.getSafe() != 0) scoreTotal += score;
                 } else if (id == 6) {
                     //缓冲区溢出攻击
-                    scoreTotal += score;
+                    JSONObject buffer = getCheckSafeByType(securityArray, "buffer");
+                    //获取缓冲区溢出攻击设置值
+                    Integer bufferNum = buffer.getInteger("bufferNum");
+                    //获取缓冲区溢出攻击达标值
+                    Integer num = jsonObject.getInteger("num");
+                    checkResult.setZoneAttacCondition("缓冲区溢出攻击<="+num);
+                    if(bufferNum != null){
+                        checkResult.setZoneAttackVaule("缓冲区溢出攻击:"+bufferNum);
+                        if (bufferNum > num){
+                            checkResult.setZoneAttacStatus(0);
+                            checkResult.setSafe(0);
+                        }
+                    }
+                    if (checkResult.getSafe() != 0) scoreTotal += score;
                 } else if (id == 7) {
                     //网络蠕虫攻击
-                    scoreTotal += score;
+                    JSONObject worm = getCheckSafeByType(securityArray, "worm");
+                    //获取网络蠕虫攻击设置值
+                    Integer wormNum = worm.getInteger("wormNum");
+                    //获取网络蠕虫攻击达标值
+                    Integer num = jsonObject.getInteger("num");
+                    checkResult.setWormAttacCondition("网络蠕虫攻击<="+num);
+                    if(wormNum != null){
+                        checkResult.setWormAttackVaule("网络蠕虫攻击:"+wormNum);
+                        if (wormNum > num){
+                            checkResult.setWormAttacStatus(0);
+                            checkResult.setSafe(0);
+                        }
+                    }
+                    if (checkResult.getSafe() != 0) scoreTotal += score;
                 } else if (id == 8) {
                     //ip碎片攻击
-                    scoreTotal += score;
+                    JSONObject ip = getCheckSafeByType(securityArray, "ip");
+                    //获取ip碎片攻击设置值
+                    Integer ipNum = ip.getInteger("ipNum");
+                    //获取ip碎片攻击达标值
+                    Integer num = jsonObject.getInteger("num");
+                    checkResult.setIpAttacCondition("ip碎片攻击<="+num);
+                    if(ipNum != null){
+                        checkResult.setIpAttackVaule("ip碎片攻击:"+ipNum);
+                        if (ipNum > num){
+                            checkResult.setIpAttacStatus(0);
+                            checkResult.setSafe(0);
+                        }
+                    }
+                    if (checkResult.getSafe() != 0) scoreTotal += score;
                 }
             }
             if (checkResult.getSafe() == null) {
