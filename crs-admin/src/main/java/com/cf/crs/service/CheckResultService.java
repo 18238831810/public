@@ -569,7 +569,7 @@ public class CheckResultService {
         for (Object obj : securityArray) {
             JSONObject json = JSON.parseObject(JSON.toJSONString(obj));
             String id = json.getString("id");
-            if ("type".equalsIgnoreCase(id)) return json;
+            if (type.equalsIgnoreCase(id)) return json;
         }
         return null;
     }
