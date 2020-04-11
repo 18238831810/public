@@ -176,10 +176,11 @@ public class CheckResultService {
 
         //信息安全
         String informationSecurity = checkInfo.getInformationSecurity();
-        if (checkItemList.contains("8") && StringUtils.isNotEmpty(informationSecurity)){
+        JSONArray securityArray = JSONArray.parseArray(informationSecurity);
+        if (checkItemList.contains("8") && StringUtils.isNotEmpty(informationSecurity) && securityArray != null && !securityArray.isEmpty()){
             //需要考评
             JSONArray security = business.getJSONArray("security");
-            JSONArray securityArray = JSONArray.parseArray(informationSecurity);
+
             //获取用户设置的信息安全设置
             for (Object o : security) {
                 JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(o));
