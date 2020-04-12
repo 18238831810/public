@@ -99,6 +99,7 @@ public class CheckResultService {
         }
     }
 
+
     /**
      * 考评入口
      */
@@ -127,13 +128,24 @@ public class CheckResultService {
             JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(o));
             Integer id = jsonObject.getInteger("id");
             Integer score = jsonObject.getInteger("fraction");
+            Map<String, List<CheckInfo>> deviceList = checkInfo.getDeviceList();
             if (id == 0){
                 //页面可用性
                 if (checkItemList.contains("7")){
                     //需要考评,考评页面可用性
                     checkResult.setBusinessCondition(jsonObject.getString("qualification"));
-                    checkResult.setBusinessVaule("正常");
-                    scoreTotal += score;
+                    List<String> deviceNameList = getDeviceNameList(deviceList, "1");
+                    if (CollectionUtils.isNotEmpty(deviceNameList)){
+                        JSONObject serverWaring = warningService.getSqlWaring(1,deviceNameList);
+                        Integer clear = serverWaring.getInteger("clear");
+                        if (clear <= 0){
+                            //页面可用不正常
+                            checkResult.setBusinessVaule("不正常");
+                            checkResult.setBusinessStatus(0);
+                            checkResult.setHealth(0);
+                        }
+                    }
+                    if (checkResult.getBusinessStatus() == null || checkResult.getBusinessStatus() != 0) scoreTotal += score;
                 }else{
                     //不需要考评
                     //checkResult.setBusinessVaule(DEFAULTVALUE);
@@ -142,10 +154,20 @@ public class CheckResultService {
             }else if(id == 1){
                 //业务监测
                 if (checkItemList.contains("4")){
-                    //需要考评,业务监测
                     checkResult.setResponseCondition(jsonObject.getString("qualification"));
-                    checkResult.setResponseVaule("正常");
-                    scoreTotal += score;
+                    List<String> deviceNameList = getDeviceNameList(deviceList, "6");
+                    if (CollectionUtils.isNotEmpty(deviceNameList)){
+                        JSONObject serverWaring = warningService.getSqlWaring(1,deviceNameList);
+                        Integer clear = serverWaring.getInteger("clear");
+                        if (clear <= 0){
+                            //页面可用不正常
+                            checkResult.setResponseVaule("不正常");
+                            checkResult.setResponseStatus(0);
+                            checkResult.setHealth(0);
+                        }
+                    }
+                    //需要考评,业务监测
+                    if (checkResult.getResponseStatus() == null || checkResult.getResponseStatus() != 0)scoreTotal += score;
                 }else{
                     //不需要考评
                     //checkResult.setBusinessVaule(DEFAULTVALUE);
@@ -349,7 +371,7 @@ public class CheckResultService {
                     if (securityValue.endsWith("数据库:")) securityValue = securityValue.replace("数据库:","").trim();
                     if (securityValue.endsWith("服务器:")) securityValue = securityValue.replace("服务器:","").trim();
                     if (StringUtils.isNotEmpty(securityValue)) checkResult.setSecurityBreachVaule(securityValue.trim());
-                    if (checkResult.getSafe() != 0) scoreTotal += score;
+                    if (checkResult.getSecurityBreachStatus() == null || checkResult.getSecurityBreachStatus() != 0) scoreTotal += score;
                 } else if (id == 1) {
                     //病毒攻击
                     //获取病毒攻击配置
@@ -380,7 +402,7 @@ public class CheckResultService {
                         }
                     }
                     if (StringUtils.isNotEmpty(virusAttackVaule)) checkResult.setVirusAttackVaule(virusAttackVaule);
-                    if (checkResult.getSafe() != 0) scoreTotal += score;
+                    if (checkResult.getVirusAttackStatus() == null || checkResult.getVirusAttackStatus() != 0) scoreTotal += score;
                 } else if (id == 2) {
                     //端口扫描
                     JSONObject port = getCheckSafeByType(securityArray, "port");
@@ -397,7 +419,7 @@ public class CheckResultService {
                         }
                     }
                     //病毒攻击
-                    if (checkResult.getSafe() != 0) scoreTotal += score;
+                    if (checkResult.getPortScanStatus() == null || checkResult.getPortScanStatus() != 0) scoreTotal += score;
                 } else if (id == 3) {
                     //强力攻击
                     JSONObject strong = getCheckSafeByType(securityArray, "strong");
@@ -413,7 +435,7 @@ public class CheckResultService {
                             checkResult.setSafe(0);
                         }
                     }
-                    if (checkResult.getSafe() != 0) scoreTotal += score;
+                    if (checkResult.getForceAttackStatus() == null || checkResult.getForceAttackStatus() != 0) scoreTotal += score;
                 } else if (id == 4) {
                     //木马后门攻击
                     JSONObject trojan = getCheckSafeByType(securityArray, "trojan");
@@ -429,7 +451,7 @@ public class CheckResultService {
                             checkResult.setSafe(0);
                         }
                     }
-                    if (checkResult.getSafe() != 0) scoreTotal += score;
+                    if (checkResult.getTrojanAttackStatus() == null || checkResult.getTrojanAttackStatus() != 0) scoreTotal += score;
                 } else if (id == 5) {
                     //拒绝访问攻击
                     JSONObject refuse = getCheckSafeByType(securityArray, "refuse");
@@ -445,7 +467,7 @@ public class CheckResultService {
                             checkResult.setSafe(0);
                         }
                     }
-                    if (checkResult.getSafe() != 0) scoreTotal += score;
+                    if (checkResult.getDeniedAttacStatus() == null || checkResult.getDeniedAttacStatus() != 0) scoreTotal += score;
                 } else if (id == 6) {
                     //缓冲区溢出攻击
                     JSONObject buffer = getCheckSafeByType(securityArray, "buffer");
@@ -461,7 +483,7 @@ public class CheckResultService {
                             checkResult.setSafe(0);
                         }
                     }
-                    if (checkResult.getSafe() != 0) scoreTotal += score;
+                    if (checkResult.getZoneAttacStatus() == null || checkResult.getZoneAttacStatus() != 0) scoreTotal += score;
                 } else if (id == 7) {
                     //网络蠕虫攻击
                     JSONObject worm = getCheckSafeByType(securityArray, "worm");
@@ -477,7 +499,7 @@ public class CheckResultService {
                             checkResult.setSafe(0);
                         }
                     }
-                    if (checkResult.getSafe() != 0) scoreTotal += score;
+                    if (checkResult.getWormAttacStatus() == null || checkResult.getWormAttacStatus() != 0) scoreTotal += score;
                 } else if (id == 8) {
                     //ip碎片攻击
                     JSONObject ip = getCheckSafeByType(securityArray, "ip");
@@ -493,7 +515,7 @@ public class CheckResultService {
                             checkResult.setSafe(0);
                         }
                     }
-                    if (checkResult.getSafe() != 0) scoreTotal += score;
+                    if (checkResult.getIpAttacStatus() == null || checkResult.getIpAttacStatus() != 0) scoreTotal += score;
                 }
             }
             if (checkResult.getSafe() == null) {
