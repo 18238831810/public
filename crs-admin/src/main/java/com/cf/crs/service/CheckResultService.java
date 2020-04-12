@@ -143,6 +143,8 @@ public class CheckResultService {
                             checkResult.setBusinessVaule("不正常");
                             checkResult.setBusinessStatus(0);
                             checkResult.setHealth(0);
+                        }else{
+                            checkResult.setBusinessVaule("正常");
                         }
                     }
                     if (checkResult.getBusinessStatus() == null || checkResult.getBusinessStatus() != 0) scoreTotal += score;
@@ -164,6 +166,8 @@ public class CheckResultService {
                             checkResult.setResponseVaule("不正常");
                             checkResult.setResponseStatus(0);
                             checkResult.setHealth(0);
+                        }else{
+                            checkResult.setResponseVaule("正常");
                         }
                     }
                     //需要考评,业务监测
