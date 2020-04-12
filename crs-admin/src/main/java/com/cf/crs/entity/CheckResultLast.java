@@ -8,11 +8,13 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.Serializable;
+
 @TableName("check_result_last")
 @Slf4j
 @Data
 @ApiModel(value = "最新考评结果")
-public class CheckResultLast{
+public class CheckResultLast implements Serializable {
 
     @ApiModelProperty(value = "id")
     private Long id;
