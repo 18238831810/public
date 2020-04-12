@@ -8,8 +8,10 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.cf.crs.entity.CheckInfo;
 import com.cf.crs.entity.CheckMode;
 import com.cf.crs.entity.CheckResult;
+import com.cf.crs.entity.CheckResultLast;
 import com.cf.crs.mapper.CheckInfoMapper;
 import com.cf.crs.mapper.CheckModeMapper;
+import com.cf.crs.mapper.CheckResultLastMapper;
 import com.cf.crs.mapper.CheckResultMapper;
 import com.cf.util.http.HttpWebResult;
 import com.cf.util.http.ResultJson;
@@ -53,6 +55,9 @@ public class CheckResultService {
     @Autowired
     WarningService warningService;
 
+    @Autowired
+    CheckResultLastMapper checkResultLastMapper;
+
 
 
 
@@ -60,11 +65,11 @@ public class CheckResultService {
      * 获取考评结果
      * @return
      */
-    public ResultJson<List<CheckResult>> getCheckResult(){
-        List<CheckResult> list = checkResultMapper.selectList(new QueryWrapper<CheckResult>().orderByDesc("time"));
+    public ResultJson<List<CheckResultLast>> getCheckResult(){
+        List<CheckResultLast> list = checkResultLastMapper.selectList(new QueryWrapper<CheckResultLast>().orderByDesc("time"));
         if (CollectionUtils.isEmpty(list)) return HttpWebResult.getMonoSucResult(Lists.newArrayList());
         Map<String, String> map = checkInfoService.getCheckInfoName();
-        for (CheckResult checkResult : list) {
+        for (CheckResultLast checkResult : list) {
             String name = map.get(String.valueOf(checkResult.getCheckId()));
             if (StringUtils.isNotEmpty(name)) checkResult.setName(name);
         }
@@ -566,6 +571,8 @@ public class CheckResultService {
         checkResult.setCheckId(checkInfo.getId());
         checkResultMapper.insert(checkResult);
         checkInfoMapper.update(null,new UpdateWrapper<CheckInfo>().eq("id",checkResult.getCheckId()).set("lastCheckTime",now).set("lastCheckResult",checkResult.getResult()));
+        checkResultLastMapper.delete(new QueryWrapper<CheckResultLast>().eq("checkId",checkResult.getCheckId()));
+        checkResultLastMapper.insert(checkResult);
     }
 
     private JSONObject getCheckSafeByType(JSONArray securityArray,String type) {

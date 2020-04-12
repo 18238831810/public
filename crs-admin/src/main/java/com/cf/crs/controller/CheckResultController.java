@@ -1,6 +1,7 @@
 package com.cf.crs.controller;
 
 import com.cf.crs.entity.CheckResult;
+import com.cf.crs.entity.CheckResultLast;
 import com.cf.crs.service.CheckResultService;
 import com.cf.util.http.HttpWebResult;
 import com.cf.util.http.ResultJson;
@@ -31,7 +32,7 @@ public class CheckResultController {
 
     @ApiOperation("获取考评结果")
     @PostMapping("/getCheckResult")
-    public ResultJson<List<CheckResult>> getCheckInfo(){
+    public ResultJson<List<CheckResultLast>> getCheckInfo(){
         return checkResultService.getCheckResult();
     }
 
