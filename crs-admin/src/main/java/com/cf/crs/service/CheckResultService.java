@@ -115,8 +115,9 @@ public class CheckResultService {
      * @return
      */
     public ResultJson<IPage<CheckResult>> getcheckReport(Long id,Long startTime, Long endTime, Page<CheckResult> page){
-        if (!DataUtil.checkIsUsable(id)) return HttpWebResult.getMonoError("");
+        if (!DataUtil.checkIsUsable(id)) return HttpWebResult.getMonoError("报表id不存在");
         CheckReport checkReport = checkReportMapper.selectById(id);
+        if (checkReport == null) return HttpWebResult.getMonoError("报表设置不存在");
         String checkItems = checkReport.getCheckItems();
         List<String> selectFiledList = getSelectFiled(checkItems);
         String[] selectFiled = (String[])selectFiledList.toArray();
@@ -126,9 +127,11 @@ public class CheckResultService {
         IPage<CheckResult> checkResultIPage = checkResultMapper.selectPage(page, new QueryWrapper<CheckResult>().select(selectFiled).in("checkId", objectList).between("time", startTime, endTime));
         List<CheckResult> records = checkResultIPage.getRecords();
         Map<String, String> map = checkInfoService.getCheckInfoName();
-        for (CheckResult checkResult : records) {
-            String name = map.get(String.valueOf(checkResult.getCheckId()));
-            if (StringUtils.isNotEmpty(name)) checkResult.setName(name);
+        if(CollectionUtils.isNotEmpty(records)){
+            for (CheckResult checkResult : records) {
+                String name = map.get(String.valueOf(checkResult.getCheckId()));
+                if (StringUtils.isNotEmpty(name)) checkResult.setName(name);
+            }
         }
         String message = selectFiledList.stream().collect(Collectors.joining(","));
         return HttpWebResult.getMonoSucResult(message,checkResultIPage);
