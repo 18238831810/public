@@ -5,24 +5,22 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.cf.crs.entity.CheckInfo;
-import com.cf.crs.entity.CheckMode;
-import com.cf.crs.entity.CheckResult;
-import com.cf.crs.entity.CheckResultLast;
-import com.cf.crs.mapper.CheckInfoMapper;
-import com.cf.crs.mapper.CheckModeMapper;
-import com.cf.crs.mapper.CheckResultLastMapper;
-import com.cf.crs.mapper.CheckResultMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cf.crs.entity.*;
+import com.cf.crs.mapper.*;
 import com.cf.util.http.HttpWebResult;
 import com.cf.util.http.ResultJson;
 import com.cf.util.utils.DataUtil;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -58,8 +56,38 @@ public class CheckResultService {
     @Autowired
     CheckResultLastMapper checkResultLastMapper;
 
+    @Autowired
+    CheckReportMapper checkReportMapper;
+
+    /**
+     * 考评id字段对照表
+     */
+    public Map<String,String> itemMap = Maps.newHashMap();
 
 
+    @PostConstruct
+    public void PostConstruct(){
+        //业务监测
+        itemMap.put("4","responseStatus");
+        //数据质量
+        itemMap.put("5","dataQualityStatus");
+        //数据共享
+        itemMap.put("6","dataSharingStatus");
+        //页面可用性
+        itemMap.put("7","businessStatus");
+        //信息安全
+        itemMap.put("8","safe");
+        //物联网设备状态
+        itemMap.put("9","iot");
+        //服务器
+        itemMap.put("10","serverDevice");
+        //数据库
+        itemMap.put("11","sqlDevice");
+        //中间件
+        itemMap.put("12","middleware");
+        //网络设备
+        itemMap.put("13","Internet");
+    }
 
     /**
      * 获取考评结果
@@ -77,7 +105,47 @@ public class CheckResultService {
     }
 
 
+    /**
+     *
+     * 获取考评报表
+     * @param page  分页参数
+     * @param id   报表id
+     * @param endTime   结束时间
+     * @param page      页数
+     * @return
+     */
+    public ResultJson<IPage<CheckResult>> getcheckReport(Long id,Long startTime, Long endTime, Page<CheckResult> page){
+        if (!DataUtil.checkIsUsable(id)) return HttpWebResult.getMonoError("");
+        CheckReport checkReport = checkReportMapper.selectById(id);
+        String checkItems = checkReport.getCheckItems();
+        List<String> selectFiledList = getSelectFiled(checkItems);
+        String[] selectFiled = (String[])selectFiledList.toArray();
+        String checkObjectIds = checkReport.getCheckObjectIdList();
+        //考评对象列表
+        List<String> objectList = Arrays.asList(checkObjectIds.split(","));
+        IPage<CheckResult> checkResultIPage = checkResultMapper.selectPage(page, new QueryWrapper<CheckResult>().select(selectFiled).in("checkId", objectList).between("time", startTime, endTime));
+        List<CheckResult> records = checkResultIPage.getRecords();
+        Map<String, String> map = checkInfoService.getCheckInfoName();
+        for (CheckResult checkResult : records) {
+            String name = map.get(String.valueOf(checkResult.getCheckId()));
+            if (StringUtils.isNotEmpty(name)) checkResult.setName(name);
+        }
+        String message = selectFiledList.stream().collect(Collectors.joining(","));
+        return HttpWebResult.getMonoSucResult(message,checkResultIPage);
+    }
 
+    private List<String> getSelectFiled(String checkItems) {
+        //考评项目id列表
+        List<String> itemList = Arrays.asList(checkItems.split(","));
+        //获取考评查询字段
+        List<String> selectFiled = itemList.stream().map(key -> itemMap.get(key)).collect(Collectors.toList());
+        selectFiled.add("id");
+        selectFiled.add("checkId");
+        selectFiled.add("type");
+        selectFiled.add("result");
+        selectFiled.add("time");
+        return selectFiled;
+    }
 
 
     /**
