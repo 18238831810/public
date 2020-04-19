@@ -743,7 +743,7 @@ public class CheckResultService {
             //需要考评数据库
             Integer maxHeight = jsonObject.getInteger("maxHeight");
             Integer minHeight = jsonObject.getInteger("minHeight");
-            checkResult.setMiddlewareCondition("严重告警数:"+maxHeight+",故障告警数:"+minHeight);
+            checkResult.setMiddlewareCondition("严重告警数<="+maxHeight+",故障告警数<="+minHeight);
             JSONObject serverWaring = warningService.getSqlWaring(2,deviceNameList);
             Integer critical = serverWaring.getInteger("critical");
             Integer warning = serverWaring.getInteger("warning");
@@ -776,7 +776,7 @@ public class CheckResultService {
             //需要考评数据库
             Integer maxHeight = jsonObject.getInteger("maxHeight");
             Integer minHeight = jsonObject.getInteger("minHeight");
-            checkResult.setSqlCondition("严重告警数:"+maxHeight+",故障告警数:"+minHeight);
+            checkResult.setSqlCondition("严重告警数<="+maxHeight+",故障告警数<="+minHeight);
             JSONObject serverWaring = warningService.getSqlWaring(1,deviceNameList);
             Integer critical = serverWaring.getInteger("critical");
             Integer warning = serverWaring.getInteger("warning");
@@ -809,7 +809,7 @@ public class CheckResultService {
             //需要考评服务器
             Integer maxHeight = jsonObject.getInteger("maxHeight");
             Integer minHeight = jsonObject.getInteger("minHeight");
-            checkResult.setServerCondition("严重告警数:"+maxHeight+",故障告警数:"+minHeight);
+            checkResult.setServerCondition("严重告警数<="+maxHeight+",故障告警数<="+minHeight);
 
             JSONObject serverWaring = warningService.getServerWaring(deviceNameList);
             Integer critical = serverWaring.getInteger("critical");
