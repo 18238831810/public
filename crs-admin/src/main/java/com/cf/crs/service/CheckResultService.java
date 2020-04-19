@@ -141,7 +141,7 @@ public class CheckResultService {
         //考评项目id列表
         List<String> itemList = Arrays.asList(checkItems.split(","));
         //获取考评查询字段
-        List<String> selectFiled = itemList.stream().map(key -> itemMap.get(key)).collect(Collectors.toList());
+        List<String> selectFiled = itemList.stream().map(key -> itemMap.get(key)).filter(key->StringUtils.isNotEmpty(key)).collect(Collectors.toList());
         selectFiled.add("id");
         selectFiled.add("checkId");
         selectFiled.add("type");
