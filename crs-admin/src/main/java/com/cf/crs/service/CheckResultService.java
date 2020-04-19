@@ -120,7 +120,7 @@ public class CheckResultService {
         if (checkReport == null) return HttpWebResult.getMonoError("报表设置不存在");
         String checkItems = checkReport.getCheckItems();
         List<String> selectFiledList = getSelectFiled(checkItems);
-        String[] selectFiled = (String[])selectFiledList.toArray();
+        String[] selectFiled = selectFiledList.toArray(new String[selectFiledList.size()]);
         String checkObjectIds = checkReport.getCheckObjectIdList();
         //考评对象列表
         List<String> objectList = Arrays.asList(checkObjectIds.split(","));
