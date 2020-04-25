@@ -93,7 +93,7 @@ public class CheckResultService {
      * 获取考评结果
      * @return
      */
-    public ResultJson<List<CheckResultLast>> getCheckResult(){
+    public ResultJson<List<CheckResultLast>> getCheckResult(Long id,){
         List<CheckResultLast> list = checkResultLastMapper.selectList(new QueryWrapper<CheckResultLast>().orderByDesc("time"));
         if (CollectionUtils.isEmpty(list)) return HttpWebResult.getMonoSucResult(Lists.newArrayList());
         Map<String, String> map = checkInfoService.getCheckInfoName();
@@ -102,6 +102,101 @@ public class CheckResultService {
             if (StringUtils.isNotEmpty(name)) checkResult.setName(name);
         }
         return HttpWebResult.getMonoSucResult(list);
+    }
+
+    /**
+     * 审批考评结果
+     * @return
+     */
+    public Object updateCheckResult(Long id,String filed,Integer result){
+        if (!DataUtil.checkIsUsable(id) || StringUtils.isEmpty(filed) || result == null) return HttpWebResult.getMonoError("审批失败(审批信息错误)");
+        //更改结果字段
+        checkResultLastMapper.update(null,new UpdateWrapper<CheckResultLast>().eq("id",id).set(filed,result));
+        checkResultMapper.update(null,new UpdateWrapper<CheckResult>().eq("id",id).set(filed,result));
+        //更改关联字段
+        CheckResultLast checkResultLast = checkResultLastMapper.selectById(id);
+        //更新业务健康度
+        updateHealth(id, checkResultLast);
+        //更新安全信息
+        updateSafe(id, checkResultLast);
+        return HttpWebResult.getMonoSucStr();
+    }
+
+    /**
+     * 更新安全信息
+     * @param id
+     * @param checkResultLast
+     */
+    private void updateSafe(Long id, CheckResultLast checkResultLast) {
+        Integer securityBreachStatus = checkResultLast.getSecurityBreachStatus();
+        Integer virusAttackStatus = checkResultLast.getVirusAttackStatus();
+        Integer portScanStatus = checkResultLast.getPortScanStatus();
+        Integer forceAttackStatus = checkResultLast.getForceAttackStatus();
+        Integer trojanAttackStatus = checkResultLast.getTrojanAttackStatus();
+        Integer deniedAttacStatus = checkResultLast.getDeniedAttacStatus();
+        Integer zoneAttacStatus = checkResultLast.getZoneAttacStatus();
+        Integer wormAttacStatus = checkResultLast.getWormAttacStatus();
+        Integer ipAttacStatus = checkResultLast.getIpAttacStatus();
+        Integer safe = checkResultLast.getSafe();
+        if (DataUtil.checkIsUsable(securityBreachStatus) &&
+                DataUtil.checkIsUsable(virusAttackStatus) &&
+                DataUtil.checkIsUsable(portScanStatus) &&
+                DataUtil.checkIsUsable(forceAttackStatus) &&
+                DataUtil.checkIsUsable(trojanAttackStatus) &&
+                DataUtil.checkIsUsable(deniedAttacStatus) &&
+                DataUtil.checkIsUsable(zoneAttacStatus) &&
+                DataUtil.checkIsUsable(wormAttacStatus) &&
+                DataUtil.checkIsUsable(ipAttacStatus)){
+            //业务健康度达标
+            if (!DataUtil.checkIsUsable(safe)) {
+                //业务健康度需改为达标
+                checkResultLastMapper.update(null,new UpdateWrapper<CheckResultLast>().eq("id",id).set("safe",1));
+                checkResultMapper.update(null,new UpdateWrapper<CheckResult>().eq("id",id).set("safe",1));
+            }
+        }else{
+            //业务健康度不达标
+            if (DataUtil.checkIsUsable(safe)) {
+                //业务健康度需改为不达标
+                checkResultLastMapper.update(null,new UpdateWrapper<CheckResultLast>().eq("id",id).set("safe",0));
+                checkResultMapper.update(null,new UpdateWrapper<CheckResult>().eq("id",id).set("safe",0));
+            }
+        }
+    }
+
+    /**
+     * 更新业务健康度
+     * @param id
+     * @param checkResultLast
+     */
+    private void updateHealth(Long id, CheckResultLast checkResultLast) {
+        //业务可用性达标状态
+        Integer businessStatus = checkResultLast.getBusinessStatus();
+        //业务监测达标状态
+        Integer responseStatus = checkResultLast.getResponseStatus();
+        //数据质量达标状态
+        Integer dataQualityStatus = checkResultLast.getDataQualityStatus();
+        //数据共享达标状态
+        Integer dataSharingStatus = checkResultLast.getDataSharingStatus();
+        //业务健康度
+        Integer health = checkResultLast.getHealth();
+        if (DataUtil.checkIsUsable(businessStatus) &&
+                DataUtil.checkIsUsable(responseStatus) &&
+                DataUtil.checkIsUsable(dataQualityStatus) &&
+                DataUtil.checkIsUsable(dataSharingStatus)){
+            //业务健康度达标
+            if (!DataUtil.checkIsUsable(health)) {
+                //业务健康度需改为达标
+                checkResultLastMapper.update(null,new UpdateWrapper<CheckResultLast>().eq("id",id).set("health",1));
+                checkResultMapper.update(null,new UpdateWrapper<CheckResult>().eq("id",id).set("health",1));
+            }
+        }else{
+            //业务健康度不达标
+            if (DataUtil.checkIsUsable(health)) {
+                //业务健康度需改为不达标
+                checkResultLastMapper.update(null,new UpdateWrapper<CheckResultLast>().eq("id",id).set("health",0));
+                checkResultMapper.update(null,new UpdateWrapper<CheckResult>().eq("id",id).set("health",0));
+            }
+        }
     }
 
 
