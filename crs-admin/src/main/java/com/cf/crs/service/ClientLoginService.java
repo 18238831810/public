@@ -98,7 +98,7 @@ public class ClientLoginService {
         //考评对象列表
         Set disPlaySet = Sets.newHashSet();
         if (StringUtils.isNotEmpty(auth)){
-            List<CityRole> roleList = cityRoleService.getRoleList(auth);
+            List<CityRole> roleList = cityRoleService.getRoleListByIds(auth);
             if (!CollectionUtils.isEmpty(roleList)) {
                 roleList.forEach(role -> {
                     String auths = role.getAuth();

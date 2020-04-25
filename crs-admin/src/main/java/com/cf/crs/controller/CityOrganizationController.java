@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
 
@@ -25,8 +26,9 @@ public class CityOrganizationController {
 
     @ApiOperation("获取所有部门")
     @PostMapping("/getOrganization")
-    public ResultJson<List<CityOrganization>> getOrganizationList(){
-        return organizationService.getOrganizationList();
+    @ApiImplicitParam(paramType="query", name = "organization", value = "部门名称", required = false, dataType = "String")
+    public ResultJson<List<CityOrganization>> getOrganizationList(@ApiIgnore String organization){
+        return organizationService.getOrganizationList(organization);
     }
 
     @ApiOperation("设置部门角色")

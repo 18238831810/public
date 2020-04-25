@@ -7,6 +7,7 @@ import com.cf.crs.mapper.CityMenuMapper;
 import com.cf.crs.mapper.CityRoleMapper;
 import com.cf.util.http.HttpWebResult;
 import com.cf.util.http.ResultJson;
+import com.cf.util.utils.DataUtil;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -36,15 +37,15 @@ public class CityRoleService {
      * 查询所有有角色
      * @return
      */
-    public ResultJson<List<CityRole>> getRoleList(){
-        return HttpWebResult.getMonoSucResult(cityRoleMapper.selectList(new QueryWrapper<CityRole>()));
+    public ResultJson<List<CityRole>> getRoleList(Long id,String name){
+        return HttpWebResult.getMonoSucResult(cityRoleMapper.selectList(new QueryWrapper<CityRole>().like(StringUtils.isNotEmpty(name),"name",name).eq(DataUtil.checkIsUsable(id),"id",id)));
     }
 
     /**
      * 根据id查询权限(多个id逗号隔开)
      * @return
      */
-    public List<CityRole> getRoleList(String ids){
+    public List<CityRole> getRoleListByIds(String ids){
         if ("1".equalsIgnoreCase(ids) || "2".equalsIgnoreCase(ids)) return cityRoleMapper.selectList(new QueryWrapper<CityRole>());
         if(StringUtils.isEmpty(ids)) return Lists.newArrayList();
         List<Integer> collect = Arrays.stream(ids.split(",")).filter(id -> NumberUtils.isNumber(id)).map(id -> Integer.parseInt(id)).collect(Collectors.toList());

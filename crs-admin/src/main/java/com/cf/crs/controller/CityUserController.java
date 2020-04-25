@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
 
@@ -30,8 +31,12 @@ public class CityUserController {
 
     @ApiOperation("获取所有用户")
     @PostMapping("/getUserList")
-    public ResultJson<List<CityUser>> selectList(){
-        return cityUserService.selectList();
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType="query", name = "username", value = "登录用户", required = false, dataType = "String"),
+            @ApiImplicitParam(paramType="query", name = "user", value = "用户名称", required = false, dataType = "String")
+    })
+    public ResultJson<List<CityUser>> selectList(@ApiIgnore String username,@ApiIgnore String user){
+        return cityUserService.selectList(username,user);
     }
 
     @ApiOperation("设置用户权限")
@@ -40,7 +45,7 @@ public class CityUserController {
             @ApiImplicitParam(paramType="query", name = "auth", value = "用户角色 0:无权限，1:管理员 2:普通权限(角色id,多个角色id以逗号隔开)", required = true, dataType = "String")
     })
     @PostMapping("/setAuth")
-    public Object setRole(Integer id,String auth){
+    public ResultJson<String> setRole(Integer id,String auth){
         return cityUserService.setRole(id,auth);
     }
 

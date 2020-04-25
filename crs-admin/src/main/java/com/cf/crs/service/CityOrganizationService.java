@@ -6,6 +6,7 @@ import com.cf.crs.entity.CityOrganization;
 import com.cf.crs.mapper.CityOrganizationMapper;
 import com.cf.util.http.HttpWebResult;
 import com.cf.util.http.ResultJson;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,8 +22,8 @@ public class CityOrganizationService {
      * 获取所有部门
      * @return
      */
-    public ResultJson<List<CityOrganization>> getOrganizationList(){
-        return HttpWebResult.getMonoSucResult(cityOrganizationMapper.selectList(new QueryWrapper<CityOrganization>()));
+    public ResultJson<List<CityOrganization>> getOrganizationList(String organization){
+        return HttpWebResult.getMonoSucResult(cityOrganizationMapper.selectList(new QueryWrapper<CityOrganization>().like(StringUtils.isNotEmpty(organization),"organization",organization)));
     }
 
     /**

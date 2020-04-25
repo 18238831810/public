@@ -37,9 +37,11 @@ public class CityUserService {
      * 获取所有的city用户
      * @return
      */
-    public ResultJson<List<CityUser>> selectList(){
-        List<CityUser> list = cityUserMapper.selectList(new QueryWrapper<CityUser>().eq("isDisabled", 0));
-        List<SysUser> sysUsers = sysUserMapper.selectList(new QueryWrapper<SysUser>());
+    public ResultJson<List<CityUser>> selectList(String username,String user){
+        List<CityUser> list = cityUserMapper.selectList(new QueryWrapper<CityUser>().eq("isDisabled", 0).
+                like(StringUtils.isNotEmpty(username),"username",username).like(StringUtils.isNotEmpty(user),"user",user));
+        List<SysUser> sysUsers = sysUserMapper.selectList(new QueryWrapper<SysUser>().
+                like(StringUtils.isNotEmpty(username),"username",username).like(StringUtils.isNotEmpty(user),"user",user));
         List<CityUser> collect = sysUsers.stream().map(sysUser -> {
             CityUser cityUser = new CityUser();
             cityUser.setId(sysUser.getId());
