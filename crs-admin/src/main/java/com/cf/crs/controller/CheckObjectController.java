@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author frank
  * 2019/10/22
  **/
-@Api(tags="城管项目")
+//@Api(tags="城管项目")
 @RequestMapping("/city/checkObject")
 @RestController
 public class CheckObjectController {

@@ -18,7 +18,7 @@ import java.util.List;
  * @author frank
  * 2019/10/18
  **/
-@Api(tags="城管项目")
+//@Api(tags="城管项目")
 @RequestMapping("/city/checkPlan")
 @RestController
 public class CheckPlanController {

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author frank
  * 2019/10/16
  **/
-@Api(tags="城管项目")
+//@Api(tags="城管项目")
 @RestController
 @RequestMapping("/city/email")
 public class EmailSenderController {
