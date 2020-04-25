@@ -60,6 +60,17 @@ public class CheckResultController {
         return HttpWebResult.getMonoSucStr();
     }
 
+    @ApiOperation("审批考评结果")
+    @PostMapping("/updateCheckResult")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType="query", name = "id", value = "考评结果id", required = true, dataType = "Long"),
+            @ApiImplicitParam(paramType="query", name = "filed", value = "考评结果字段名称", required = true, dataType = "String"),
+            @ApiImplicitParam(paramType="query", name = "result", value = "0:不达标，1:达标", required = true, dataType = "Integer"),
+    })
+    public ResultJson<String> updateCheckResult(@ApiIgnore Long id,@ApiIgnore String filed,@ApiIgnore Integer result){
+        return checkResultService.updateCheckResult(id,filed,result);
+    }
+
 
 
 }

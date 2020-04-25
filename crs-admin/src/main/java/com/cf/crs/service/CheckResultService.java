@@ -93,7 +93,7 @@ public class CheckResultService {
      * 获取考评结果
      * @return
      */
-    public ResultJson<List<CheckResultLast>> getCheckResult(Long id,){
+    public ResultJson<List<CheckResultLast>> getCheckResult(){
         List<CheckResultLast> list = checkResultLastMapper.selectList(new QueryWrapper<CheckResultLast>().orderByDesc("time"));
         if (CollectionUtils.isEmpty(list)) return HttpWebResult.getMonoSucResult(Lists.newArrayList());
         Map<String, String> map = checkInfoService.getCheckInfoName();
@@ -106,9 +106,12 @@ public class CheckResultService {
 
     /**
      * 审批考评结果
+     * @param id
+     * @param filed
+     * @param result
      * @return
      */
-    public Object updateCheckResult(Long id,String filed,Integer result){
+    public ResultJson<String> updateCheckResult(Long id,String filed,Integer result){
         if (!DataUtil.checkIsUsable(id) || StringUtils.isEmpty(filed) || result == null) return HttpWebResult.getMonoError("审批失败(审批信息错误)");
         //更改结果字段
         checkResultLastMapper.update(null,new UpdateWrapper<CheckResultLast>().eq("id",id).set(filed,result));
