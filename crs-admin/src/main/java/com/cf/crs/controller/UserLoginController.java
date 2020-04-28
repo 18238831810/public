@@ -28,8 +28,8 @@ public class UserLoginController {
     @ApiOperation("登录")
     @PostMapping("/login")
     @ApiImplicitParams({
-            @ApiImplicitParam(paramType="query", name = "userName", value = "用户名", required = true, dataType = "String"),
-            @ApiImplicitParam(paramType="query", name = "password", value = "密码", required = true, dataType = "String"),
+            @ApiImplicitParam(paramType="query", name = "userName", value = "用户名", required = false, dataType = "String"),
+            @ApiImplicitParam(paramType="query", name = "password", value = "密码", required = false, dataType = "String"),
             @ApiImplicitParam(paramType="query", name = "code", value = "第三方登录code(如果此参数存在，将认为是第三方登录，可以不传其他参数)", required = false, dataType = "String")
     })
     public ResultJson<Object> login(String userName, String password, String code){
