@@ -121,7 +121,7 @@ check:
     url: http://192.168.1.73:8080
     apikey: 0125E6D6-8D59-4E23-9104-ACE745F6BF37
 client:
-  url: https://iam.szzhcg.com
+  url: https://szzhcg.com/ebus/iam
   client-id: apphub_oauth
   client-secret: 0427f05a070d45169da2ad5aed47b8ed
 
