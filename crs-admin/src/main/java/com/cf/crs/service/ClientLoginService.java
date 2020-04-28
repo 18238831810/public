@@ -166,7 +166,7 @@ public class ClientLoginService {
      * @return
      */
     private JSONObject getUserByToken(String access_token) {
-        String userUrl = clientConfig.getUrl() + "/idp/oauth2/getUserInfo?access_token={access_token}&client_id={client_id}";
+        String userUrl = clientConfig.getUrl() + "/getUserInfo?access_token={access_token}&client_id={client_id}";
         JSONObject userInfo = restTemplate.getForObject(userUrl, JSONObject.class, access_token, clientConfig.getClientId());
         log.info("userInfo:{}",JSON.toJSONString(userInfo));
         return userInfo;
@@ -178,7 +178,7 @@ public class ClientLoginService {
      * @return
      */
     private JSONObject getTokenByCode(String code){
-        String url = clientConfig.getUrl() + "/idp/oauth2/getToken?client_id={client_id}&client_secret={client_secret}&grant_type=authorization_code&code={code}";
+        String url = clientConfig.getUrl() + "/getToken?client_id={client_id}&client_secret={client_secret}&grant_type=authorization_code&code={code}";
         log.info("code:{}",code);
         JSONObject result = restTemplate.postForObject(url, null,JSONObject.class, clientConfig.getClientId(), clientConfig.getClientSecret(), code);
         log.info("code login result:{}",JSON.toJSONString(result));
