@@ -194,8 +194,8 @@ public class SynUserService {
     public JSONObject pullTask(String tokenId){
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("tokenId",tokenId);
-        jsonObject.put("systemCode","ZNKPGL");
-        jsonObject.put("timestamp",1458793365386L);
+        jsonObject.put("systemCode","ZNKP");
+        jsonObject.put("timestamp",System.currentTimeMillis());
         return post(jsonObject, "pullTask");
     }
 
@@ -209,8 +209,8 @@ public class SynUserService {
         jsonObject.put("taskId",taskId);
         jsonObject.put("guid",guid);
         jsonObject.put("success",true);
-        jsonObject.put("systemCode","ZNKPGL");
-        jsonObject.put("timestamp",1458793365386L);
+        jsonObject.put("systemCode","ZNKP");
+        jsonObject.put("timestamp",System.currentTimeMillis());
         return post(jsonObject, "pullFinish");
     }
 
@@ -221,8 +221,8 @@ public class SynUserService {
     public JSONObject logout(String tokenId){
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("tokenId",tokenId);
-        jsonObject.put("systemCode","ZNKPGL");
-        jsonObject.put("timestamp",1458793365386L);
+        jsonObject.put("systemCode","ZNKP");
+        jsonObject.put("timestamp",System.currentTimeMillis());
         return post(jsonObject, "logout");
     }
 
