@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.cf.crs.config.config.ClientConfig;
 import com.cf.crs.entity.CityOrganization;
 import com.cf.crs.entity.CityUser;
 import com.cf.crs.mapper.CityOrganizationMapper;
@@ -37,6 +38,8 @@ public class SynUserService {
     @Autowired
     CityOrganizationMapper cityOrganizationMapper;
 
+    @Autowired
+    ClientConfig clientConfig;
 
 
     /**
@@ -224,6 +227,15 @@ public class SynUserService {
     }
 
     private JSONObject post(JSONObject jsonObject,String method) {
+        HttpEntity<Map> httpEntity = getMapHttpEntity();
+        String url = clientConfig.getUrl()+"/integration?method={method}&request={request}";
+        JSONObject result = restTemplate.postForObject(url, httpEntity, JSONObject.class,method,jsonObject.toString());
+        log.info("result:{}",JSON.toJSONString(result));
+        return result;
+
+    }
+
+    public HttpEntity<Map> getMapHttpEntity() {
         String paasid = "znkpjczxt";
         String token = "Npn7nl2dFQ8669K7uUkG7YAu9tfS4mKa";
         Long timestamp = System.currentTimeMillis()/1000;
@@ -235,11 +247,6 @@ public class SynUserService {
         headers.add("x-tif-signature",signature);
         headers.add("x-tif-paasid",paasid);
         headers.add("x-tif-timestamp",String.valueOf(timestamp));
-        HttpEntity<Map> httpEntity = new HttpEntity<>(null,headers);
-        String url = "https://szzhcg.com/ebus/iam/integration?method={method}&request={request}";
-        JSONObject result = restTemplate.postForObject(url, httpEntity, JSONObject.class,method,jsonObject.toString());
-        log.info("result:{}",JSON.toJSONString(result));
-        return result;
-
+        return new HttpEntity<>(null,headers);
     }
 }

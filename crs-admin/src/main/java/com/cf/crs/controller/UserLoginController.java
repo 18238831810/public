@@ -39,7 +39,7 @@ public class UserLoginController {
     @ApiOperation("退出登录")
     @PostMapping("/logout")
     @ApiImplicitParam(paramType="query", name = "userName", value = "用户名", required = true, dataType = "String")
-    public ResultJson<Object> login(String userName){
+    public ResultJson<Object> logout(String userName){
         return clientLoginService.logout(userName);
     }
 

@@ -20,6 +20,7 @@ import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.DigestUtils;
@@ -58,6 +59,9 @@ public class ClientLoginService {
 
     @Autowired
     CityMenuMapper cityMenuMapper;
+
+    @Autowired
+    SynUserService synUserService;
 
     public static void main(String[] args) {
         String md5Password = DigestUtils.md5DigestAsHex("SzcgKp#@4479".getBytes());
@@ -166,6 +170,7 @@ public class ClientLoginService {
      * @return
      */
     private JSONObject getUserByToken(String access_token) {
+        HttpEntity<Map> mapHttpEntity = synUserService.getMapHttpEntity();
         String userUrl = clientConfig.getUrl() + "/getUserInfo?access_token={access_token}&client_id={client_id}";
         JSONObject userInfo = restTemplate.getForObject(userUrl, JSONObject.class, access_token, clientConfig.getClientId());
         log.info("userInfo:{}",JSON.toJSONString(userInfo));
@@ -178,9 +183,10 @@ public class ClientLoginService {
      * @return
      */
     private JSONObject getTokenByCode(String code){
+        HttpEntity<Map> mapHttpEntity = synUserService.getMapHttpEntity();
         String url = clientConfig.getUrl() + "/getToken?client_id={client_id}&client_secret={client_secret}&grant_type=authorization_code&code={code}";
         log.info("code:{}",code);
-        JSONObject result = restTemplate.postForObject(url, null,JSONObject.class, clientConfig.getClientId(), clientConfig.getClientSecret(), code);
+        JSONObject result = restTemplate.postForObject(url, mapHttpEntity,JSONObject.class, clientConfig.getClientId(), clientConfig.getClientSecret(), code);
         log.info("code login result:{}",JSON.toJSONString(result));
         return result;
     }
