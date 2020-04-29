@@ -20,4 +20,6 @@ public class ClientConfig {
     private String clientId;
 
     private String clientSecret;
+
+    private String synUserUrl;
 }

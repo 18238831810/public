@@ -170,7 +170,6 @@ public class ClientLoginService {
      * @return
      */
     private JSONObject getUserByToken(String access_token) {
-        HttpEntity<Map> mapHttpEntity = synUserService.getMapHttpEntity();
         String userUrl = clientConfig.getUrl() + "/getUserInfo?access_token={access_token}&client_id={client_id}";
         JSONObject userInfo = restTemplate.getForObject(userUrl, JSONObject.class, access_token, clientConfig.getClientId());
         log.info("userInfo:{}",JSON.toJSONString(userInfo));
@@ -183,10 +182,9 @@ public class ClientLoginService {
      * @return
      */
     private JSONObject getTokenByCode(String code){
-        HttpEntity<Map> mapHttpEntity = synUserService.getMapHttpEntity();
         String url = clientConfig.getUrl() + "/getToken?client_id={client_id}&client_secret={client_secret}&grant_type=authorization_code&code={code}";
         log.info("code:{}",code);
-        JSONObject result = restTemplate.postForObject(url, mapHttpEntity,JSONObject.class, clientConfig.getClientId(), clientConfig.getClientSecret(), code);
+        JSONObject result = restTemplate.postForObject(url, null,JSONObject.class, clientConfig.getClientId(), clientConfig.getClientSecret(), code);
         log.info("code login result:{}",JSON.toJSONString(result));
         return result;
     }

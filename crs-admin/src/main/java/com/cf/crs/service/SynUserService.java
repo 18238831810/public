@@ -180,10 +180,10 @@ public class SynUserService {
      */
     public JSONObject login(){
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("systemCode","ZNKPGL");
-        jsonObject.put("integrationKey","szcg1234");
-        jsonObject.put("force",false);
-        jsonObject.put("timestamp",1458793365386L);
+        jsonObject.put("systemCode","ZNKP");
+        jsonObject.put("integrationKey","password");
+        jsonObject.put("force",true);
+        jsonObject.put("timestamp",System.currentTimeMillis());
         return post(jsonObject, "login");
     }
 
@@ -228,7 +228,7 @@ public class SynUserService {
 
     private JSONObject post(JSONObject jsonObject,String method) {
         HttpEntity<Map> httpEntity = getMapHttpEntity();
-        String url = clientConfig.getUrl()+"/integration?method={method}&request={request}";
+        String url = clientConfig.getSynUserUrl()+"?method={method}&request={request}";
         JSONObject result = restTemplate.postForObject(url, httpEntity, JSONObject.class,method,jsonObject.toString());
         log.info("result:{}",JSON.toJSONString(result));
         return result;

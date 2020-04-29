@@ -135,8 +135,9 @@ check:
     apikey: AE4DADDE-BC94-4BE2-8AC6-73984663D096
 client:
   url: https://szzhcg.com/ebus/iam
-  client-id: apphub_oauth
-  client-secret: 0427f05a070d45169da2ad5aed47b8ed
+  client-id: znkp
+  client-secret: 3696035b52c14369a202a45a9b56170a
+  syn-user-url: https://szzhcg.com/ebus/iam/integration
 
 
 

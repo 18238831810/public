@@ -121,9 +121,11 @@ check:
     url: http://192.168.1.73:8080
     apikey: 0125E6D6-8D59-4E23-9104-ACE745F6BF37
 client:
-  url: https://szzhcg.com/ebus/iam
-  client-id: apphub_oauth
-  client-secret: 0427f05a070d45169da2ad5aed47b8ed
+  url: https://10.253.36.34/idp/oauth2
+  client-id: znkp
+  client-secret: 3696035b52c14369a202a45a9b56170a
+  syn-user-url: https://10.253.36.34/bim-server/integration/api.json
+
 
 
 
