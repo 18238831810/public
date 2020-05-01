@@ -120,6 +120,7 @@ check:
   order:
     url: http://192.168.1.73:8080
     apikey: 0125E6D6-8D59-4E23-9104-ACE745F6BF37
+  iotDay: -5
 client:
   url: https://10.253.36.34/idp/oauth2
   client-id: znkp
