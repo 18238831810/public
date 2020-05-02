@@ -19,6 +19,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
@@ -58,6 +59,9 @@ public class CheckResultService {
 
     @Autowired
     CheckReportMapper checkReportMapper;
+
+    @Autowired
+    EmailSenderService emailSenderService;
 
     /**
      * 考评id字段对照表
@@ -102,6 +106,21 @@ public class CheckResultService {
             if (StringUtils.isNotEmpty(name)) checkResult.setName(name);
         }
         return HttpWebResult.getMonoSucResult(list);
+    }
+
+    /**
+     * 发送考评结果
+     * @return
+     */
+    public ResultJson<String> SendEmailForReslut(Long id, MultipartFile[] file){
+        //发送指定报表
+        CheckInfo checkInfo = checkInfoMapper.selectById(id);
+        if (checkInfo == null) return HttpWebResult.getMonoError("此考评对象不存在");
+        String title = checkInfo.getName() + " 报表";
+        String content = "报表详情请参考附件";
+        String email = checkInfo.getEmail();
+        if (StringUtils.isNotEmpty(email)) return HttpWebResult.getMonoError("此考评对象没有设置发送邮箱");
+        return emailSenderService.sendEmail(title,content,email,file);
     }
 
     /**

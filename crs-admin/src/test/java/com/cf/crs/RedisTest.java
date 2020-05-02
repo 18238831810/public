@@ -50,6 +50,9 @@ public class RedisTest {
     @Autowired
     CheckAvailaHistoryService checkAvailaHistoryService;
 
+    @Autowired
+    EmailSenderService emailSenderService;
+
     @Test
     public void contextLoads() {
         SysUserEntity user = new SysUserEntity();
@@ -155,6 +158,11 @@ public class RedisTest {
     @Test
     public void createByWeek(){
         //checkReportService.createByWeek("202001",3);
+    }
+
+    @Test
+    public void sendEmailWithFile(){
+        emailSenderService.sendEmail("title","content","1527583922@qq.com");
     }
 
 }

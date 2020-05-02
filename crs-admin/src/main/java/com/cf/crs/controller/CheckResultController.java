@@ -7,14 +7,12 @@ import com.cf.crs.entity.CheckResultLast;
 import com.cf.crs.service.CheckResultService;
 import com.cf.util.http.HttpWebResult;
 import com.cf.util.http.ResultJson;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
@@ -37,6 +35,13 @@ public class CheckResultController {
     @PostMapping("/getCheckResult")
     public ResultJson<List<CheckResultLast>> getCheckInfo(){
         return checkResultService.getCheckResult();
+    }
+
+
+    @ApiOperation("发送考评结果")
+    @PostMapping("/sendCheckResult")
+    public ResultJson<String> SendEmailForReslut(@ApiParam(value = "考评对象id", required = true) Long id,@ApiParam(value = "发送的考评文件", required = true) MultipartFile[] file){
+        return checkResultService.SendEmailForReslut(id,file);
     }
 
     @ApiOperation("获取考评报表")

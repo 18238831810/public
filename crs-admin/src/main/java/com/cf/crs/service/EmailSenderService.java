@@ -8,10 +8,15 @@ import com.cf.util.http.ResultJson;
 import com.cf.util.utils.DataUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.mail.internet.MimeMessage;
 
 /**
  * 邮箱服务器
@@ -44,27 +49,34 @@ public class EmailSenderService {
         return HttpWebResult.getMonoSucResult(emailSenderProperties);
     }
 
+    public ResultJson<String> sendEmail(String title, String content, String to){
+        return sendEmail(title,content,to,null);
+    }
+
     /**
      * 发送邮件
      * @return
      */
-    public ResultJson<EmailSenderProperties> sendEmail(String title,String content,String to){
+    public ResultJson<String> sendEmail(String title, String content, String to, MultipartFile[] file){
         //获取邮件sender
         EmailSenderProperties emailSenderProperties = emailSenderMapper.selectById(1);
-        log.info("发送邮件服务配置:{}", JSON.toJSONString(emailSenderProperties));
+        log.info("发送邮件服务配置:{},{}", title, JSON.toJSONString(emailSenderProperties));
         JavaMailSender sender = getJavaMailSender(emailSenderProperties);
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(emailSenderProperties.getFromEmail());
-        message.setTo(to);
-        message.setSubject(title);
-        message.setText(content);
+        MimeMessage message=  sender.createMimeMessage();
         try {
+            MimeMessageHelper helper = new MimeMessageHelper(message,true);
+            helper.setFrom(emailSenderProperties.getFromEmail());
+            helper.setTo(to);
+            helper.setSubject(title);
+            helper.setText(content);
+            //验证文件数据是否为空
+            if (file != null && file.length > 0) helper.addAttachment(title, file[0]);
             sender.send(message);
-            log.info("文本邮件发送成功");
+            log.info("{}- 文本邮件发送成功",title);
             return HttpWebResult.getMonoSucStr();
-        } catch (Exception e) {
-            log.error("文本邮件发送异常", e);
-            return HttpWebResult.getMonoError(e.getMessage());
+        }catch (Exception e){
+            log.error(e.getMessage(), e);
+            return HttpWebResult.getMonoError("发送邮件失败");
         }
     }
 
