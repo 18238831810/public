@@ -3,13 +3,12 @@ package com.cf.crs.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.cf.crs.entity.CheckObject;
+import com.cf.crs.entity.CheckInfo;
 import com.cf.util.http.HttpWebResult;
 import com.cf.util.http.ResultJson;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
-import net.bytebuddy.asm.Advice;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -18,6 +17,7 @@ import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +31,8 @@ import java.util.Map;
 @Service
 public class CheckObjectAnalyService {
 
+    private static Map<String,String> deviceNameMap = Maps.newHashMap();
+
     @Autowired
     CheckObjectService checkObjectService;
 
@@ -39,6 +41,16 @@ public class CheckObjectAnalyService {
 
     @Autowired
     CheckSqlService checkSqlService;
+
+    @Autowired
+    CheckInfoService checkInfoService;
+
+    @PostConstruct
+    public void postConstruct(){
+        deviceNameMap.put("1","server");
+        deviceNameMap.put("2","sql");
+        deviceNameMap.put("3","middleware");
+    }
 
 
     public Map<String,JSONObject> getServersMap(){
@@ -86,6 +98,67 @@ public class CheckObjectAnalyService {
         Map<String, JSONObject> serversMap = getServersMap();
         Map<String, Element> sqlMap = getSqlMap(1);
         Map<String, Element> middlewareMap = getSqlMap(2);
+        List<CheckInfo> checkInfoList = checkInfoService.getCheckInfoList();
+        ArrayList<Object> list = Lists.newArrayList();
+        for(CheckInfo checkInfo:checkInfoList){
+            JSONObject symbolJson = new JSONObject();
+            String symbol = checkInfo.getName();
+            HashMap<Object, Object> deviceMap = Maps.newHashMap();
+            analyDeviceData(serversMap, sqlMap, middlewareMap, checkInfo.getDeviceList(), deviceMap);
+            symbolJson.put("name",symbol);
+            symbolJson.put("information",deviceMap);
+            list.add(symbolJson);
+        }
+        return list;
+    }
+
+    private void analyDeviceData(Map<String, JSONObject> serversMap, Map<String, Element> sqlMap, Map<String, Element> middlewareMap, Map<String, List<CheckInfo>> deviceListMap, HashMap<Object, Object> deviceMap) {
+        deviceListMap.keySet().forEach(key->{
+            List<CheckInfo> deviceList = deviceListMap.get(key);
+            int total = 0;
+            int waring = 0;
+            if ("1".equalsIgnoreCase(key)){
+                //服务器
+                for (CheckInfo checkInfo:deviceList){
+                    String deviceName = checkInfo.getName();
+                    JSONObject jsonObject = serversMap.get(deviceName);
+                    if (jsonObject == null || jsonObject.isEmpty()) continue;
+                    total += 1;
+                    Integer severity = jsonObject.getInteger("severity");
+                    if (severity != 5) waring += 1;
+                }
+            }else if ("2".equalsIgnoreCase(key)){
+                //数据库
+                for (Object deviceObj:deviceList){
+                    JSONObject device = JSON.parseObject(JSON.toJSONString(deviceObj));
+                    String deviceName = device.getString("name");
+                    Element element = sqlMap.get(deviceName);
+                    if (element == null) continue;
+                    total += 1;
+                    String healthstatus = element.attr("HEALTHSTATUS");
+                    if (!"clear".equalsIgnoreCase(healthstatus)) waring += 1;
+                }
+            }else if("3".equalsIgnoreCase(key)){
+                //中间件
+                for (Object deviceObj:deviceList){
+                    JSONObject device = JSON.parseObject(JSON.toJSONString(deviceObj));
+                    String deviceName = device.getString("name");
+                    Element element = middlewareMap.get(deviceName);
+                    if (element == null) continue;
+                    total += 1;
+                    String healthstatus = element.attr("HEALTHSTATUS");
+                    if (!"clear".equalsIgnoreCase(healthstatus)) waring += 1;
+                }
+            }
+            deviceMap.put(deviceNameMap.get(key),waring+"/"+total);
+        });
+    }
+
+
+    /*public List<Object> getCheckObjectAnalyResult(){
+        Map<String, JSONObject> serversMap = getServersMap();
+        Map<String, Element> sqlMap = getSqlMap(1);
+        Map<String, Element> middlewareMap = getSqlMap(2);
         CheckObject object = checkObjectService.getObject();
         if (object == null) return null;
         String result = object.getObject();
@@ -106,7 +179,7 @@ public class CheckObjectAnalyService {
             list.add(symbolJson);
         }
         return list;
-    }
+    }*/
 
     private void analyDeviceData(Map<String, JSONObject> serversMap, Map<String, Element> sqlMap, Map<String, Element> middlewareMap, JSONArray information, HashMap<Object, Object> deviceMap) {
         for (Object typeObj:information){
