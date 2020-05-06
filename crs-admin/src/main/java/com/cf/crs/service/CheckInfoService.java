@@ -180,7 +180,7 @@ public class CheckInfoService {
         //设置新的考评任务
         String[] split = checkPlan.split(",");
         for (int i = 0; i < split.length; i++) {
-            if (StringUtils.isEmpty(split[i])) continue;
+            if (StringUtils.isEmpty(split[i]) || StringUtils.isEmpty(split[i].trim())) continue;
             ScheduleJobDTO scheduleJobDTO = new ScheduleJobDTO();
             scheduleJobDTO.setStatus(1);
             scheduleJobDTO.setBeanName(beanName);
