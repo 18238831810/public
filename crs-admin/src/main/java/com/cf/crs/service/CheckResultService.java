@@ -7,13 +7,17 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cf.crs.common.redis.RedisUtils;
 import com.cf.crs.entity.*;
 import com.cf.crs.mapper.*;
 import com.cf.util.http.HttpWebResult;
 import com.cf.util.http.ResultJson;
+import com.cf.util.redis.RedisUtil;
+import com.cf.util.utils.CacheKey;
 import com.cf.util.utils.DataUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -62,6 +66,9 @@ public class CheckResultService {
 
     @Autowired
     EmailSenderService emailSenderService;
+
+    @Autowired
+    RedisUtils redisUtils;
 
     /**
      * 考评id字段对照表
@@ -267,16 +274,46 @@ public class CheckResultService {
         return selectFiled;
     }
 
+    /**
+     * 自动考评入口
+     */
+    public void autoCheck(Long id,Integer type){
+        if (id != 0) {
+            CheckInfo allCheckInfo = (CheckInfo) redisUtils.get(CacheKey.CHECK_PLAN);
+            if (allCheckInfo != null) {
+                log.info("存在全局考评任务，此任务不生效");
+            }
+        }
+        startCheck(id,type,true);
+    }
+
+    private boolean isCheckTime(CheckInfo checkInfo) {
+        Long checkStartTime = checkInfo.getCheckStartTime();
+        Long checkEndTime = checkInfo.getCheckEndTime();
+        long now = System.currentTimeMillis();
+        if(DataUtil.checkIsUsable(checkEndTime) && checkEndTime < now){
+            log.info("{},{}已经过期",checkInfo.getId(),now);
+            return true;
+        }
+        if(DataUtil.checkIsUsable(checkStartTime) && checkStartTime > now){
+            log.info("{},{}未到开始时间",checkInfo.getId(),now);
+            return true;
+        }
+        return false;
+    }
+
 
     /**
      * 考评入口
      */
-    public void startCheck(Long id,Integer type){
+    public void startCheck(Long id,Integer type,boolean autoCheck){
         try {
             List<CheckInfo> list = checkInfoService.getCheckInfoList();
             for (CheckInfo checkInfo : list) {
                 if (DataUtil.checkIsUsable(id) && !checkInfo.getId().equals(id)) continue;
                 try {
+                    //自动考评需要考评考评时间限制
+                    if(autoCheck && isCheckTime(checkInfo)) return;
                     startCheck(checkInfo,type);
                 } catch (Exception e) {
                     log.info(e.getMessage(),e);

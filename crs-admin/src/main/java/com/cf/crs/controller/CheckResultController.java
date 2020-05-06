@@ -61,7 +61,7 @@ public class CheckResultController {
     @PostMapping("/startCheck")
     @ApiImplicitParam(paramType="query", name = "id", value = "考评对象id（id为空或0，则全部考评,对应一键全部考评功能）", required = false, dataType = "Integer")
     public ResultJson<List<CheckResult>> startCheck(Long id){
-        checkResultService.startCheck(id,1);
+        checkResultService.startCheck(id,1,false);
         return HttpWebResult.getMonoSucStr();
     }
 

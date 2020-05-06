@@ -42,6 +42,15 @@ public class ScheduleJobServiceImpl extends BaseServiceImpl<ScheduleJobDao, Sche
 	}
 
 	@Override
+	public ScheduleJobDTO getByBeanNameAndParam(String beanName, String param) {
+		QueryWrapper<ScheduleJobEntity> wrapper = new QueryWrapper<>();
+		wrapper.like(StringUtils.isNotBlank(beanName), "bean_name", beanName);
+		wrapper.eq(StringUtils.isNotBlank(param), "params", param);
+		ScheduleJobEntity entity = baseDao.selectOne(wrapper);
+		return ConvertUtils.sourceToTarget(entity, ScheduleJobDTO.class);
+	}
+
+	@Override
 	public ScheduleJobDTO get(Long id) {
 		ScheduleJobEntity entity = baseDao.selectById(id);
 

@@ -1,10 +1,11 @@
 package com.cf.crs.service;
 
-import cn.hutool.cache.impl.FIFOCache;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.cf.crs.common.redis.RedisUtils;
 import com.cf.crs.entity.CheckInfo;
+import com.cf.crs.job.dto.ScheduleJobDTO;
+import com.cf.crs.job.service.ScheduleJobService;
 import com.cf.crs.mapper.CheckInfoMapper;
 import com.cf.util.http.HttpWebResult;
 import com.cf.util.http.ResultJson;
@@ -12,10 +13,13 @@ import com.cf.util.utils.CacheKey;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,11 +34,19 @@ import java.util.stream.Collectors;
 @Service
 public class CheckInfoService {
 
+    private String beanName = "checkResultTask";
+
     @Autowired
     CheckInfoMapper checkInfoMapper;
 
     @Autowired
     RedisUtils redisUtils;
+
+    @Autowired
+    ScheduleJobService scheduleJobService;
+
+
+
     /**
      * 获取对象信息
      * @return
@@ -139,11 +151,47 @@ public class CheckInfoService {
      * @return
      */
     public ResultJson<String> updateCheckPlan(CheckInfo checkInfo){
+        //获取redis的全局考评计划
+        CheckInfo allCheckInfo = (CheckInfo) redisUtils.get(CacheKey.CHECK_PLAN);
         Long id = checkInfo.getId();
-        if (id == 0) redisUtils.set(CacheKey.CHECK_PLAN,checkInfo);
+        if (id == 0) {
+            redisUtils.set(CacheKey.CHECK_PLAN,checkInfo);
+        }
         else checkInfoMapper.update(null,new UpdateWrapper<CheckInfo>().eq(id > 0,"id",checkInfo.getId()).eq("type",0).eq("parentId",0).set("checkPlan",checkInfo.getCheckPlan()).
                 set("checkStartTime",checkInfo.getCheckStartTime()).set("checkEndTime",checkInfo.getCheckEndTime()));
+        //设置定时考评任务
+        setCheckPlan(checkInfo);
         return HttpWebResult.getMonoSucStr();
+    }
+
+    /**
+     * 设置定时考评任务
+     */
+    private void setCheckPlan(CheckInfo checkInfo){
+        String checkPlan = checkInfo.getCheckPlan();
+        if (StringUtils.isEmpty(checkPlan)) return;
+        //全局计划可用,删除原先设置的考评计划
+        JSONObject param = new JSONObject();
+        param.put("id",checkInfo.getId());
+        for (int i = 1; i <= 4; i++) {
+            param.put("type",i);
+            ScheduleJobDTO jobDTO = scheduleJobService.getByBeanNameAndParam(beanName, param.toString());
+            if (jobDTO != null) scheduleJobService.deleteById(jobDTO.getId());
+        }
+        //设置新的考评任务
+        String[] split = checkPlan.split(",");
+        for (int i = 0; i < split.length; i++) {
+            if (StringUtils.isEmpty(split[i])) continue;
+            ScheduleJobDTO scheduleJobDTO = new ScheduleJobDTO();
+            scheduleJobDTO.setStatus(1);
+            scheduleJobDTO.setBeanName(beanName);
+            scheduleJobDTO.setCreateDate(new Date());
+            scheduleJobDTO.setRemark("考评任务");
+            param.put("type",i+1);
+            scheduleJobDTO.setParams(param.toString());
+            scheduleJobDTO.setCronExpression(split[i]);
+            scheduleJobService.save(scheduleJobDTO);
+        }
     }
 
     /**

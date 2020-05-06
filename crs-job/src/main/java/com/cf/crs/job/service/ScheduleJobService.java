@@ -26,6 +26,12 @@ public interface ScheduleJobService extends BaseService<ScheduleJobEntity> {
 
 	ScheduleJobDTO get(Long id);
 
+
+	/**
+	 * 根据bean名称和参数获取唯一的定时任务
+	 */
+	ScheduleJobDTO getByBeanNameAndParam(String beanName, String param);
+
 	/**
 	 * 保存定时任务
 	 */
