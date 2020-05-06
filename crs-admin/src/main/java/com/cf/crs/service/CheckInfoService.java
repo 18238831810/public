@@ -152,7 +152,6 @@ public class CheckInfoService {
      */
     public ResultJson<String> updateCheckPlan(CheckInfo checkInfo){
         //获取redis的全局考评计划
-        CheckInfo allCheckInfo = (CheckInfo) redisUtils.get(CacheKey.CHECK_PLAN);
         Long id = checkInfo.getId();
         if (id == 0) {
             redisUtils.set(CacheKey.CHECK_PLAN,checkInfo);
