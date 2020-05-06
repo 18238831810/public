@@ -65,9 +65,9 @@ public class CityUserController {
 
     @ApiOperation("删除用户信息")
     @PostMapping("/deleteUser")
-    @ApiImplicitParam(paramType="query", name = "id", value = "用户id", required = true, dataType = "Integer")
-    public ResultJson<String> deleteUser(Long id){
-        return cityUserService.deleteUser(id);
+    @ApiImplicitParam(paramType="query", name = "ids", value = "用户id(多个用户id以逗号隔开)", required = true, dataType = "String")
+    public ResultJson<String> deleteUser(String ids){
+        return cityUserService.deleteUser(ids);
     }
 
 

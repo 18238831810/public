@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -90,12 +91,12 @@ public class CityUserService {
     }
     /**
      * 删除用户信息
-     * @param id
+     * @param ids
      * @return
      */
-    public ResultJson<String> deleteUser(Long id){
-        if (!DataUtil.checkIsUsable(id)) return HttpWebResult.getMonoError("您删除的用户不存在");
-        sysUserMapper.deleteById(id);
+    public ResultJson<String> deleteUser(String ids){
+        if (StringUtils.isEmpty(ids)) return HttpWebResult.getMonoError("您删除的用户不存在");
+        sysUserMapper.deleteBatchIds(Arrays.asList(ids.split(",")));
         return HttpWebResult.getMonoSucStr();
     }
 
