@@ -1,5 +1,6 @@
 package com.cf.crs.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cf.crs.service.CheckModeService;
 import com.cf.crs.service.CheckObjectAnalyService;
 import com.cf.util.http.ResultJson;
@@ -28,7 +29,7 @@ public class CheckObjectAnalyController {
 
     @ApiOperation("获取考评对象分析结果")
     @PostMapping("/getCheckModeAnaly")
-    public ResultJson<List> getAnalyResult(){
+    public ResultJson<List<JSONObject>> getAnalyResult(){
         return checkObjectAnalyService.getAnalyResult();
     }
 }

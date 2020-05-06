@@ -94,12 +94,12 @@ public class CheckObjectAnalyService {
         return map;
     }
 
-    public List<Object> getCheckObjectAnalyResult(){
+    public List<JSONObject> getCheckObjectAnalyResult(){
         Map<String, JSONObject> serversMap = getServersMap();
         Map<String, Element> sqlMap = getSqlMap(1);
         Map<String, Element> middlewareMap = getSqlMap(2);
         List<CheckInfo> checkInfoList = checkInfoService.getCheckInfoList();
-        ArrayList<Object> list = Lists.newArrayList();
+        ArrayList<JSONObject> list = Lists.newArrayList();
         for(CheckInfo checkInfo:checkInfoList){
             JSONObject symbolJson = new JSONObject();
             String symbol = checkInfo.getName();
@@ -149,6 +149,8 @@ public class CheckObjectAnalyService {
                     String healthstatus = element.attr("HEALTHSTATUS");
                     if (!"clear".equalsIgnoreCase(healthstatus)) waring += 1;
                 }
+            }else {
+                return;
             }
             deviceMap.put(deviceNameMap.get(key),waring+"/"+total);
         });
@@ -232,7 +234,7 @@ public class CheckObjectAnalyService {
         }
     }
 
-    public ResultJson<List> getAnalyResult(){
+    public ResultJson<List<JSONObject>> getAnalyResult(){
         return HttpWebResult.getMonoSucResult(getCheckObjectAnalyResult());
     }
 }

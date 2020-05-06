@@ -116,7 +116,7 @@ public class RedisTest {
     }
     @Test
     public void getCheckObjectAnalyResult() {
-        List<Object> checkObjectAnalyResult = checkObjectAnalyService.getCheckObjectAnalyResult();
+        List<JSONObject> checkObjectAnalyResult = checkObjectAnalyService.getCheckObjectAnalyResult();
         System.out.println(JSON.toJSONString(checkObjectAnalyResult));
     }
 
