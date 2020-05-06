@@ -54,7 +54,7 @@ public class CityRoleController {
 
     @ApiOperation("删除角色")
     @PostMapping("/deleteRole")
-    public ResultJson<String> deleteRole(Integer id){
-        return cityRoleService.deleteRole(id);
+    public ResultJson<String> deleteRole(String ids){
+        return cityRoleService.deleteRole(ids);
     }
 }

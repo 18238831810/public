@@ -71,7 +71,7 @@ public class CityRoleService {
      * 删除角色
      * @return
      */
-    public ResultJson<String> deleteRole(Integer id){
-        return HttpWebResult.getMonoSucResult(cityRoleMapper.deleteById(id));
+    public ResultJson<String> deleteRole(String ids){
+        return HttpWebResult.getMonoSucResult(cityRoleMapper.deleteBatchIds(Arrays.asList(ids.split(","))));
     }
 }
