@@ -112,7 +112,7 @@ public class ClientLoginService {
                 });
             }
         }
-        List<CityMenu> menuList = cityMenuMapper.selectList(new QueryWrapper<CityMenu>());
+        List<CityMenu> menuList = cityMenuMapper.selectList(new QueryWrapper<CityMenu>().orderByAsc("sort"));
 
         menuList.forEach(menu -> {
             Long id = menu.getId();
