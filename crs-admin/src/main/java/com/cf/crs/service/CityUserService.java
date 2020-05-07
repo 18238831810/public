@@ -74,7 +74,7 @@ public class CityUserService {
      * @return
      */
     public ResultJson<String> updateUser(SysUser sysUser){
-        sysUser.setPassword(DigestUtils.md5DigestAsHex(sysUser.getUsername().getBytes()));
+        sysUser.setPassword(DigestUtils.md5DigestAsHex(sysUser.getPassword().getBytes()));
         sysUserMapper.updateById(sysUser);
         return HttpWebResult.getMonoSucStr();
     }
@@ -85,7 +85,7 @@ public class CityUserService {
      * @return
      */
     public ResultJson<String> addUser(SysUser sysUser){
-        sysUser.setPassword(DigestUtils.md5DigestAsHex(sysUser.getUsername().getBytes()));
+        sysUser.setPassword(DigestUtils.md5DigestAsHex(sysUser.getPassword().getBytes()));
         sysUserMapper.insert(sysUser);
         return HttpWebResult.getMonoSucStr();
     }
