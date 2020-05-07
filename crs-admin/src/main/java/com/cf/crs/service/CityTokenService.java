@@ -69,10 +69,10 @@ public class CityTokenService {
      * 获取用户
      * @return
      */
-    public Map<String, Set> getMenuList(){
+    public Map<String, Object> getMenuList(){
         String token = getToken();
         if (StringUtils.isEmpty(token)) return null;
-        Map<String, Set> result = (Map<String, Set>)redisUtils.get(token+":menu");
+        Map<String, Object> result = (Map<String, Object>)redisUtils.get(token+":menu");
         if (DataUtil.mapNotEmpty(result)) return result;
         return Maps.newHashMap();
     }

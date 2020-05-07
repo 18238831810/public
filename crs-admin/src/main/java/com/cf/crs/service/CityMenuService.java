@@ -42,8 +42,8 @@ public class CityMenuService {
         return HttpWebResult.getMonoSucResult(cityMenuMapper.selectList(new QueryWrapper<CityMenu>()));
     }
 
-    public ResultJson<Map<String, Set>> getMenuListByToken(){
-        Map<String, Set> menuList = cityTokenService.getMenuList();
+    public ResultJson<Map<String, Object>> getMenuListByToken(){
+        Map<String, Object> menuList = cityTokenService.getMenuList();
         return HttpWebResult.getMonoSucResult(menuList);
     }
 }

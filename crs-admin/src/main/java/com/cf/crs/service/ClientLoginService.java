@@ -15,6 +15,7 @@ import com.cf.crs.mapper.SysUserMapper;
 import com.cf.util.http.HttpWebResult;
 import com.cf.util.http.ResultJson;
 import com.cf.util.utils.CacheKey;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
@@ -26,10 +27,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author frank
@@ -93,12 +91,12 @@ public class ClientLoginService {
      * @param auth 用户的角色id（多个id以逗号隔开）
      * @return
      */
-    public Map<String, Set> getMenuIds(String auth) {
-        Map<String, Set> menus = Maps.newHashMap();
+    public Map<String, Object> getMenuIds(String auth) {
+        Map<String, Object> menus = Maps.newHashMap();
         //菜单id列表
         Set menuIdSet = Sets.newHashSet();
         //菜单列表
-        Set menuSet = Sets.newHashSet();
+        Set<CityMenu> menuSet = Sets.newHashSet();
         //考评对象列表
         Set disPlaySet = Sets.newHashSet();
         if (StringUtils.isNotEmpty(auth)){
@@ -118,8 +116,10 @@ public class ClientLoginService {
             Long id = menu.getId();
             if (menuIdSet.contains(String.valueOf(id)) || "1".equalsIgnoreCase(auth)) menuSet.add(menu);
         });
+        List<CityMenu> cityMenus = Lists.newArrayList(menuSet);
+        cityMenus.sort(Comparator.comparing(CityMenu::getSort));
         //menus.put("menuId",menuIdSet);
-        menus.put("menu",menuSet);
+        menus.put("menu",cityMenus);
         menus.put("display",disPlaySet);
         return menus;
     }
