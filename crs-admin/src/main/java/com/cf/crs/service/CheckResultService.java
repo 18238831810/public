@@ -760,48 +760,59 @@ public class CheckResultService {
 
         //物联网设备
         JSONArray internet = business.getJSONArray("internet");
-        for (Object o : internet) {
-            JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(o));
-            Integer id = jsonObject.getInteger("id");
-            Integer score = jsonObject.getInteger("fraction");
-            if (id == 0) {
-                //执法车
-                scoreTotal += score;
-            } else if (id == 1) {
-                //绿化车辆
-                scoreTotal += score;
-            } else if (id == 2) {
-                //环卫车
-                scoreTotal += score;
-            } else if (id == 3) {
-                //摄像头
-                scoreTotal += score;
-            } else if (id == 4) {
-                //执法仪
-                scoreTotal += score;
-            } else if (id == 5) {
-                //对讲机
-                scoreTotal += score;
-            } else if (id == 6) {
-                //环卫工牌
-                scoreTotal += score;
-            } else if (id == 7) {
-                //公厕一体机
-                scoreTotal += score;
-            } else if (id == 8) {
-                //果壳箱监测仪
-                scoreTotal += score;
-            }else if (id == 9) {
-                //气体监测仪
-                scoreTotal += score;
-            }else if (id == 10) {
-                //避险设备
-                scoreTotal += score;
+        Map<String, List<CheckInfo>> deviceList = checkInfo.getDeviceList();
+        List<CheckInfo> checkInfos = deviceList.get("8");
+        if (checkItemList.contains("9") && CollectionUtils.isNotEmpty(checkInfos)){
+            //获取互联网设备列表（对应ioconfig中的key）
+            List<String> internetList = checkInfos.stream().map(CheckInfoDevice -> CheckInfoDevice.getName()).collect(Collectors.toList());
+            for (Object o : internet) {
+                JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(o));
+                Integer id = jsonObject.getInteger("id");
+                Integer score = jsonObject.getInteger("fraction");
+                if (id == 0) {
+                    //执法车
+                    if(internetList.contains("iot_zhifache_status")){
+
+                    }else{
+                        scoreTotal += score;
+                    }
+
+                } else if (id == 1) {
+                    //绿化车辆
+                    scoreTotal += score;
+                } else if (id == 2) {
+                    //环卫车
+                    scoreTotal += score;
+                } else if (id == 3) {
+                    //摄像头
+                    scoreTotal += score;
+                } else if (id == 4) {
+                    //执法仪
+                    scoreTotal += score;
+                } else if (id == 5) {
+                    //对讲机
+                    scoreTotal += score;
+                } else if (id == 6) {
+                    //环卫工牌
+                    scoreTotal += score;
+                } else if (id == 7) {
+                    //公厕一体机
+                    scoreTotal += score;
+                } else if (id == 8) {
+                    //果壳箱监测仪
+                    scoreTotal += score;
+                }else if (id == 9) {
+                    //气体监测仪
+                    scoreTotal += score;
+                }else if (id == 10) {
+                    //避险设备
+                    scoreTotal += score;
+                }
             }
-        }
-        if (checkResult.getIot() == null) {
-            business.getInteger("internetTotal");
-            checkResult.setIot(1);
+            if (checkResult.getIot() == null) {
+                business.getInteger("internetTotal");
+                checkResult.setIot(1);
+            }
         }
         //信息安全考评结束
 
