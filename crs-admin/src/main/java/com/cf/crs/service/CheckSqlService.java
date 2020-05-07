@@ -1,7 +1,7 @@
 package com.cf.crs.service;
 
 import com.alibaba.fastjson.JSONObject;
-import com.cf.crs.entity.WaringParam;
+import com.cf.crs.config.config.IotConfig;
 import com.cf.util.http.HttpWebResult;
 import com.cf.util.http.ResultJson;
 import com.google.common.collect.Lists;
@@ -12,10 +12,12 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -42,13 +44,14 @@ public class CheckSqlService {
     @Value("${check.sql.middlewareType}")
     private String middlewareType;
 
-     @Value("${check.sql.seq}")
+    @Value("${check.sql.seq}")
     private String seq;
 
-     @Value("${check.sql.monitor}")
+    @Value("${check.sql.monitor}")
     private String monitor;
 
-
+    @Autowired
+    IotConfig iotConfig;
 
     @Autowired
     CheckServerService checkServerService;
@@ -58,14 +61,31 @@ public class CheckSqlService {
 
     /**
      * 获取设备列表
-     * @param type 1:数据库 2:中间件 3:服务器 4 :物联网设备 5:工单 6:业务监测 7:页面可用性
+     * @param type 1:数据库 2:中间件 3:服务器 4 :网络设备 5:工单 6:业务监测 7:页面可用性 8:物联网设备
      * @return
      */
     public ResultJson<List<JSONObject>> getCheckList(Integer type,Integer waringType){
         if (type == null) return HttpWebResult.getMonoError("请选择查询设备类型");
         if (type == 3) return checkServerService.serverList(waringType);
+        if (type == 8) return getIot();
         if (type == 5) return HttpWebResult.getMonoSucResult(warningService.checkOrderList(waringType));
         return sqlList(type, waringType);
+    }
+
+    /**
+     * 获取物联网设备
+     * @return
+     */
+    public ResultJson<List<JSONObject>> getIot(){
+        Map<String, String> map = iotConfig.getDevice();
+        List<JSONObject> list = Lists.newArrayList();
+        map.keySet().forEach(key->{
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("name",key);
+            jsonObject.put("displayName",map.get(key));
+            list.add(jsonObject);
+        });
+        return HttpWebResult.getMonoSucResult(list);
     }
 
     /**

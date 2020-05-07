@@ -126,7 +126,13 @@ client:
   client-id: znkp
   client-secret: 3696035b52c14369a202a45a9b56170a
   syn-user-url: https://10.253.36.34/bim-server/integration/api.json
-
+iot:
+  device:
+    iot_huanweiche_status: 环卫车
+    iot_lvhuache_status: 绿化车
+    iot_shexiangtou_status: 摄像头
+    iot_zhifache_status: 执法车
+    iot_zhifaduijiang_status: 对讲机
 
 
 
