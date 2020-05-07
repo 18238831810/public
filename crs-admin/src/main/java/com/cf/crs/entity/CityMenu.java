@@ -38,4 +38,7 @@ public class CityMenu implements Serializable {
     @ApiModelProperty(value = "1:属于普通用户菜单 0;不属于普通用户菜单")
     private Integer common;
 
+    @ApiModelProperty(value = "跳转地址")
+    private String href;
+
 }
