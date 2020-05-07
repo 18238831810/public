@@ -38,7 +38,7 @@ public class CityMenuController {
 
     @ApiOperation("获取用户对应的菜单")
     @PostMapping("/getMenuListByUser")
-    public ResultJson<Map<String, Set>> selectMenuListByUser(){
+    public ResultJson<Map<String, Object>> selectMenuListByUser(){
         return cityMenuService.getMenuListByToken();
     }
 }
