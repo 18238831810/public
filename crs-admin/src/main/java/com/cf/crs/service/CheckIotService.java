@@ -56,7 +56,7 @@ public class CheckIotService {
         int count = checkIotMapper.selectCount(tableName);
         //获取在线设备
         int normalCount = checkIotMapper.selectNormalCount(tableName, time);
-        if (count == 0) return 100.00;
+        if (count == 0) return 100.0;
         return getRateDouble(count, normalCount);
     }
 
@@ -64,7 +64,7 @@ public class CheckIotService {
     private Double getRateDouble(int count, int normalCount) {
         BigDecimal a = new BigDecimal(count);
         BigDecimal b = new BigDecimal(normalCount);
-        return a.divide(b).doubleValue();
+        return b.divide(a).doubleValue();
     }
 
 
