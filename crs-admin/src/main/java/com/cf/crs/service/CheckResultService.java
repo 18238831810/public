@@ -335,6 +335,7 @@ public class CheckResultService {
             CheckInfo allCheckInfo = (CheckInfo) redisUtils.get(CacheKey.CHECK_PLAN);
             if (allCheckInfo != null) {
                 log.info("存在全局考评任务，此任务不生效");
+                return;
             }
         }
         startCheck(id,type,true);
