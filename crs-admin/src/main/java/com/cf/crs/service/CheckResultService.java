@@ -70,6 +70,9 @@ public class CheckResultService {
     @Autowired
     RedisUtils redisUtils;
 
+    @Autowired
+    CheckIotService checkIotService;
+
     /**
      * 考评id字段对照表
      */
@@ -769,28 +772,78 @@ public class CheckResultService {
                 JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(o));
                 Integer id = jsonObject.getInteger("id");
                 Integer score = jsonObject.getInteger("fraction");
+                Double num = jsonObject.getDouble("num");
                 if (id == 0) {
                     //执法车
-                    if(internetList.contains("iot_zhifache_status")){
-
-                    }else{
-                        scoreTotal += score;
+                    String iotName = "iot_zhifache_status";
+                    if(internetList.contains(iotName)){
+                        checkResult.setZhifacheCondition("执法车>="+num);
+                        Double value = checkIotService.getnormalRateByDay(iotName);
+                        checkResult.setZhifacheVaule("执法车:"+value);
+                        if(value < num) {
+                            checkResult.setZhifacheStatus(0);
+                            checkResult.setIot(0);
+                        }
                     }
-
+                    if (checkResult.getZhifacheStatus() == null || checkResult.getZhifacheStatus() != 0) scoreTotal += score;
                 } else if (id == 1) {
                     //绿化车辆
+                    String iotName = "iot_lvhuache_status";
+                    if(internetList.contains(iotName)){
+                        checkResult.setLvhuacheCondition("绿化车>="+num);
+                        Double value = checkIotService.getnormalRateByDay(iotName);
+                        checkResult.setZhifacheVaule("绿化车:"+value);
+                        if(value < num) {
+                            checkResult.setLvhuacheStatus(0);
+                            checkResult.setIot(0);
+                        }
+                    }
+                    if (checkResult.getLvhuacheStatus() == null || checkResult.getLvhuacheStatus() != 0) scoreTotal += score;
                     scoreTotal += score;
                 } else if (id == 2) {
                     //环卫车
+                    String iotName = "iot_huanweiche_status";
+                    if(internetList.contains(iotName)){
+                        checkResult.setHuanweicheCondition("环卫车>="+num);
+                        Double value = checkIotService.getnormalRateByDay(iotName);
+                        checkResult.setHuanweicheVaule("环卫车:"+value);
+                        if(value < num) {
+                            checkResult.setHuanweicheStatus(0);
+                            checkResult.setIot(0);
+                        }
+                    }
+                    if (checkResult.getHuanweicheStatus() == null || checkResult.getHuanweicheStatus() != 0) scoreTotal += score;
                     scoreTotal += score;
                 } else if (id == 3) {
                     //摄像头
+                    String iotName = "iot_shexiangtou_status";
+                    if(internetList.contains(iotName)){
+                        checkResult.setShexiangtouCondition("摄像头>="+num);
+                        Double value = checkIotService.getnormalRateByDay(iotName);
+                        checkResult.setShexiangtouVaule("摄像头:"+value);
+                        if(value < num) {
+                            checkResult.setShexiangtouStatus(0);
+                            checkResult.setIot(0);
+                        }
+                    }
+                    if (checkResult.getShexiangtouStatus() == null || checkResult.getShexiangtouStatus() != 0) scoreTotal += score;
                     scoreTotal += score;
                 } else if (id == 4) {
                     //执法仪
                     scoreTotal += score;
                 } else if (id == 5) {
                     //对讲机
+                    String iotName = "iot_zhifaduijiang_status";
+                    if(internetList.contains(iotName)){
+                        checkResult.setDuijiangjiCondition("对讲机>="+num);
+                        Double value = checkIotService.getnormalRateByDay(iotName);
+                        checkResult.setDuijiangjiVaule("对讲机:"+value);
+                        if(value < num) {
+                            checkResult.setDuijiangjiStatus(0);
+                            checkResult.setIot(0);
+                        }
+                    }
+                    if (checkResult.getDuijiangjiStatus() == null || checkResult.getDuijiangjiStatus() != 0) scoreTotal += score;
                     scoreTotal += score;
                 } else if (id == 6) {
                     //环卫工牌
