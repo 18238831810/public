@@ -23,6 +23,7 @@ public class CheckResultTask implements ITask{
     @Override
     public void run(String params) {
         try {
+            log.info("自动考评开始:{}",JSON.toJSONString(params));
             JSONObject jsonObject = JSON.parseObject(params);
             Long id = jsonObject.getLong("id");
             Integer type = jsonObject.getInteger("type");
