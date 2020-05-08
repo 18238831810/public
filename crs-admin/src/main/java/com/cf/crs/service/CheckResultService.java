@@ -863,9 +863,12 @@ public class CheckResultService {
                 }
             }
             if (checkResult.getIot() == null) {
-                business.getInteger("internetTotal");
                 checkResult.setIot(1);
             }
+        }else{
+            Integer score = business.getInteger("internetTotal");
+            scoreTotal += score;
+            checkResult.setIot(1);
         }
         //信息安全考评结束
 
