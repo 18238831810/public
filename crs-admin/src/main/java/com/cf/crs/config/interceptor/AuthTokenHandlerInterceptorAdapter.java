@@ -47,6 +47,7 @@ public class AuthTokenHandlerInterceptorAdapter extends HandlerInterceptorAdapte
             throw new UnauthorizedException();
         }
         redisTemplate.expire(token,2, TimeUnit.HOURS);
+        redisTemplate.expire(token+":menu",2, TimeUnit.HOURS);
         return true;
     }
 
