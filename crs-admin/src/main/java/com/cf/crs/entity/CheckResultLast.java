@@ -160,37 +160,37 @@ public class CheckResultLast implements Serializable {
     private String deniedAttackVaule;
 
     @ApiModelProperty(value = "拒绝访问达标条件")
-    private String deniedAttacCondition;
+    private String deniedAttackCondition;
 
     @ApiModelProperty(value = "拒绝访问达标状态")
-    private Integer deniedAttacStatus;
+    private Integer deniedAttackStatus;
 
     @ApiModelProperty(value = "缓冲区溢出当前值")
     private String zoneAttackVaule;
 
     @ApiModelProperty(value = "缓冲区溢出达标条件")
-    private String zoneAttacCondition;
+    private String zoneAttackCondition;
 
     @ApiModelProperty(value = "缓冲区溢出达标状态")
-    private Integer zoneAttacStatus;
+    private Integer zoneAttackStatus;
 
     @ApiModelProperty(value = "蠕虫攻击当前值")
     private String wormAttackVaule;
 
     @ApiModelProperty(value = "蠕虫攻击达标条件")
-    private String wormAttacCondition;
+    private String wormAttackCondition;
 
     @ApiModelProperty(value = "蠕虫攻击达标状态")
-    private Integer wormAttacStatus;
+    private Integer wormAttackStatus;
 
     @ApiModelProperty(value = "ip碎片当前值")
     private String ipAttackVaule;
 
     @ApiModelProperty(value = "ip碎片达标条件")
-    private String ipAttacCondition;
+    private String ipAttackCondition;
 
     @ApiModelProperty(value = "ip碎片达标状态")
-    private Integer ipAttacStatus;
+    private Integer ipAttackStatus;
 
     @ApiModelProperty(value = "执法车当前值")
     private String zhifacheVaule;
