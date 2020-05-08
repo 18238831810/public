@@ -832,9 +832,9 @@ public class CheckResultService {
                     //执法车
                     String iotName = "iot_zhifache_status";
                     if(internetList.contains(iotName)){
-                        checkResult.setZhifacheCondition("执法车>="+num);
+                        checkResult.setZhifacheCondition("执法车>="+num+"%");
                         Double value = checkIotService.getnormalRateByDay(iotName);
-                        checkResult.setZhifacheVaule("执法车:"+value);
+                        checkResult.setZhifacheVaule("执法车:"+value+"%");
                         if(value < num) {
                             checkResult.setZhifacheStatus(0);
                             checkResult.setIot(0);
@@ -845,9 +845,9 @@ public class CheckResultService {
                     //绿化车辆
                     String iotName = "iot_lvhuache_status";
                     if(internetList.contains(iotName)){
-                        checkResult.setLvhuacheCondition("绿化车>="+num);
+                        checkResult.setLvhuacheCondition("绿化车>="+num+"%");
                         Double value = checkIotService.getnormalRateByDay(iotName);
-                        checkResult.setZhifacheVaule("绿化车:"+value);
+                        checkResult.setZhifacheVaule("绿化车:"+value+"%");
                         if(value < num) {
                             checkResult.setLvhuacheStatus(0);
                             checkResult.setIot(0);
@@ -859,9 +859,9 @@ public class CheckResultService {
                     //环卫车
                     String iotName = "iot_huanweiche_status";
                     if(internetList.contains(iotName)){
-                        checkResult.setHuanweicheCondition("环卫车>="+num);
+                        checkResult.setHuanweicheCondition("环卫车>="+num+"%");
                         Double value = checkIotService.getnormalRateByDay(iotName);
-                        checkResult.setHuanweicheVaule("环卫车:"+value);
+                        checkResult.setHuanweicheVaule("环卫车:"+value+"%");
                         if(value < num) {
                             checkResult.setHuanweicheStatus(0);
                             checkResult.setIot(0);
@@ -873,9 +873,9 @@ public class CheckResultService {
                     //摄像头
                     String iotName = "iot_shexiangtou_status";
                     if(internetList.contains(iotName)){
-                        checkResult.setShexiangtouCondition("摄像头>="+num);
+                        checkResult.setShexiangtouCondition("摄像头>="+num+"%");
                         Double value = checkIotService.getnormalRateByDay(iotName);
-                        checkResult.setShexiangtouVaule("摄像头:"+value);
+                        checkResult.setShexiangtouVaule("摄像头:"+value+"%");
                         if(value < num) {
                             checkResult.setShexiangtouStatus(0);
                             checkResult.setIot(0);
@@ -890,9 +890,9 @@ public class CheckResultService {
                     //对讲机
                     String iotName = "iot_zhifaduijiang_status";
                     if(internetList.contains(iotName)){
-                        checkResult.setDuijiangjiCondition("对讲机>="+num);
+                        checkResult.setDuijiangjiCondition("对讲机>="+num+"%");
                         Double value = checkIotService.getnormalRateByDay(iotName);
-                        checkResult.setDuijiangjiVaule("对讲机:"+value);
+                        checkResult.setDuijiangjiVaule("对讲机:"+value+"%");
                         if(value < num) {
                             checkResult.setDuijiangjiStatus(0);
                             checkResult.setIot(0);
