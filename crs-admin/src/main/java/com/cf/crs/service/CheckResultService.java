@@ -847,7 +847,7 @@ public class CheckResultService {
                     if(internetList.contains(iotName)){
                         checkResult.setLvhuacheCondition("绿化车>="+num+"%");
                         Double value = checkIotService.getnormalRateByDay(iotName);
-                        checkResult.setZhifacheVaule("绿化车:"+value+"%");
+                        checkResult.setLvhuacheVaule("绿化车:"+value+"%");
                         if(value < num) {
                             checkResult.setLvhuacheStatus(0);
                             checkResult.setIot(0);
