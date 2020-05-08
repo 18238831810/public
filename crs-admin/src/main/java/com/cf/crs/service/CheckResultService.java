@@ -167,10 +167,10 @@ public class CheckResultService {
         Integer portScanStatus = checkResultLast.getPortScanStatus();
         Integer forceAttackStatus = checkResultLast.getForceAttackStatus();
         Integer trojanAttackStatus = checkResultLast.getTrojanAttackStatus();
-        Integer deniedAttacStatus = checkResultLast.getDeniedAttacStatus();
-        Integer zoneAttacStatus = checkResultLast.getZoneAttacStatus();
-        Integer wormAttacStatus = checkResultLast.getWormAttacStatus();
-        Integer ipAttacStatus = checkResultLast.getIpAttacStatus();
+        Integer deniedAttacStatus = checkResultLast.getDeniedAttackStatus();
+        Integer zoneAttacStatus = checkResultLast.getZoneAttackStatus();
+        Integer wormAttacStatus = checkResultLast.getWormAttackStatus();
+        Integer ipAttacStatus = checkResultLast.getIpAttackStatus();
         Integer safe = checkResultLast.getSafe();
         if (DataUtil.checkIsUsable(securityBreachStatus) &&
                 DataUtil.checkIsUsable(virusAttackStatus) &&
@@ -746,15 +746,15 @@ public class CheckResultService {
                     Integer refuseNum = refuse.getInteger("refuseNum");
                     //获取拒绝访问攻击达标值
                     Integer num = jsonObject.getInteger("num");
-                    checkResult.setDeniedAttacCondition("拒绝访问攻击<="+num);
+                    checkResult.setDeniedAttackCondition("拒绝访问攻击<="+num);
                     if(refuseNum != null){
                         checkResult.setDeniedAttackVaule("拒绝访问攻击:"+refuseNum);
                         if (refuseNum > num){
-                            checkResult.setDeniedAttacStatus(0);
+                            checkResult.setDeniedAttackStatus(0);
                             checkResult.setSafe(0);
                         }
                     }
-                    if (checkResult.getDeniedAttacStatus() == null || checkResult.getDeniedAttacStatus() != 0) scoreTotal += score;
+                    if (checkResult.getDeniedAttackStatus() == null || checkResult.getDeniedAttackStatus() != 0) scoreTotal += score;
                 } else if (id == 6) {
                     //缓冲区溢出攻击
                     JSONObject buffer = getCheckSafeByType(securityArray, "buffer");
@@ -762,15 +762,15 @@ public class CheckResultService {
                     Integer bufferNum = buffer.getInteger("bufferNum");
                     //获取缓冲区溢出攻击达标值
                     Integer num = jsonObject.getInteger("num");
-                    checkResult.setZoneAttacCondition("缓冲区溢出攻击<="+num);
+                    checkResult.setZoneAttackCondition("缓冲区溢出攻击<="+num);
                     if(bufferNum != null){
                         checkResult.setZoneAttackVaule("缓冲区溢出攻击:"+bufferNum);
                         if (bufferNum > num){
-                            checkResult.setZoneAttacStatus(0);
+                            checkResult.setZoneAttackStatus(0);
                             checkResult.setSafe(0);
                         }
                     }
-                    if (checkResult.getZoneAttacStatus() == null || checkResult.getZoneAttacStatus() != 0) scoreTotal += score;
+                    if (checkResult.getZoneAttackStatus() == null || checkResult.getZoneAttackStatus() != 0) scoreTotal += score;
                 } else if (id == 7) {
                     //网络蠕虫攻击
                     JSONObject worm = getCheckSafeByType(securityArray, "worm");
@@ -778,15 +778,15 @@ public class CheckResultService {
                     Integer wormNum = worm.getInteger("wormNum");
                     //获取网络蠕虫攻击达标值
                     Integer num = jsonObject.getInteger("num");
-                    checkResult.setWormAttacCondition("网络蠕虫攻击<="+num);
+                    checkResult.setWormAttackCondition("网络蠕虫攻击<="+num);
                     if(wormNum != null){
                         checkResult.setWormAttackVaule("网络蠕虫攻击:"+wormNum);
                         if (wormNum > num){
-                            checkResult.setWormAttacStatus(0);
+                            checkResult.setWormAttackStatus(0);
                             checkResult.setSafe(0);
                         }
                     }
-                    if (checkResult.getWormAttacStatus() == null || checkResult.getWormAttacStatus() != 0) scoreTotal += score;
+                    if (checkResult.getWormAttackStatus() == null || checkResult.getWormAttackStatus() != 0) scoreTotal += score;
                 } else if (id == 8) {
                     //ip碎片攻击
                     JSONObject ip = getCheckSafeByType(securityArray, "ip");
@@ -794,15 +794,15 @@ public class CheckResultService {
                     Integer ipNum = ip.getInteger("ipNum");
                     //获取ip碎片攻击达标值
                     Integer num = jsonObject.getInteger("num");
-                    checkResult.setIpAttacCondition("ip碎片攻击<="+num);
+                    checkResult.setIpAttackCondition("ip碎片攻击<="+num);
                     if(ipNum != null){
                         checkResult.setIpAttackVaule("ip碎片攻击:"+ipNum);
                         if (ipNum > num){
-                            checkResult.setIpAttacStatus(0);
+                            checkResult.setIpAttackStatus(0);
                             checkResult.setSafe(0);
                         }
                     }
-                    if (checkResult.getIpAttacStatus() == null || checkResult.getIpAttacStatus() != 0) scoreTotal += score;
+                    if (checkResult.getIpAttackStatus() == null || checkResult.getIpAttackStatus() != 0) scoreTotal += score;
                 }
             }
             if (checkResult.getSafe() == null) {
