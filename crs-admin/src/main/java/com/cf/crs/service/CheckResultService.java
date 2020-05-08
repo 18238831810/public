@@ -822,7 +822,7 @@ public class CheckResultService {
         List<CheckInfo> checkInfos = deviceList.get("8");
         if (checkItemList.contains("9") && CollectionUtils.isNotEmpty(checkInfos)){
             //获取互联网设备列表（对应ioconfig中的key）
-            List<String> internetList = checkInfos.stream().map(CheckInfoDevice -> CheckInfoDevice.getName()).collect(Collectors.toList());
+            List<String> internetList = checkInfos.stream().map(CheckInfoDevice -> CheckInfoDevice.getDisplayName()).collect(Collectors.toList());
             for (Object o : internet) {
                 JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(o));
                 Integer id = jsonObject.getInteger("id");
