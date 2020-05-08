@@ -151,6 +151,8 @@ public class CheckResultService {
         updateHealth(id, checkResultLast);
         //更新安全信息
         updateSafe(id, checkResultLast);
+        //更新物联网设备
+        updateIot(id,checkResultLast);
         return HttpWebResult.getMonoSucStr();
     }
 
@@ -227,6 +229,54 @@ public class CheckResultService {
                 //业务健康度需改为不达标
                 checkResultLastMapper.update(null,new UpdateWrapper<CheckResultLast>().eq("id",id).set("health",0));
                 checkResultMapper.update(null,new UpdateWrapper<CheckResult>().eq("id",id).set("health",0));
+            }
+        }
+    }
+
+
+    /**
+     * 更新物联网设备
+     * @param id
+     * @param checkResultLast
+     */
+    private void updateIot(Long id, CheckResultLast checkResultLast) {
+        Integer zhifacheStatus = checkResultLast.getZhifacheStatus();
+        Integer lvhuacheStatus = checkResultLast.getLvhuacheStatus();
+        Integer huanweicheStatus = checkResultLast.getHuanweicheStatus();
+        Integer shexiangtouStatus = checkResultLast.getShexiangtouStatus();
+        Integer zhifayiStatus = checkResultLast.getZhifayiStatus();
+        Integer duijiangjiStatus = checkResultLast.getDuijiangjiStatus();
+        Integer hwgongpaiStatus = checkResultLast.getHwgongpaiStatus();
+        Integer gcyitijiStatus = checkResultLast.getGcyitijiStatus();
+        Integer gkxjianceyiStatus = checkResultLast.getGkxjianceyiStatus();
+        Integer qtjianceyiStatus = checkResultLast.getQtjianceyiStatus();
+        Integer bixianshebeiStatus = checkResultLast.getBixianshebeiStatus();
+        //物联网设备
+        Integer iot = checkResultLast.getIot();
+        if (DataUtil.checkIsUsable(zhifacheStatus) &&
+                DataUtil.checkIsUsable(lvhuacheStatus) &&
+                DataUtil.checkIsUsable(huanweicheStatus) &&
+                DataUtil.checkIsUsable(shexiangtouStatus) &&
+                DataUtil.checkIsUsable(shexiangtouStatus) &&
+                DataUtil.checkIsUsable(zhifayiStatus) &&
+                DataUtil.checkIsUsable(duijiangjiStatus) &&
+                DataUtil.checkIsUsable(hwgongpaiStatus) &&
+                DataUtil.checkIsUsable(gcyitijiStatus) &&
+                DataUtil.checkIsUsable(gkxjianceyiStatus) &&
+                DataUtil.checkIsUsable(qtjianceyiStatus) &&
+                DataUtil.checkIsUsable(bixianshebeiStatus)){
+            //物联网设备达标
+            if (!DataUtil.checkIsUsable(iot)) {
+                //业务健康度需改为达标
+                checkResultLastMapper.update(null,new UpdateWrapper<CheckResultLast>().eq("id",id).set("iot",1));
+                checkResultMapper.update(null,new UpdateWrapper<CheckResult>().eq("id",id).set("iot",1));
+            }
+        }else{
+            //物联网设备不达标
+            if (DataUtil.checkIsUsable(iot)) {
+                //业务健康度需改为不达标
+                checkResultLastMapper.update(null,new UpdateWrapper<CheckResultLast>().eq("id",id).set("iot",0));
+                checkResultMapper.update(null,new UpdateWrapper<CheckResult>().eq("id",id).set("iot",0));
             }
         }
     }
