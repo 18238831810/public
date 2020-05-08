@@ -156,12 +156,13 @@ public class WarningService {
             if (StringUtils.isEmpty(status)) continue;
             if (record != null) {
                 JSONObject history = new JSONObject();
-                String displayname = element.attr("DISPLAYNAME");
-                if (CollectionUtils.isEmpty(deviceNameList) || !deviceNameList.contains(displayname)) continue;
+                String name = element.attr("RESOURCEID");
+                if (CollectionUtils.isEmpty(deviceNameList) || !deviceNameList.contains(name)) continue;
                 history.put("status",status);
                 history.put("healthmessage",element.attr("HEALTHMESSAGE"));
                 history.put("lastalarmtime",element.attr("LASTALARMTIME"));
-                history.put("displayName",displayname);
+                history.put("displayName",element.attr("DISPLAYNAME"));
+                history.put("name",name);
                 record.add(history);
             }
             if ("critical".equalsIgnoreCase(status)) critical+=1;
