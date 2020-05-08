@@ -331,14 +331,18 @@ public class CheckResultService {
      * 自动考评入口
      */
     public void autoCheck(Long id,Integer type){
+        CheckInfo allCheckInfo = (CheckInfo) redisUtils.get(CacheKey.CHECK_PLAN);
         if (id != 0) {
-            CheckInfo allCheckInfo = (CheckInfo) redisUtils.get(CacheKey.CHECK_PLAN);
             if (allCheckInfo != null) {
                 log.info("存在全局考评任务，此任务不生效");
                 return;
             }
+            startCheck(id,type,true);
+        }else{
+            if(isCheckTime(allCheckInfo)) return;
+            startCheck(id,type,false);
         }
-        startCheck(id,type,true);
+
     }
 
     private boolean isCheckTime(CheckInfo checkInfo) {
@@ -367,7 +371,7 @@ public class CheckResultService {
                 if (DataUtil.checkIsUsable(id) && !checkInfo.getId().equals(id)) continue;
                 try {
                     //自动考评需要考评考评时间限制
-                    if(autoCheck && isCheckTime(checkInfo)) return;
+                    if(autoCheck && isCheckTime(checkInfo)) continue;
                     startCheck(checkInfo,type);
                 } catch (Exception e) {
                     log.info(e.getMessage(),e);
