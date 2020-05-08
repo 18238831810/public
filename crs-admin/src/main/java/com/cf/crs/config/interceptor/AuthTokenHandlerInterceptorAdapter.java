@@ -42,7 +42,7 @@ public class AuthTokenHandlerInterceptorAdapter extends HandlerInterceptorAdapte
         if (requestURI.indexOf(loginUrl) != -1) return true;
         //获取token
         String token = cityTokenService.getToken();
-        if (StringUtils.isBlank(token) || !redisTemplate.hasKey(token)) {
+        if (StringUtils.isBlank(token) || !redisTemplate.hasKey(token) || !redisTemplate.hasKey(token+":menu")) {
             log.error("token.error:[{}]", request.getRequestURI());
             throw new UnauthorizedException();
         }

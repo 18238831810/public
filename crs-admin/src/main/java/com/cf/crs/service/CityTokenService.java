@@ -71,7 +71,7 @@ public class CityTokenService {
      */
     public Map<String, Object> getMenuList(){
         String token = getToken();
-        if (StringUtils.isEmpty(token)) return null;
+        if (StringUtils.isEmpty(token)) return Maps.newHashMap();
         Map<String, Object> result = (Map<String, Object>)redisUtils.get(token+":menu");
         if (DataUtil.mapNotEmpty(result)) return result;
         return Maps.newHashMap();
