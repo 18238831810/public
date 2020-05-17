@@ -117,7 +117,7 @@ public class CheckObjectAnalyService {
             List<CheckInfo> deviceList = deviceListMap.get(key);
             int total = 0;
             int waring = 0;
-            if ("1".equalsIgnoreCase(key)){
+            if ("3".equalsIgnoreCase(key)){
                 //服务器
                 for (CheckInfo checkInfo:deviceList){
                     String deviceName = checkInfo.getName();
@@ -127,7 +127,7 @@ public class CheckObjectAnalyService {
                     Integer severity = jsonObject.getInteger("severity");
                     if (severity != 5) waring += 1;
                 }
-            }else if ("2".equalsIgnoreCase(key)){
+            }else if ("1".equalsIgnoreCase(key)){
                 //数据库
                 for (Object deviceObj:deviceList){
                     JSONObject device = JSON.parseObject(JSON.toJSONString(deviceObj));
@@ -138,7 +138,7 @@ public class CheckObjectAnalyService {
                     String healthstatus = element.attr("HEALTHSTATUS");
                     if (!"clear".equalsIgnoreCase(healthstatus)) waring += 1;
                 }
-            }else if("3".equalsIgnoreCase(key)){
+            }else if("2".equalsIgnoreCase(key)){
                 //中间件
                 for (Object deviceObj:deviceList){
                     JSONObject device = JSON.parseObject(JSON.toJSONString(deviceObj));
