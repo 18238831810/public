@@ -64,6 +64,26 @@ public class CityTokenService {
         }
     }
 
+    /**
+     * 获取用户name
+     * @return
+     */
+    public String getUserAuth(){
+        String token = getToken();
+        if (StringUtils.isEmpty(token)) return null;
+        Object o = redisUtils.get(token);
+        if (o == null) return null;
+        if (o instanceof SysUser){
+            //本系统用户登录
+            SysUser user = (SysUser)o;
+            return user.getAuth();
+        }else {
+            //第三方登录
+            CityUser user = (CityUser)o;
+            return user.getAuth();
+        }
+    }
+
 
     /**
      * 获取用户

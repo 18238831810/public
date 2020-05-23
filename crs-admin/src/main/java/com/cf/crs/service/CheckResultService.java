@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,9 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class CheckResultService {
+
+    @Autowired
+    HttpServletRequest request;
 
     @Autowired
     CheckResultMapper checkResultMapper;
@@ -72,6 +76,9 @@ public class CheckResultService {
 
     @Autowired
     CheckIotService checkIotService;
+
+    @Autowired
+    CityTokenService cityTokenService;
 
     /**
      * 考评id字段对照表
@@ -141,6 +148,8 @@ public class CheckResultService {
      * @return
      */
     public ResultJson<String> updateCheckResult(Long id,String filed,Integer result){
+        String userAuth = cityTokenService.getUserAuth();
+        if (!"1".equalsIgnoreCase(userAuth)) return  HttpWebResult.getMonoError("您没有审批权限，请申请管理员权限");
         if (!DataUtil.checkIsUsable(id) || StringUtils.isEmpty(filed) || result == null) return HttpWebResult.getMonoError("审批失败(审批信息错误)");
         //更改结果字段
         checkResultLastMapper.update(null,new UpdateWrapper<CheckResultLast>().eq("id",id).set(filed,result));
