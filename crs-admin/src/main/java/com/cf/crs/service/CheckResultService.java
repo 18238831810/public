@@ -944,7 +944,7 @@ public class CheckResultService {
         log.info("scoreTotal:{}",scoreTotal);
         if (scoreTotal >= total) checkResult.setResult(1);
         else checkResult.setResult(0);
-
+        checkResult.setScore(scoreTotal);
         //考评类型
         checkResult.setType(type);
         //考评时间

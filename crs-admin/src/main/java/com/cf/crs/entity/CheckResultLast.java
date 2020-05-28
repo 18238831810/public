@@ -46,6 +46,9 @@ public class CheckResultLast implements Serializable {
     @ApiModelProperty(value = "考评结果")
     private Integer result;
 
+    @ApiModelProperty(value = "考评分数")
+    private Integer score;
+
     @ApiModelProperty(value = "考评类型（1:日 2:周 3:月 4:年）")
     private Integer type;
 
