@@ -40,7 +40,7 @@ public class CheckResultController {
 
     @ApiOperation("发送考评结果")
     @PostMapping("/sendCheckResult")
-    public ResultJson<String> SendEmailForReslut(@ApiParam(value = "考评对象id", required = true) Long id){
+    public ResultJson<String> SendEmailForReslut(@ApiParam(value = "考评结果id", required = true) Long id){
         return checkResultService.sendEmailForReslut(id);
     }
 
