@@ -863,7 +863,6 @@ public class CheckResultService {
                         }
                     }
                     if (checkResult.getLvhuacheStatus() == null || checkResult.getLvhuacheStatus() != 0) scoreTotal += score;
-                    scoreTotal += score;
                 } else if (id == 2) {
                     //环卫车
                     String iotName = "iot_huanweiche_status";
@@ -877,7 +876,6 @@ public class CheckResultService {
                         }
                     }
                     if (checkResult.getHuanweicheStatus() == null || checkResult.getHuanweicheStatus() != 0) scoreTotal += score;
-                    scoreTotal += score;
                 } else if (id == 3) {
                     //摄像头
                     String iotName = "iot_shexiangtou_status";
@@ -891,7 +889,6 @@ public class CheckResultService {
                         }
                     }
                     if (checkResult.getShexiangtouStatus() == null || checkResult.getShexiangtouStatus() != 0) scoreTotal += score;
-                    scoreTotal += score;
                 } else if (id == 4) {
                     //执法仪
                     scoreTotal += score;
@@ -908,7 +905,6 @@ public class CheckResultService {
                         }
                     }
                     if (checkResult.getDuijiangjiStatus() == null || checkResult.getDuijiangjiStatus() != 0) scoreTotal += score;
-                    scoreTotal += score;
                 } else if (id == 6) {
                     //环卫工牌
                     scoreTotal += score;
