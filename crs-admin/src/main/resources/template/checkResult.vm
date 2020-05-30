@@ -1,0 +1,32 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+</head>
+<body style="font-size:12.0pt; font-family:SimSun">
+<div id="main">
+    <div id="head"><common-head></common-head></div>
+    <div id="content" class="result">
+        <div class="layout">
+            <div class="title"></div>
+
+            <div class="table">
+                <table id="tableCon">
+                    <tr>
+                        <td>页面可用性</td>
+                        <td>${resultList.businessVaule}</td>
+                        <td>${resultList.businessCondition}</td>
+                        <td><div class="item">#if ($resultList.businessStatus==0) 未达标 #else 达标 #end</div></td>
+                    </tr>
+                    <tr>
+                        <td>页面监测</td>
+                        <td>${resultList.responseVaule}</td>
+                        <td>${resultList.responseCondition}</td>
+                        <td><div class="item">#if ($resultList.responseStatus==0) 未达标 #else 达标 #end</div></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+</html>

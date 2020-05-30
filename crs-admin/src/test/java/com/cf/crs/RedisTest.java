@@ -53,6 +53,9 @@ public class RedisTest {
     @Autowired
     EmailSenderService emailSenderService;
 
+    @Autowired
+    CheckResultService checkResultService;
+
     @Test
     public void contextLoads() {
         SysUserEntity user = new SysUserEntity();
@@ -163,6 +166,12 @@ public class RedisTest {
     @Test
     public void sendEmailWithFile(){
         emailSenderService.sendEmail("title","content","1527583922@qq.com");
+    }
+
+    @Test
+    public void createPdf(){
+        String pdf = "E:/hero.pdf";
+        checkResultService.createPdf(pdf,206L);
     }
 
 }
