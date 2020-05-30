@@ -6,8 +6,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cf.crs.common.redis.RedisUtils;
+import com.cf.crs.common.utils.DateUtils;
 import com.cf.crs.entity.*;
 import com.cf.crs.mapper.*;
 import com.cf.util.http.HttpWebResult;
@@ -17,20 +19,30 @@ import com.cf.util.utils.CacheKey;
 import com.cf.util.utils.DataUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.tool.xml.XMLWorkerHelper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.Velocity;
+import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
 
 /**
  * 考评菜单
@@ -1125,6 +1137,50 @@ public class CheckResultService {
         String rule = checkMode.getRule();
         return JSON.parseObject(rule);
     }
+
+
+    /**
+     * 生成html
+     * @return
+     */
+   public String getTemplateOut(Long id){
+       Properties prop = new Properties();
+       prop.put("file.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+       Velocity.init(prop);
+       //封装模板数据
+       Map<String, Object> map = new HashMap<>();
+       CheckResultLast checkResultLast = checkResultLastMapper.selectById(id);
+       map.put("resultList",checkResultLast);
+       VelocityContext context = new VelocityContext(map);
+       //渲染模板
+       StringWriter writer = new StringWriter();
+       Template tpl = Velocity.getTemplate("template/checkResult.vm", "UTF-8");
+       tpl.merge(context, writer);
+       String out = writer.toString();
+       return out;
+   }
+
+
+    /**
+     * html转pdf
+     * @param file
+     * @throws Exception
+     */
+   public void createPdf(String file,Long id)  {
+       try {
+           Document document = new Document();
+           PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(file));
+           document.open();
+           String value = getTemplateOut(id);
+           Reader reader = new StringReader(value);
+           XMLWorkerHelper.getInstance().parseXHtml(writer, document, reader);
+           document.close();
+       } catch (Exception e) {
+           log.error(e.getMessage(),e);
+       }
+   }
+
+
 
 
 
