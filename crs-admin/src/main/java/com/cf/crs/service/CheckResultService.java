@@ -33,11 +33,13 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
+import javax.swing.*;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.util.*;
@@ -92,6 +94,9 @@ public class CheckResultService {
     @Autowired
     CityTokenService cityTokenService;
 
+    @Value("${checkPdf}")
+    String checkResultPath;
+
     /**
      * 考评id字段对照表
      */
@@ -141,15 +146,15 @@ public class CheckResultService {
      * 发送考评结果
      * @return
      */
-    public ResultJson<String> SendEmailForReslut(Long id, MultipartFile[] file){
+    public ResultJson<String> sendEmailForReslut(Long id){
+        CheckInfo checkInfo = createPdf(checkResultPath, id);
+        if (checkInfo == null) return HttpWebResult.getMonoError("发送失败");
         //发送指定报表
-        CheckInfo checkInfo = checkInfoMapper.selectById(id);
-        if (checkInfo == null) return HttpWebResult.getMonoError("此考评对象不存在");
-        String title = checkInfo.getName() + " 报表";
+        String title = checkInfo.getName() + "-报表";
         String content = "报表详情请参考附件";
         String email = checkInfo.getEmail();
-        if (StringUtils.isNotEmpty(email)) return HttpWebResult.getMonoError("此考评对象没有设置发送邮箱");
-        return emailSenderService.sendEmail(title,content,email,file);
+        if (StringUtils.isEmpty(email)) return HttpWebResult.getMonoError("此考评对象没有设置发送邮箱");
+        return emailSenderService.sendEmail(title,content,email,checkResultPath + checkInfo.getName() + ".pdf");
     }
 
     /**
@@ -1125,7 +1130,7 @@ public class CheckResultService {
      * @param type  1：服务器，2：数据库 3：中间件
      * @return
      */
-    private List<String>  getDeviceNameList(Map<String, List<CheckInfo>> deviceList,String type) {
+    private List<String> getDeviceNameList(Map<String, List<CheckInfo>> deviceList,String type) {
         if (!DataUtil.mapNotEmpty(deviceList)) return null;
         List<CheckInfo> CheckInfoList = deviceList.get(type);
         if (CollectionUtils.isEmpty(CheckInfoList)) return null;
@@ -1139,26 +1144,7 @@ public class CheckResultService {
     }
 
 
-    /**
-     * 生成html
-     * @return
-     */
-   public String getTemplateOut(Long id){
-       Properties prop = new Properties();
-       prop.put("file.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
-       Velocity.init(prop);
-       //封装模板数据
-       Map<String, Object> map = new HashMap<>();
-       CheckResultLast checkResultLast = checkResultLastMapper.selectById(id);
-       map.put("resultList",checkResultLast);
-       VelocityContext context = new VelocityContext(map);
-       //渲染模板
-       StringWriter writer = new StringWriter();
-       Template tpl = Velocity.getTemplate("template/checkResult.vm", "UTF-8");
-       tpl.merge(context, writer);
-       String out = writer.toString();
-       return out;
-   }
+
 
 
     /**
@@ -1166,22 +1152,46 @@ public class CheckResultService {
      * @param file
      * @throws Exception
      */
-   public void createPdf(String file,Long id)  {
+   public CheckInfo createPdf(String file,Long id)  {
        try {
+           Properties prop = new Properties();
+           prop.put("file.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+           Velocity.init(prop);
+           //封装模板数据
+           Map<String, Object> map = new HashMap<>();
+           CheckResultLast checkResultLast = checkResultLastMapper.selectById(id);
+           CheckInfo checkInfo = checkInfoMapper.selectById(checkResultLast.getCheckId());
+           JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(checkResultLast));
+           jsonObject.keySet().forEach(key -> {
+               String value = jsonObject.getString(key);
+               if (StringUtils.isNotEmpty(value)) jsonObject.put(key,value.replace("<","&lt;").replace(">","&gt;"));
+           });
+           jsonObject.put("checkName",checkInfo.getName());
+           map.put("resultList",jsonObject);
+           VelocityContext context = new VelocityContext(map);
+           //渲染模板
+           String out = getTemplate(context);
+
            Document document = new Document();
-           PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(file));
+           PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(file+checkInfo.getName()+".pdf"));
            document.open();
-           String value = getTemplateOut(id);
-           Reader reader = new StringReader(value);
+           Reader reader = new StringReader(out);
            XMLWorkerHelper.getInstance().parseXHtml(writer, document, reader);
            document.close();
+           return checkInfo;
        } catch (Exception e) {
            log.error(e.getMessage(),e);
+           return null;
        }
    }
 
-
-
+    private String getTemplate(VelocityContext context) {
+        StringWriter writer = new StringWriter();
+        Template tpl = Velocity.getTemplate("template/checkResult.vm", "UTF-8");
+        tpl.merge(context, writer);
+        String out = writer.toString();
+        return out;
+    }
 
 
 }

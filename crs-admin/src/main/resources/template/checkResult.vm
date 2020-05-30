@@ -6,26 +6,130 @@
     <div id="head"><common-head></common-head></div>
     <div id="content" class="result">
         <div class="layout">
-            <div class="title"></div>
-
+            <div class="title">
+                <span>考评结果管理</span>
+            </div>
+            <div class="nameList">
+                <ul>
+                    <li><span>业务系统名称：</span><p>${resultList.checkName}</p></li>
+                    <li><span>当前考评结果：</span><p>#if ($resultList.result==0) 未达标 #else 达标 #end</p></li>
+                </ul>
+            </div>
             <div class="table">
                 <table id="tableCon">
                     <tr>
+                        <th colspan="3"></th>
+                        <th>当前值</th>
+                        <th>达标条件</th>
+                        <th>达标状态</th>
+                    </tr>
+                    <tr>
+                        <td rowspan="13">业务考评</td>
+                        <td rowspan="4">业务健康度</td>
                         <td>页面可用性</td>
                         <td>${resultList.businessVaule}</td>
                         <td>${resultList.businessCondition}</td>
-                        <td><div class="item">#if ($resultList.businessStatus==0) 未达标 #else 达标 #end</div></td>
+                        <td>#if ($resultList.businessStatus==0) 未达标 #else 达标 #end}</td>
                     </tr>
                     <tr>
                         <td>页面监测</td>
                         <td>${resultList.responseVaule}</td>
                         <td>${resultList.responseCondition}</td>
-                        <td><div class="item">#if ($resultList.responseStatus==0) 未达标 #else 达标 #end</div></td>
+                        <td>#if ($resultList.responseStatus==0) 未达标 #else 达标 #end}</td>
                     </tr>
-                </table>
-            </div>
+                    <tr>
+                        <td>数据质量</td>
+                        <td>${resultList.dataQualityVaule}</td>
+                        <td>${resultList.dataQualityCondition}</td>
+                        <td>#if ($resultList.dataQualityStatus==0) 未达标 #else 达标 #end}</td>
+                    </tr>
+                    <tr>
+                        <td>数据共享</td>
+                        <td>${resultList.dataSharingVaule}</td>
+                        <td>${resultList.dataSharingCondition}</td>
+                        <td>#if ($resultList.dataSharingStatus==0) 未达标 #else 达标 #end}</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="9">信息安全</td>
+                        <td>安全漏洞</td>
+                        <td>${resultList.securityBreachVaule}</td>
+                        <td>${resultList.securityBreachCondition}</td>
+                        <td>#if ($resultList.securityBreachStatus==0) 未达标 #else 达标 #end}</td>
+                    </tr>
+                    <tr>
+                        <td>病毒攻击</td>
+                        <td>${resultList.virusAttackVaule}</td>
+                        <td>${resultList.virusAttackCondition}</td>
+                        <td>#if ($resultList.virusAttackStatus==0) 未达标 #else 达标 #end}</td>
+                    </tr>
+                    <tr>
+                        <td>端口扫描</td>
+                        <td>${resultList.portScanVaule}</td>
+                        <td>${resultList.portScanCondition}</td>
+                        <td>#if ($resultList.portScanStatus==0) 未达标 #else 达标 #end}</td>
+                    </tr>
+                    <tr>
+                        <td>强力攻击</td>
+                        <td>${resultList.forceAttackVaule}</td>
+                        <td>${resultList.forceAttackCondition}</td>
+                        <td>#if ($resultList.forceAttackStatus==0) 未达标 #else 达标 #end}</td>
+                    </tr>
+                    <tr>
+                        <td>木马后门攻击</td>
+                        <td>${resultList.trojanAttackVaule}</td>
+                        <td>${resultList.trojanAttackCondition}</td>
+                        <td>#if ($resultList.trojanAttackStatus==0) 未达标 #else 达标 #end}</td>
+                    </tr>
+                    <tr>
+                        <td>拒绝访问攻击</td>
+                        <td>${resultList.deniedAttackVaule}</td>
+                        <td>${resultList.deniedAttackCondition}</td>
+                        <td>#if ($resultList.deniedAttackStatus==0) 未达标 #else 达标 #end}</td>
+                    </tr>
+                    <tr>
+                        <td>缓冲区溢出攻击</td>
+                        <td>${resultList.zoneAttackVaule}</td>
+                        <td>${resultList.zoneAttackCondition}</td>
+                        <td>#if ($resultList.zoneAttackStatus==0) 未达标 #else 达标 #end}</td>
+                    </tr>
+                    <tr>
+                        <td>网络蠕虫攻击</td>
+                        <td>${resultList.wormAttackVaule}</td>
+                        <td>${resultList.wormAttackCondition}</td>
+                        <td>#if ($resultList.wormAttackStatus==0) 未达标 #else 达标 #end}</td>
+                    </tr>
+                    <tr>
+                        <td>IP碎片攻击</td>
+                        <td>${resultList.ipAttackVaule}</td>
+                        <td>${resultList.ipAttackCondition}</td>
+                        <td>#if ($resultList.ipAttackStatus==0) 未达标 #else 达标 #end}</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="3">技术考评</td>
+                        <td colspan="2">服务器</td>
+                        <td>${resultList.serverVaule}</td>
+                        <td>${resultList.serverCondition}</td>
+                        <td>${resultList.serverDevice}</td>
+                        <td>#if ($resultList.serverDevice==0) 未达标 #else 达标 #end}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">数据库</td>
+                        <td>${resultList.sqlVaule}</td>
+                        <td>${resultList.sqlCondition}</td>
+                        <td>${resultList.sqlDevice}</td>
+                        <td>#if ($resultList.sqlDevice==0) 未达标 #else 达标 #end}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">中间件</td>
+                        <td>${resultList.middlewareVaule}</td>
+                        <td>${resultList.middlewareCondition}</td>
+                        <td>${resultList.middleware}</td>
+                        <td>#if ($resultList.middleware==0) 未达标 #else 达标 #end}</td>
+                    </tr>
+            </table>
         </div>
     </div>
+</div>
 </div>
 </body>
 

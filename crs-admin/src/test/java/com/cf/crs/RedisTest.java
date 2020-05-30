@@ -163,15 +163,16 @@ public class RedisTest {
         //checkReportService.createByWeek("202001",3);
     }
 
-    @Test
-    public void sendEmailWithFile(){
-        emailSenderService.sendEmail("title","content","1527583922@qq.com");
-    }
 
     @Test
     public void createPdf(){
         String pdf = "E:/hero.pdf";
         checkResultService.createPdf(pdf,206L);
+    }
+
+    @Test
+    public void SendEmailForReslut(){
+        checkResultService.sendEmailForReslut(206L);
     }
 
 }

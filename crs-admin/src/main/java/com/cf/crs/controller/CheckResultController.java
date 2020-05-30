@@ -40,8 +40,8 @@ public class CheckResultController {
 
     @ApiOperation("发送考评结果")
     @PostMapping("/sendCheckResult")
-    public ResultJson<String> SendEmailForReslut(@ApiParam(value = "考评对象id", required = true) Long id,@ApiParam(value = "发送的考评文件", required = true) MultipartFile[] file){
-        return checkResultService.SendEmailForReslut(id,file);
+    public ResultJson<String> SendEmailForReslut(@ApiParam(value = "考评对象id", required = true) Long id){
+        return checkResultService.sendEmailForReslut(id);
     }
 
     @ApiOperation("获取考评报表")

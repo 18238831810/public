@@ -14,9 +14,11 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.internet.MimeMessage;
+import java.io.File;
 
 /**
  * 邮箱服务器
@@ -49,9 +51,6 @@ public class EmailSenderService {
         return HttpWebResult.getMonoSucResult(emailSenderProperties);
     }
 
-    public ResultJson<String> sendEmail(String title, String content, String to){
-        return sendEmail(title,content,to,null);
-    }
 
     /**
      * 发送邮件
@@ -73,6 +72,34 @@ public class EmailSenderService {
             if (file != null && file.length > 0) helper.addAttachment(title, file[0]);
             sender.send(message);
             log.info("{}- 文本邮件发送成功",title);
+            return HttpWebResult.getMonoSucStr();
+        }catch (Exception e){
+            log.error(e.getMessage(), e);
+            return HttpWebResult.getMonoError("发送邮件失败");
+        }
+    }
+
+    /**
+     * 发送邮件
+     * @return
+     */
+    public ResultJson<String> sendEmail(String title, String content, String to, String filePath){
+        //获取邮件sender
+        EmailSenderProperties emailSenderProperties = emailSenderMapper.selectById(1);
+        log.info("发送邮件服务配置:{},{}", title, JSON.toJSONString(emailSenderProperties));
+        JavaMailSender sender = getJavaMailSender(emailSenderProperties);
+        MimeMessage message=  sender.createMimeMessage();
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(message,true);
+            helper.setFrom(emailSenderProperties.getFromEmail());
+            helper.setTo(to);
+            helper.setSubject(title);
+            helper.setText(content);
+            //验证文件数据是否为空
+            helper.addAttachment(title+".pdf", new FileSystemResource(new File(filePath)));
+            log.info("发送附件->{}",filePath);
+            sender.send(message);
+            log.info("{}-文本邮件发送成功",title);
             return HttpWebResult.getMonoSucStr();
         }catch (Exception e){
             log.error(e.getMessage(), e);
