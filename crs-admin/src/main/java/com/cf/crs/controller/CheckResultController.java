@@ -51,8 +51,8 @@ public class CheckResultController {
         @ApiImplicitParam(paramType="query", name = "id", value = "报表id", required = true, dataType = "Integer"),
         @ApiImplicitParam(paramType="query", name = "startTime", value = "开始时间", required = true, dataType = "Long"),
         @ApiImplicitParam(paramType="query", name = "endTime", value = "结束时间", required = true, dataType = "Long"),
-        @ApiImplicitParam(paramType="query", name = "start", value = "开始索引", required = true, dataType = "Integer"),
-        @ApiImplicitParam(paramType="query", name = "length", value = "请求条数", required = true, dataType = "Integer")
+        @ApiImplicitParam(paramType="query", name = "current", value = "当前页，默认 1", required = true, dataType = "Integer"),
+        @ApiImplicitParam(paramType="query", name = "size", value = "每页显示条数，默认 10", required = true, dataType = "Integer")
     })
     public ResultJson<IPage<CheckResult>> getCheckInfo(@ApiIgnore Long id, @ApiIgnore Long startTime, @ApiIgnore Long endTime, @ApiIgnore Page<CheckResult> page){
         return checkResultService.getcheckReport(id,startTime,endTime,page);
