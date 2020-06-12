@@ -42,7 +42,7 @@ public class WarningInfoService {
             return HttpWebResult.getMonoSucResult(forObject);
         } catch (RestClientException e) {
             log.error(e.getMessage(),e);
-            return HttpWebResult.getMonoError(e.getMessage());
+            return HttpWebResult.getMonoSucResult(new JSONArray());
         }
     }
 
