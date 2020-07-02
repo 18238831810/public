@@ -26,7 +26,7 @@
 		<commons.configuration.version>1.10</commons.configuration.version>
 		<fastjson.version>1.2.45</fastjson.version>
 		<velocity.version>1.7</velocity.version>
-		<mysql.version>8.0.15</mysql.version>
+		<mysql.version>8.0.16</mysql.version>
 	</properties>
 
 	<dependencies>
