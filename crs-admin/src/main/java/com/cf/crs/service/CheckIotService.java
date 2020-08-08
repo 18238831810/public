@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
@@ -70,14 +71,19 @@ public class CheckIotService {
      * @return
      */
     public Double getnormalRateByDay(Integer id,JSONObject jsonObject){
-        if (jsonObject.isEmpty()){
-            jsonObject = restTemplate.getForObject(sensorUrl, JSONObject.class);
+        try {
+            if (jsonObject.isEmpty()){
+                jsonObject = restTemplate.getForObject(sensorUrl, JSONObject.class);
+            }
+            if (jsonObject.isEmpty() || jsonObject.getInteger("code") != 200) return 0.0;
+            JSONObject data = jsonObject.getJSONObject("data");
+            if (data == null || data.isEmpty()) return 0.0;
+            if (id == 9) return DataChange.obToDouble(data.getString("sensorOnlineRate").replace("%",""));
+            else return DataChange.obToDouble(data.getString("roadDeviceOnlineRate").replace("%",""));
+        } catch (Exception e) {
+            log.error(e.getMessage(),e);
+            return 0.0;
         }
-        if (jsonObject.isEmpty() || jsonObject.getInteger("code") != 200) return 0.0;
-        JSONObject data = jsonObject.getJSONObject("data");
-        if (data == null || data.isEmpty()) return 0.0;
-        if (id == 9) return DataChange.obToDouble(data.getString("sensorOnlineRate").replace("%",""));
-        else return DataChange.obToDouble(data.getString("roadDeviceOnlineRate").replace("%",""));
     }
 
     /**
