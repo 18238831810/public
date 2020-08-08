@@ -7,11 +7,13 @@ import com.cf.crs.config.config.IotConfig;
 import com.cf.crs.mapper.CheckIotMapper;
 import com.cf.util.http.HttpWebResult;
 import com.cf.util.http.ResultJson;
+import com.cf.util.utils.DataChange;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -36,6 +38,12 @@ public class CheckIotService {
     @Value("${check.iotDay}")
     Integer day;
 
+    @Value("${sensorUrl:https://smartum.sz.gov.cn/szcity/pullSensorData/getSensorStatData.action?client_id=szcgGetSensor}")
+    String sensorUrl;
+
+    @Autowired
+    RestTemplate restTemplate;
+
 
     public static void main(String[] args) {
         DateTime dateTime = DateUtil.offsetDay(new Date(), -5);
@@ -58,6 +66,21 @@ public class CheckIotService {
             list.add(jsonObject);
         });
         return HttpWebResult.getMonoSucResult(list);
+    }
+
+    /**
+     *
+     * @param id 9:气体监测仪 10:避险设备
+     * @param jsonObject
+     * @return
+     */
+    public Double getnormalRateByDay(Integer id,JSONObject jsonObject){
+        if (jsonObject.isEmpty()){
+            jsonObject = restTemplate.getForObject(sensorUrl, JSONObject.class);
+        }
+        if (jsonObject.isEmpty() || jsonObject.getInteger("code") != 200) return 0.0;
+        if (id == 9) return DataChange.obToDouble(jsonObject.getString("sensorOnlineRate").replace("%",""));
+        else return DataChange.obToDouble(jsonObject.getString("roadDeviceOnlineRate").replace("%",""));
     }
 
     /**

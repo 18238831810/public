@@ -848,12 +848,14 @@ public class CheckResultService {
         List<CheckInfo> checkInfos = deviceList.get("8");
         if (checkItemList.contains("9") && CollectionUtils.isNotEmpty(checkInfos)){
             //获取互联网设备列表（对应ioconfig中的key）
-            List<String> internetList = checkInfos.stream().map(CheckInfoDevice -> CheckInfoDevice.getName()).collect(Collectors.toList());
+            List<String> internetList = checkInfos.stream().map(checkInfoDevice -> checkInfoDevice.getName()).collect(Collectors.toList());
             for (Object o : internet) {
                 JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(o));
                 Integer id = jsonObject.getInteger("id");
                 Integer score = jsonObject.getInteger("fraction");
                 Double num = jsonObject.getDouble("num");
+                //气体监测仪和避险设备数据
+                JSONObject sensorJson = new JSONObject();
                 if (id == 0) {
                     //执法车
                     String iotName = "iot_zhifache_status";
@@ -933,10 +935,30 @@ public class CheckResultService {
                     scoreTotal += score;
                 }else if (id == 9) {
                     //气体监测仪
-                    scoreTotal += score;
+                    String iotName = "iot_qtjianceyi_status";
+                    if(internetList.contains(iotName)){
+                        checkResult.setQtjianceyiCondition("气体监测仪>="+num+"%");
+                        Double value = checkIotService.getnormalRateByDay(id,sensorJson);
+                        checkResult.setDuijiangjiVaule("气体监测仪:"+value+"%");
+                        if(value < num) {
+                            checkResult.setQtjianceyiStatus(0);
+                            checkResult.setIot(0);
+                        }
+                    }
+                    if (checkResult.getQtjianceyiStatus() == null || checkResult.getQtjianceyiStatus() != 0) scoreTotal += score;
                 }else if (id == 10) {
                     //避险设备
-                    scoreTotal += score;
+                    String iotName = "iot_bixianshebei_status";
+                    if(internetList.contains(iotName)){
+                        checkResult.setBixianshebeiCondition("避险设备>="+num+"%");
+                        Double value = checkIotService.getnormalRateByDay(id,sensorJson);
+                        checkResult.setBixianshebeiVaule("避险设备:"+value+"%");
+                        if(value < num) {
+                            checkResult.setBixianshebeiStatus(0);
+                            checkResult.setIot(0);
+                        }
+                    }
+                    if (checkResult.getBixianshebeiStatus() == null || checkResult.getBixianshebeiStatus() != 0) scoreTotal += score;
                 }
             }
             if (checkResult.getIot() == null) {

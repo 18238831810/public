@@ -134,6 +134,7 @@ iot:
     iot_zhifache_status: 执法车
     iot_zhifaduijiang_status: 对讲机
 checkPdf: E:\checkResult\
+sensorUrl: https://smartum.sz.gov.cn/szcity/pullSensorData/getSensorStatData.action?client_id=szcgGetSensor
 
 
 
