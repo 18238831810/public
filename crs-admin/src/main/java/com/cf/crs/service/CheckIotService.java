@@ -45,11 +45,6 @@ public class CheckIotService {
     RestTemplate restTemplate;
 
 
-    public static void main(String[] args) {
-        DateTime dateTime = DateUtil.offsetDay(new Date(), -5);
-        String time = dateTime.toString();
-        System.out.println(time);
-    }
 
     public ResultJson<List<JSONObject>> getIotInfo(){
         List<JSONObject> list = Lists.newArrayList();
@@ -79,8 +74,10 @@ public class CheckIotService {
             jsonObject = restTemplate.getForObject(sensorUrl, JSONObject.class);
         }
         if (jsonObject.isEmpty() || jsonObject.getInteger("code") != 200) return 0.0;
-        if (id == 9) return DataChange.obToDouble(jsonObject.getString("sensorOnlineRate").replace("%",""));
-        else return DataChange.obToDouble(jsonObject.getString("roadDeviceOnlineRate").replace("%",""));
+        JSONObject data = jsonObject.getJSONObject("data");
+        if (data == null || data.isEmpty()) return 0.0;
+        if (id == 9) return DataChange.obToDouble(data.getString("sensorOnlineRate").replace("%",""));
+        else return DataChange.obToDouble(data.getString("roadDeviceOnlineRate").replace("%",""));
     }
 
     /**
@@ -91,6 +88,17 @@ public class CheckIotService {
     public Double getnormalRateByDay(String tableName){
         String time = DateUtil.offsetDay(new Date(), day).toString();
         return getnormalRate(tableName,time);
+    }
+
+    public static void main(String[] args) {
+        Integer id = 10;
+        JSONObject jsonObject = new JSONObject();
+        if (jsonObject.isEmpty()){
+            jsonObject = new RestTemplate().getForObject("https://smartum.sz.gov.cn/szcity/pullSensorData/getSensorStatData.action?client_id=szcgGetSensor", JSONObject.class);
+        }
+        JSONObject data = jsonObject.getJSONObject("data");
+        if (id == 9) System.out.println(DataChange.obToDouble(data.getString("sensorOnlineRate").replace("%","")));
+        else System.out.println(DataChange.obToDouble(data.getString("roadDeviceOnlineRate").replace("%","")));
     }
 
 
