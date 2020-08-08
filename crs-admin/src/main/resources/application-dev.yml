@@ -133,6 +133,8 @@ iot:
     iot_shexiangtou_status: 摄像头
     iot_zhifache_status: 执法车
     iot_zhifaduijiang_status: 对讲机
+    iot_qtjianceyi_status: 气体监测仪
+    iot_bixianshebei_status: 避险设备
 checkPdf: E:\checkResult\
 sensorUrl: https://smartum.sz.gov.cn/szcity/pullSensorData/getSensorStatData.action?client_id=szcgGetSensor
 
