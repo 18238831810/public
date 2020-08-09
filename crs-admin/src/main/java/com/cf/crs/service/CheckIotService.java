@@ -53,7 +53,7 @@ public class CheckIotService {
             JSONObject jsonObject = new JSONObject();
             JSONObject data = new JSONObject();
             JSONObject forObject = restTemplate.getForObject(sensorUrl, JSONObject.class);
-            if (forObject != null && !forObject.isEmpty() && jsonObject.getInteger("code") == 200) data = forObject.getJSONObject("data");
+            if (forObject != null && !forObject.isEmpty() && forObject.getInteger("code") == 200) data = forObject.getJSONObject("data");
             if ("iot_qtjianceyi_status".equalsIgnoreCase(key)){
                 jsonObject.put("normal",data.getInteger("sensorOnLineCount"));
                 jsonObject.put("count",data.getInteger("sensorCount"));
