@@ -50,13 +50,27 @@ public class CheckIotService {
         String time = DateUtil.offsetDay(new Date(), day).toString();
         Map<String, String> device = iotConfig.getDevice();
         device.keySet().forEach(key->{
-            int count = checkIotMapper.selectCount(key);
-            //获取在线设备
-            int normalCount = checkIotMapper.selectNormalCount(key, time);
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("normal",normalCount);
-            jsonObject.put("count",count);
-            jsonObject.put("type",device.get(key));
+            JSONObject data = new JSONObject();
+            JSONObject forObject = restTemplate.getForObject(sensorUrl, JSONObject.class);
+            if (forObject != null && !forObject.isEmpty() && jsonObject.getInteger("code") == 200) data = forObject.getJSONObject("data");
+            if ("iot_qtjianceyi_status".equalsIgnoreCase(key)){
+                jsonObject.put("normal",data.getInteger("sensorOnLineCount"));
+                jsonObject.put("count",data.getInteger("sensorCount"));
+                jsonObject.put("type",device.get(key));
+            }else if("iot_qtjianceyi_status".equalsIgnoreCase(key)){
+                jsonObject.put("normal",data.getInteger("roadDeviceOnLineCount"));
+                jsonObject.put("count",data.getInteger("roadDeviceCount"));
+                jsonObject.put("type",device.get(key));
+            }else{
+                int count = checkIotMapper.selectCount(key);
+                //获取在线设备
+                int normalCount = checkIotMapper.selectNormalCount(key, time);
+
+                jsonObject.put("normal",normalCount);
+                jsonObject.put("count",count);
+                jsonObject.put("type",device.get(key));
+            }
             list.add(jsonObject);
         });
         return HttpWebResult.getMonoSucResult(list);
