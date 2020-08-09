@@ -47,7 +47,7 @@ public class CheckResultController {
 
     @ApiOperation("发送考评结果(批量)")
     @PostMapping("/sendCheckResults")
-    @ApiImplicitParam(paramType="query", name = "id", value = "考评结果id(多个以逗号隔开)", required = true, dataType = "String")
+    @ApiImplicitParam(paramType="query", name = "ids", value = "考评结果id(多个以逗号隔开)", required = true, dataType = "String")
     public ResultJson<String> SendEmailForResluts(@ApiIgnore String ids){
         return checkResultService.sendEmailForResluts(ids);
     }
