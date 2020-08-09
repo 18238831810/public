@@ -6,45 +6,38 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cf.crs.common.redis.RedisUtils;
-import com.cf.crs.common.utils.DateUtils;
 import com.cf.crs.entity.*;
 import com.cf.crs.mapper.*;
 import com.cf.util.http.HttpWebResult;
 import com.cf.util.http.ResultJson;
-import com.cf.util.redis.RedisUtil;
 import com.cf.util.utils.CacheKey;
+import com.cf.util.utils.DataChange;
 import com.cf.util.utils.DataUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.XMLWorkerHelper;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
-import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
-import javax.swing.*;
-import java.io.*;
-import java.nio.charset.Charset;
+import java.io.FileOutputStream;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.zip.ZipEntry;
 
 /**
  * 考评菜单
@@ -155,6 +148,18 @@ public class CheckResultService {
         String email = checkInfo.getEmail();
         if (StringUtils.isEmpty(email)) return HttpWebResult.getMonoError("此考评对象没有设置发送邮箱");
         return emailSenderService.sendEmail(title,content,email,checkResultPath + checkInfo.getName() + ".pdf");
+    }
+
+    /**
+     * 发送考评结果
+     * @return
+     */
+    public ResultJson<String> sendEmailForResluts(String ids){
+        String[] split = ids.split(",");
+        for (String s : split) {
+            sendEmailForReslut(DataChange.obToLong(s));
+        }
+        return HttpWebResult.getMonoSucStr();
     }
 
     /**
