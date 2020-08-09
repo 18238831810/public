@@ -140,14 +140,18 @@ public class CheckResultService {
      * @return
      */
     public ResultJson<String> sendEmailForReslut(Long id){
-        CheckInfo checkInfo = createPdf(checkResultPath, id);
-        if (checkInfo == null) return HttpWebResult.getMonoError("发送失败");
-        //发送指定报表
-        String title = checkInfo.getName() + "-报表";
-        String content = "报表详情请参考附件";
-        String email = checkInfo.getEmail();
-        if (StringUtils.isEmpty(email)) return HttpWebResult.getMonoError("此考评对象没有设置发送邮箱");
-        return emailSenderService.sendEmail(title,content,email,checkResultPath + checkInfo.getName() + ".pdf");
+        try {
+            CheckInfo checkInfo = createPdf(checkResultPath, id);
+            if (checkInfo == null) return HttpWebResult.getMonoError("发送失败");
+            //发送指定报表
+            String title = checkInfo.getName() + "-报表";
+            String content = "报表详情请参考附件";
+            String email = checkInfo.getEmail();
+            if (StringUtils.isEmpty(email)) return HttpWebResult.getMonoError("此考评对象没有设置发送邮箱");
+            return emailSenderService.sendEmail(title,content,email,checkResultPath + checkInfo.getName() + ".pdf");
+        } catch (Exception e) {
+            return HttpWebResult.getMonoError("发送失败");
+        }
     }
 
     /**
@@ -155,9 +159,15 @@ public class CheckResultService {
      * @return
      */
     public ResultJson<String> sendEmailForResluts(String ids){
+        List<String> idList = Lists.newArrayList();
         String[] split = ids.split(",");
         for (String s : split) {
-            sendEmailForReslut(DataChange.obToLong(s));
+            ResultJson<String> resultJson = sendEmailForReslut(DataChange.obToLong(s));
+            if(resultJson.getCode() != 200) idList.add(s);
+        }
+        if (CollectionUtils.isNotEmpty(idList)) {
+            String collect = idList.stream().collect(Collectors.joining(","));
+            return HttpWebResult.getMonoError(collect+"发送失败");
         }
         return HttpWebResult.getMonoSucStr();
     }
