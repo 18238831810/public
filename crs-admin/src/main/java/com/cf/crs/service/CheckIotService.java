@@ -58,7 +58,7 @@ public class CheckIotService {
                 jsonObject.put("normal",data.getInteger("sensorOnLineCount"));
                 jsonObject.put("count",data.getInteger("sensorCount"));
                 jsonObject.put("type",device.get(key));
-            }else if("iot_qtjianceyi_status".equalsIgnoreCase(key)){
+            }else if("iot_bixianshebei_status".equalsIgnoreCase(key)){
                 jsonObject.put("normal",data.getInteger("roadDeviceOnLineCount"));
                 jsonObject.put("count",data.getInteger("roadDeviceCount"));
                 jsonObject.put("type",device.get(key));
