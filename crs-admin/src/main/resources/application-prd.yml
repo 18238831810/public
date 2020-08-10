@@ -1,10 +1,23 @@
+server:
+  tomcat:
+    uri-encoding: UTF-8
+    max-threads: 1000
+    min-spare-threads: 30
+  port: 8080
+  connection-timeout: 5000ms
+  servlet:
+    context-path: /
+    session:
+      cookie:
+        http-only: true
+        secure: true
 spring:
   #redis配置
   redis:
     database: 2
-    host: 47.106.199.193
-    port: 1371
-    password: '*&(*%QWaf4534!123dsg'
+    host: 127.0.0.1
+    port: 6379
+    password:
     timeout: 20000ms  # 连接超时时长（毫秒）
     jedis:
       pool:
@@ -19,9 +32,9 @@ spring:
     dynamic:
       datasource:
         master:
-          username: city
-          password: '!#456QWEasd&'
-          url: jdbc:mysql://47.106.199.193:3306/citymanager?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT
+          username: root
+          password: '123456'
+          url: jdbc:mysql://127.0.0.1:3306/citymanager?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT
           driver-class-name: com.mysql.cj.jdbc.Driver
           druid: # 以下参数针对每个库可以重新设置druid参数
             initial-size: 10
@@ -50,8 +63,95 @@ spring:
               wall:
                 config:
                   multi-statement-allow: true
+    #        orcale:
+    #          username: query
+    #          password: 888888
+    #          url: jdbc:oracle:thin:@192.168.3.35:1521/xhdb
+    #          driver-class-name: oracle.jdbc.OracleDriver
+    #          druid: # 以下参数针对每个库可以重新设置druid参数
+    #            initial-size: 10
+    #            max-active: 100
+    #            min-idle: 10
+    #            max-wait: 6000
+    #            pool-prepared-statements: true
+    #            max-pool-prepared-statement-per-connection-size: 20
+    #            time-between-eviction-runs-millis: 60000
+    #            min-evictable-idle-time-millis: 300000
+    #            #Oracle需要打开注释
+    #            #validation-query: SELECT 1 FROM DUAL
+    #            test-while-idle: true
+    #            test-on-borrow: false
+    #            test-on-return: false
+    #            stat-view-servlet:
+    #              enabled: true
+    #              url-pattern: /druid/*
+    #              #login-username: admin
+    #              #login-password: admin
+    #            filter:
+    #              stat:
+    #                log-slow-sql: true
+    #                slow-sql-millis: 1000
+    #                merge-sql: false
+    #              wall:
+    #                config:
+    #                  multi-statement-allow: true
+
+
+    #kafka
+  kafka:
+    consumer:
+      bootstrap-servers: 10.253.36.37:9092
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      auto-offset-reset: earliest                       #最早未被消费的offset earliest
+      max-poll-records: 200                         #批量消费一次最大拉取的数据量
+      enable-auto-commit: false                         #是否开启自动提交
+      auto-commit-interval: 1000                        #自动提交的间隔时间
+    listener:
+      ack-mode: MANUAL_IMMEDIATE
+      type: BATCH                                #是否开启批量消费，true表示批量消费
+      concurrency: 1                                  #设置消费的线程数
+      poll-timeout: 1500
 
 # 配置slq打印日志
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+check:
+  sql: # 考评sql配置
+    url: http://127.0.0.1:19090
+    sqlType: MYSQL-DB-server,PostgreSQL,MongoDB,Redis
+    apikey: 7a1b9b6b6e561bb840a4897706552a93
+    middlewareType: Tomcat-server
+    seq: UrlSeq
+    monitor: UrlMonitor
+  server:
+    url: http://127.0.0.1:18060
+    name: Server
+    apikey: 3339c7cc8bd9b2e6a3ea05091a9a638f
+  order:
+    url: http://127.0.0.1:18080
+    apikey: AE4DADDE-BC94-4BE2-8AC6-73984663D096
+  iotDay: -5
+client:
+  url: https://smartum.sz.gov.cn/idp/oauth2
+  client-id: znkp
+  client-secret: bce90c39c88b44b6a2ab16a52edac2a4
+  syn-user-url: https://smartum.sz.gov.cn/bimserver/integration/api.json
+iot:
+  device:
+    iot_huanweiche_status: 环卫车
+    iot_lvhuache_status: 绿化车
+    iot_shexiangtou_status: 摄像头
+    iot_zhifache_status: 执法车
+    iot_zhifaduijiang_status: 对讲机
+    iot_qtjianceyi_status: 气体监测仪
+    iot_bixianshebei_status: 避险设备
+checkPdf: E:\checkResult\
+sensorUrl: https://smartum.sz.gov.cn/szcity/pullSensorData/getSensorStatData.action?client_id=szcgGetSensor
+
+
+
+
+
