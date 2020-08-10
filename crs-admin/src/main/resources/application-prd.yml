@@ -135,9 +135,11 @@ check:
     apikey: AE4DADDE-BC94-4BE2-8AC6-73984663D096
   iotDay: -5
 client:
+  #单点
   url: https://smartum.sz.gov.cn/idp/oauth2
   client-id: znkp
   client-secret: bce90c39c88b44b6a2ab16a52edac2a4
+  #下拉
   syn-user-url: https://smartum.sz.gov.cn/bimserver/integration/api.json
 iot:
   device:
