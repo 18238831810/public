@@ -100,7 +100,7 @@ public class SynUserService {
                 cityOrganizationMapper.update(cityOrganization,new UpdateWrapper<CityOrganization>().eq("code",cityOrganization.getCode()).le("updateAt",cityOrganization.getUpdateAt()));
             }
         }
-        return String.valueOf(cityOrganization.getCode());
+        return cityOrganization.getCode();
     }
 
     /**
@@ -146,7 +146,7 @@ public class SynUserService {
     }
     private CityOrganization getCityOrganization(JSONObject json) {
         CityOrganization cityOrganization = new CityOrganization();
-        cityOrganization.setCode(json.getInteger("code"));
+        cityOrganization.setCode(json.getString("code"));
         cityOrganization.setParent(DataChange.obToInt(json.get("_parent"),0));
         cityOrganization.setOrganization(json.getString("_organization"));
         cityOrganization.setFullname(json.getString("fullname"));

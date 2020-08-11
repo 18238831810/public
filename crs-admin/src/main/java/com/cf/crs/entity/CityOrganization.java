@@ -15,7 +15,7 @@ import java.io.Serializable;
 public class CityOrganization implements Serializable {
 
     private Integer id;
-    private Integer code;
+    private String code;
     private Integer parent;
     private String organization;
     private String fullname;
