@@ -147,7 +147,7 @@ public class SynUserService {
     private CityOrganization getCityOrganization(JSONObject json) {
         CityOrganization cityOrganization = new CityOrganization();
         cityOrganization.setCode(json.getString("code"));
-        cityOrganization.setParent(DataChange.obToInt(json.get("_parent"),0));
+        cityOrganization.setParent(json.getString("_parent"));
         cityOrganization.setOrganization(json.getString("_organization"));
         cityOrganization.setFullname(json.getString("fullname"));
         cityOrganization.setDescription(json.getString("description"));

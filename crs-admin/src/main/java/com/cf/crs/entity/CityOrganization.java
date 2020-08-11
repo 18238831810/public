@@ -16,7 +16,7 @@ public class CityOrganization implements Serializable {
 
     private Integer id;
     private String code;
-    private Integer parent;
+    private String parent;
     private String organization;
     private String fullname;
     private String description;
