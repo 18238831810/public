@@ -27,7 +27,7 @@ public class CityUser implements Serializable {
     private String user;
 
     @ApiModelProperty(value = "部门名称")
-    private Integer organization;
+    private String organization;
 
     @ApiModelProperty(value = "登录名")
     private String username;

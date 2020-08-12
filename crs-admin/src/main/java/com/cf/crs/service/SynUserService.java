@@ -132,7 +132,7 @@ public class SynUserService {
         CityUser cityUser = new CityUser();
         cityUser.setSynId(jsonObject.getString("id"));
         cityUser.setUser(json.getString("_user"));
-        cityUser.setOrganization(json.getInteger("_organization"));
+        cityUser.setOrganization(json.getString("_organization"));
         cityUser.setUsername(json.getString("username"));
         cityUser.setFullname(json.getString("fullname"));
         cityUser.setIsDisabled(json.getBoolean("isDisabled")?1:0);
