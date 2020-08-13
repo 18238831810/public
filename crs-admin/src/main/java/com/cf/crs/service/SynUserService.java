@@ -150,6 +150,7 @@ public class SynUserService {
         cityOrganization.setParent(json.getString("_parent"));
         cityOrganization.setOrganization(json.getString("_organization"));
         cityOrganization.setFullname(json.getString("fullname"));
+        cityOrganization.setName(json.getString("name"));
         cityOrganization.setDescription(json.getString("description"));
         cityOrganization.setSequence(json.getInteger("sequence"));
         cityOrganization.setIsDisabled(json.getBoolean("isDisabled")?1:0);
