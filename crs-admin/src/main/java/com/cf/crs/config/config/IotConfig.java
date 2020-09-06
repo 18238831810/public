@@ -1,5 +1,6 @@
 package com.cf.crs.config.config;
 
+import com.cf.crs.entity.IotCard;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -22,4 +23,9 @@ public class IotConfig {
      * 网络设备
      */
     private Map<String,String> device;
+
+    /**
+     * 车辆在线信息
+     */
+    private IotCard card;
 }

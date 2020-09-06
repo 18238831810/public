@@ -871,12 +871,13 @@ public class CheckResultService {
                 Double num = jsonObject.getDouble("num");
                 //气体监测仪和避险设备数据
                 JSONObject sensorJson = new JSONObject();
+                JSONArray cardArr = new JSONArray();
                 if (id == 0) {
                     //执法车
                     String iotName = "iot_zhifache_status";
                     if(internetList.contains(iotName)){
                         checkResult.setZhifacheCondition("执法车>="+num+"%");
-                        Double value = checkIotService.getnormalRateByDay(iotName);
+                        Double value = checkIotService.getnormalRateForCard(cardArr,iotName);
                         checkResult.setZhifacheVaule("执法车:"+value+"%");
                         if(value < num) {
                             checkResult.setZhifacheStatus(0);
@@ -889,7 +890,7 @@ public class CheckResultService {
                     String iotName = "iot_lvhuache_status";
                     if(internetList.contains(iotName)){
                         checkResult.setLvhuacheCondition("绿化车>="+num+"%");
-                        Double value = checkIotService.getnormalRateByDay(iotName);
+                        Double value = checkIotService.getnormalRateForCard(cardArr,iotName);
                         checkResult.setLvhuacheVaule("绿化车:"+value+"%");
                         if(value < num) {
                             checkResult.setLvhuacheStatus(0);
@@ -902,7 +903,7 @@ public class CheckResultService {
                     String iotName = "iot_huanweiche_status";
                     if(internetList.contains(iotName)){
                         checkResult.setHuanweicheCondition("环卫车>="+num+"%");
-                        Double value = checkIotService.getnormalRateByDay(iotName);
+                        Double value = checkIotService.getnormalRateForCard(cardArr,iotName);
                         checkResult.setHuanweicheVaule("环卫车:"+value+"%");
                         if(value < num) {
                             checkResult.setHuanweicheStatus(0);

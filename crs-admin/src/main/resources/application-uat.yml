@@ -148,6 +148,10 @@ iot:
     iot_zhifaduijiang_status: 对讲机
     iot_qtjianceyi_status: 气体监测仪
     iot_bixianshebei_status: 避险设备
+  card:
+    paasid: znkp
+    token: u52sHzNTaF2rZRUWaPONvXXD475iMSYl
+    url: https://smartum.sz.gov.cn/ebus/minemap_lbs/LBSserver/iov/home/getBusiness
 checkPdf: E:\checkResult\
 sensorUrl: https://smartum.sz.gov.cn/szcity/pullSensorData/getSensorStatData.action?client_id=szcgGetSensor
 
