@@ -96,6 +96,16 @@ public class CheckIotService {
         return result;
     }
 
+    public Map<String,Map> getCardStatusMap(){
+        JSONArray jsonArray = getCardStatus();
+        Map<String, Map> result = Maps.newHashMap();
+        for (Object o : jsonArray) {
+            Map map = (HashMap) o;
+            result.put(DataChange.obToString(map.get("bgroup_id")),map);
+        }
+        return result;
+    }
+
 
 
     public ResultJson<List<JSONObject>> getIotInfo(){
@@ -106,6 +116,7 @@ public class CheckIotService {
             JSONObject jsonObject = new JSONObject();
             JSONObject data = new JSONObject();
             JSONObject forObject = restTemplate.getForObject(sensorUrl, JSONObject.class);
+            Map<String, Map> cardStatusMap = getCardStatusMap();
             if (forObject != null && !forObject.isEmpty() && forObject.getInteger("code") == 200) data = forObject.getJSONObject("data");
             if ("iot_qtjianceyi_status".equalsIgnoreCase(key)){
                 jsonObject.put("normal",data.getInteger("sensorOnLineCount"));
@@ -114,6 +125,21 @@ public class CheckIotService {
             }else if("iot_bixianshebei_status".equalsIgnoreCase(key)){
                 jsonObject.put("normal",data.getInteger("roadDeviceOnLineCount"));
                 jsonObject.put("count",data.getInteger("roadDeviceCount"));
+                jsonObject.put("type",device.get(key));
+            }else if("iot_zhifache_status".equalsIgnoreCase(key)){
+                Map map = cardStatusMap.get("1");
+                jsonObject.put("normal",DataChange.obToInt(map.get("onlineNum")));
+                jsonObject.put("count",DataChange.obToInt(map.get("totalnum")));
+                jsonObject.put("type",device.get(key));
+            }else if("iot_lvhuache_status".equalsIgnoreCase(key)){
+                Map map = cardStatusMap.get("2");
+                jsonObject.put("normal",DataChange.obToInt(map.get("onlineNum")));
+                jsonObject.put("count",DataChange.obToInt(map.get("totalnum")));
+                jsonObject.put("type",device.get(key));
+            }else if("iot_huanweiche_status".equalsIgnoreCase(key)){
+                Map map = cardStatusMap.get("3");
+                jsonObject.put("normal",DataChange.obToInt(map.get("onlineNum")));
+                jsonObject.put("count",DataChange.obToInt(map.get("totalnum")));
                 jsonObject.put("type",device.get(key));
             }else{
                 int count = checkIotMapper.selectCount(key);
