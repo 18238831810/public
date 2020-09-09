@@ -34,7 +34,7 @@ public class CheckInfo implements Serializable {
     @ApiModelProperty(value = "显示名称")
     private String  displayName;
 
-    @ApiModelProperty(value = "设备类型（0:考评对象，1：服务器，2：数据库 3：中间件）")
+    @ApiModelProperty(value = "设备类型（0:考评对象，1：数据库，2：中间件 3：服务器）")
     private Integer type;
 
     @ApiModelProperty(value = "信息安全")
