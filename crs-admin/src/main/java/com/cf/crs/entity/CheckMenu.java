@@ -26,7 +26,7 @@ public class CheckMenu implements Serializable {
     @ApiModelProperty(value = "菜单名称")
     private String  name;
 
-    @ApiModelProperty(value = "菜单类型（0：暂时无法定义 1：服务器，2：数据库 3：中间件)")
+    @ApiModelProperty(value = "菜单类型（1:数据库 2:中间件 3:服务器 4 :物联网设备 5:工单（暂时不用） 6:业务监测 7:页面可用性 8:物联网设备)")
     private Integer type;
 
     @ApiModelProperty(value = "菜单等级")
