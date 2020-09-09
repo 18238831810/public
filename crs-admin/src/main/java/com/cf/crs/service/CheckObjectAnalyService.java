@@ -47,9 +47,9 @@ public class CheckObjectAnalyService {
 
     @PostConstruct
     public void postConstruct(){
-        deviceNameMap.put("1","server");
-        deviceNameMap.put("2","sql");
-        deviceNameMap.put("3","middleware");
+        deviceNameMap.put("3","server");
+        deviceNameMap.put("1","sql");
+        deviceNameMap.put("2","middleware");
     }
 
 
