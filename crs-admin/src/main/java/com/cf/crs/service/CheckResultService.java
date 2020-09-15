@@ -458,9 +458,9 @@ public class CheckResultService {
                 if (checkItemList.contains("7")){
                     //需要考评,考评页面可用性
                     checkResult.setBusinessCondition(jsonObject.getString("qualification"));
-                    List<String> deviceNameList = getDeviceNameList(deviceList, "1");
+                    List<String> deviceNameList = getDeviceNameList(deviceList, "6");
                     if (CollectionUtils.isNotEmpty(deviceNameList)){
-                        JSONObject serverWaring = warningService.getSqlWaring(1,deviceNameList);
+                        JSONObject serverWaring = warningService.getSqlWaring(6,deviceNameList);
                         Integer clear = serverWaring.getInteger("clear");
                         if (clear <= 0){
                             //页面可用不正常
@@ -481,9 +481,9 @@ public class CheckResultService {
                 //业务监测
                 if (checkItemList.contains("4")){
                     checkResult.setResponseCondition(jsonObject.getString("qualification"));
-                    List<String> deviceNameList = getDeviceNameList(deviceList, "6");
+                    List<String> deviceNameList = getDeviceNameList(deviceList, "7");
                     if (CollectionUtils.isNotEmpty(deviceNameList)){
-                        JSONObject serverWaring = warningService.getSqlWaring(1,deviceNameList);
+                        JSONObject serverWaring = warningService.getSqlWaring(7,deviceNameList);
                         Integer clear = serverWaring.getInteger("clear");
                         if (clear <= 0){
                             //页面可用不正常

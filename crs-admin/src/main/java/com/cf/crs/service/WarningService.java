@@ -73,7 +73,7 @@ public class WarningService {
 
     public JSONObject getServerWaring(List<String> deviceNameList){
         JSONObject servers = checkServerService.getServers();
-        return scoreServe(null, servers,deviceNameList);
+        return scoreServe(Lists.newArrayList(), servers,deviceNameList);
     }
 
     public JSONObject scoreServe(List record, JSONObject servers,List<String> deviceNameList) {
@@ -124,7 +124,7 @@ public class WarningService {
 
     public JSONObject getSqlWaring(Integer type,List<String> deviceNameList){
         String html = checkSqlService.getCheckSqlList(type);
-        return scoreSql(null, html, deviceNameList);
+        return scoreSql(Lists.newArrayList(), html, deviceNameList);
     }
 
     public JSONObject scoreSql(List record, String html,List<String> deviceNameList) {
